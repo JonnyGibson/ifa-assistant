@@ -13,7 +13,8 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
     "chart.js": "^4.4.0",
-    "vue": "^3.3.4"
+    "vue": "^3.3.4",
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.6.2",

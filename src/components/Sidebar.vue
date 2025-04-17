@@ -6,24 +6,48 @@
     </div>
     <nav class="mt-6">
       <div class="px-4 space-y-2">
-        <a href="#" class="block py-2 px-4 bg-gray-700 rounded-md text-white">
+        <router-link 
+          to="/" 
+          class="block py-2 px-4 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+          :class="{ 'bg-gray-700 text-white': isActive('/') }"
+        >
           <i class="fas fa-home mr-2"></i>Dashboard
-        </a>
-        <a href="#" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 rounded-md">
+        </router-link>
+        <router-link 
+          to="/clients" 
+          class="block py-2 px-4 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+          :class="{ 'bg-gray-700 text-white': isActive('/clients') }"
+        >
           <i class="fas fa-users mr-2"></i>Clients
-        </a>
-        <a href="#" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 rounded-md">
+        </router-link>
+        <router-link 
+          to="/documents" 
+          class="block py-2 px-4 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+          :class="{ 'bg-gray-700 text-white': isActive('/documents') }"
+        >
           <i class="fas fa-file-alt mr-2"></i>Documents
-        </a>
-        <a href="#" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 rounded-md">
+        </router-link>
+        <router-link 
+          to="/compliance" 
+          class="block py-2 px-4 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+          :class="{ 'bg-gray-700 text-white': isActive('/compliance') }"
+        >
           <i class="fas fa-clipboard-check mr-2"></i>Compliance
-        </a>
-        <a href="#" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 rounded-md">
+        </router-link>
+        <router-link 
+          to="/appointments" 
+          class="block py-2 px-4 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+          :class="{ 'bg-gray-700 text-white': isActive('/appointments') }"
+        >
           <i class="fas fa-calendar-alt mr-2"></i>Appointments
-        </a>
-        <a href="#" class="block py-2 px-4 text-gray-300 hover:bg-gray-700 rounded-md">
+        </router-link>
+        <router-link 
+          to="/reports" 
+          class="block py-2 px-4 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
+          :class="{ 'bg-gray-700 text-white': isActive('/reports') }"
+        >
           <i class="fas fa-chart-line mr-2"></i>Reports
-        </a>
+        </router-link>
       </div>
     </nav>
   </div>
@@ -36,6 +60,11 @@ export default {
     userEmail: {
       type: String,
       required: true
+    }
+  },
+  methods: {
+    isActive(path) {
+      return this.$route.path === path || this.$route.path.startsWith(path + '/')
     }
   }
 }

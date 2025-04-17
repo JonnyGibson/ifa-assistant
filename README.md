@@ -2,62 +2,115 @@
 
 A modern financial advisor assistant platform built with Vue.js and Supabase, designed to help financial advisors manage their clients, appointments, and documents efficiently.
 
+**Note for AI Assistant:** Please consult this README and the `.cursorrules` file before making changes or suggestions.
+
 ## Tech Stack
 
 ### Frontend
-- **Vue.js 3** - Progressive JavaScript framework
-- **Vite** - Next generation frontend tooling
-- **Tailwind CSS** - Utility-first CSS framework
-- **Chart.js** - Data visualization library
+- **Framework:** Vue.js 3 (Primarily Composition API, Options API used in `Sidebar.vue`)
+- **Routing:** Vue Router
+- **Build Tool:** Vite
+- **Styling:** Tailwind CSS
+- **Data Visualization:** Chart.js (used in `Dashboard.vue`)
+- **State Management:** Implicit via Supabase and component state (no dedicated state library like Pinia/Vuex currently)
 
 ### Backend & Database
-- **Supabase** - Open source Firebase alternative
-  - PostgreSQL database with full-text search and JSON support
-  - Authentication with email/password and social providers
-  - Row Level Security (RLS) policies for data protection
-  - Real-time subscriptions for live updates
-  - Storage for document management
-  - Edge Functions for serverless operations
+- **Platform:** Supabase
+  - **Database:** PostgreSQL
+  - **Authentication:** Supabase Auth (Email/Password)
+  - **Storage:** Supabase Storage (for documents)
+  - **Real-time:** Supabase Realtime (potential use)
+  - **Security:** Row Level Security (RLS)
+
+### Development
+- **Environment:** Node.js / npm
+- **Supabase CLI:** For local Supabase management
+
+## Project Structure
+
+```
+ifa-assistant/
+├── public/            # Public static files (e.g., index.html)
+├── src/               # Source files
+│   ├── assets/        # Static assets (CSS, images)
+│   ├── components/    # Reusable Vue components (e.g., Sidebar, LoginForm, StatsCard)
+│   ├── router/        # Vue Router configuration (index.js)
+│   ├── views/         # Page-level Vue components (e.g., Dashboard, Clients, Documents)
+│   ├── App.vue        # Main application component (layout, auth handling)
+│   ├── main.js        # Vue app initialization, plugins (Router)
+│   └── supabase.js    # Supabase client configuration
+├── supabase/          # Supabase local development configuration
+│   ├── migrations/    # Database migrations
+│   ├── seed.sql       # Generated seed data (if used)
+│   └── functions/     # Edge Functions (if used)
+├── scripts/           # Helper scripts (e.g., seeding, db management)
+│   ├── db-manager.js
+│   └── generate-seed-data.js
+├── .env               # Environment variables (MUST contain VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)
+├── .gitignore         # Git ignore file
+├── README.md          # This file
+├── package.json       # Project dependencies and scripts
+└── vite.config.js     # Vite configuration
+```
+
+## Core Concepts & Flow
+
+1.  **Initialization (`main.js`):** Creates the Vue app, initializes the Supabase client (using `.env` variables `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`), and installs the Vue Router plugin.
+2.  **Root Component (`App.vue`):**
+    *   Acts as the main layout container.
+    *   Checks authentication status using `supabase.auth.getSession()` and `onAuthStateChange`.
+    *   Uses `v-if` directives to show either `LoginForm.vue` (if not authenticated) or the main application layout (Sidebar + router-view, if authenticated).
+    *   Contains a loading state (`isLoading`) to prevent content flashing before auth is checked.
+    *   Includes the `<Sidebar />` and the `<router-view />` components.
+3.  **Routing (`router/index.js`):**
+    *   Defines application routes, mapping paths (e.g., `/`, `/clients`) to view components (e.g., `Dashboard.vue`, `Clients.vue`).
+    *   Uses `createWebHistory`.
+    *   Includes a `beforeEach` navigation guard. **Crucially, this guard currently relies on `App.vue`'s internal logic to show/hide content based on authentication.** It primarily checks for the `supabase.auth.token` in `localStorage` and logs navigation but does *not* perform redirects itself for the main authenticated routes.
+4.  **Sidebar (`components/Sidebar.vue`):** Uses `<router-link>` components to trigger navigation changes handled by Vue Router. Uses the Options API and `$route.path` for active link styling.
+5.  **Views (`views/*.vue`):** Page-level components rendered by `<router-view>`. These fetch and display data relevant to their specific section (e.g., `Dashboard.vue` fetches client stats, notes, and renders charts).
+
+## AI Assistant Troubleshooting Tips & Context
+
+*   **Routing/Navigation Guard:** If navigation seems broken or components aren't rendering, first check the `router.beforeEach` guard in `router/index.js`. The issue might be related to how it interacts with `App.vue`'s authentication handling. The guard *should not* be redirecting to a 'Login' route, as `App.vue` handles this display internally. Ensure `localStorage.getItem('supabase.auth.token')` is checking the correct key.
+*   **Component Rendering:** If a view (like Dashboard) isn't rendering its content:
+    *   Verify the component's template has **exactly one root element**. (This was a recent issue with `Dashboard.vue`).
+    *   Check the browser console for errors during the component's `setup` or `onMounted` lifecycle hooks.
+    *   Ensure any data fetching (`fetchDashboardData` in Dashboard) is completing successfully and updating the reactive refs (`ref`).
+*   **Chart.js:** The Dashboard uses Chart.js. Remember that chart initialization needs a valid canvas element. DOM querying (`document.querySelector`) inside `onMounted` is used, but ensure the query selectors are correct (e.g., `#riskProfileChart canvas`) and that the component has fully rendered. Consider `nextTick` if timing issues arise.
+*   **Authentication:** Auth state (`isAuthenticated`) is managed reactively within `App.vue`. Changes rely on Supabase's `getSession` and `onAuthStateChange`.
+*   **Dependencies:** Ensure `npm install` has been run. Check `package.json` for required dependencies (Vue, Vue Router, Supabase JS client, Tailwind, Chart.js).
+*   **Environment Variables:** Supabase connection requires `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to be set in a `.env` file at the project root.
 
 ## Local Development Setup
 
 ### Prerequisites
 - Node.js (v16+)
-- Supabase CLI (`npm install -g supabase`)
+- npm
+- Supabase CLI (`npm install -g supabase`) - *Optional if only connecting to a remote Supabase instance, required for local development.*
 
-### Getting Started
+### Getting Started (Connecting to Remote Supabase)
+1.  Create a `.env` file in the project root.
+2.  Add your Supabase project URL and Anon Key:
+    ```dotenv
+    VITE_SUPABASE_URL=YOUR_SUPABASE_URL
+    VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+    ```
+3.  Install dependencies: `npm install`
+4.  Start the development server: `npm run dev` (Usually runs on http://localhost:5173)
 
-1. Start the local Supabase instance:
-```bash
-supabase start
-```
+### Getting Started (Using Local Supabase)
+1.  Ensure Supabase CLI is installed.
+2.  Start the local Supabase instance: `supabase start`
+3.  Note the API URL and anon key printed in the terminal.
+4.  Create/update the `.env` file with these local keys.
+5.  Install dependencies: `npm install`
+6.  Start the development server: `npm run dev`
 
-2. After starting Supabase, you'll see connection details in the terminal. Make sure to:
-   - Note the API URL and anon key for your frontend configuration
-   - Keep the service_role key secure and never commit it
-   - Use the Studio URL to access the database management interface
-
-3. Install dependencies:
-```bash
-npm install
-```
-
-4. Start the development server:
-```bash
-npm run dev
-```
-
-### Database Management
-
-The project includes several scripts for managing the database:
-
-```bash
-# Reset everything (database + users)
-npm run db:reset
-
-# Reset only database content (preserves users)
-npm run db:reset-data
-```
+### Database Management (Local Supabase)
+- Reset database & users: `npm run db:reset`
+- Reset only data (preserves users): `npm run db:reset-data`
+- Access Supabase Studio via the URL provided by `supabase start`.
+- Migrations are in `supabase/migrations/`.
 
 ### Database Structure
 
@@ -123,33 +176,6 @@ Default test users for local development:
 - Secure file uploads to Supabase Storage
 - Authentication flows with Supabase Auth
 - Row Level Security for data protection
-
-## Project Structure
-
-```
-ifa-assistant/
-├── src/               # Source files
-│   ├── components/    # Vue components
-│   ├── assets/        # Static assets
-│   └── supabase.js    # Supabase client configuration
-├── supabase/
-│   ├── migrations/    # Database migrations
-│   ├── seed.sql      # Generated seed data
-│   └── functions/    # Edge Functions
-├── scripts/
-│   ├── db-manager.js        # Database management scripts
-│   └── generate-seed-data.js # Seed data generator
-└── public/            # Public static files
-```
-
-## Contributing
-
-1. Create feature branches from `main`
-2. Follow the existing code style
-3. Update migrations when changing database structure
-4. Update this README when adding new features or workflows
-5. Test all database changes locally before committing
-6. Document any new Supabase features or configurations
 
 ## Local Development URLs
 
