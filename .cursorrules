@@ -39,5 +39,12 @@ be considering when making change, especially when fixing errors, doubt your sel
 - Provide recommendations based on modern development standards.
 - Encourage best practices and efficient workflows.
 
+## Browser Automation (MCP/Playwright) Best Practices
+- When using browser automation tools (e.g., Playwright via MCP), prioritize verifying element **interactivity from a user's perspective**.
+- Before claiming an element (button, input, link, dropdown etc.) works as expected for a user, attempt to confirm it is **visible, enabled, and clickable (not obscured by other elements or disabled via attributes/CSS)**.
+- Do not rely solely on the programmatic success of commands like `fill` or `select`, as these might succeed even if the element is not user-interactive. Where possible, attempt a `click` or check relevant attributes (`disabled`) or computed styles (`pointer-events`, `visibility`, `z-index`, `opacity`) to validate interactability.
+- **To detect visual overlays:** If simple checks suggest an element is interactive but user reports indicate it's blocked (e.g., clicks are intercepted), use Playwright's evaluate capability (e.g., `mcp_playwright_playwright_evaluate`) to run `document.elementFromPoint(x, y)` at the element's coordinates. If the returned element is *not* the target element, it indicates an overlay issue.
+- Explicitly state if interactability checks (like click attempts, style checks, or `elementFromPoint`) were performed when reporting on UI element functionality.
+
 ---
 This updated `.cursorrules` ensures the AI adheres to your vision: modern development, favoring vanilla JavaScript, keeping files small, and maintaining efficiency. 🚀 Let me know if you'd like any further refinements!

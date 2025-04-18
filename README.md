@@ -188,3 +188,62 @@ After running `supabase start`, you'll see the following URLs in your terminal:
 - Auth URL
 
 Note: The actual URLs and keys will be displayed in your terminal after running `supabase start`. Never commit these values to version control. 
+
+## Testing with MCP Server
+
+The project uses MCP (Model Control Protocol) server for automated testing and UI interaction verification. This allows us to:
+
+- Simulate user interactions with the application
+- Verify UI components are working correctly
+- Test form submissions and data entry
+- Validate navigation flows
+- Check authentication processes
+- Ensure proper error handling
+
+### Running MCP Tests
+
+1. Start the MCP server (this is typically handled by your development environment)
+2. The MCP server provides browser automation capabilities through tools like:
+   - Navigation (`navigate`, `go_back`, `go_forward`)
+   - Element interaction (`click`, `type`, `hover`)
+   - Form handling (`select_option`, `press_key`)
+   - State verification (`snapshot`, `get_console_logs`)
+   - Visual testing (`screenshot`)
+
+### Best Practices for MCP Testing
+
+- Always verify elements are visible and interactive before attempting interactions
+- Use proper waiting mechanisms when testing dynamic content
+- Check for proper error handling and edge cases
+- Validate form submissions and data persistence
+- Test across different authentication states
+- Verify navigation flows and routing behavior
+
+### Common MCP Test Scenarios
+
+1. User Authentication
+   - Login/logout flows
+   - Invalid credentials handling
+   - Session management
+
+2. Client Management
+   - Adding new clients
+   - Editing client information
+   - Searching and filtering clients
+   - Status updates
+
+3. Document Handling
+   - File uploads
+   - Document previews
+   - Permission checks
+
+4. Appointment Scheduling
+   - Creating appointments
+   - Updating appointment details
+   - Calendar integration
+
+5. Data Validation
+   - Form validation
+   - Error message display
+   - Required field handling
+``` 

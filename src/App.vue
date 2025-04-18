@@ -9,18 +9,19 @@
       <div v-else class="min-h-screen flex">
         <Sidebar :user-email="userEmail" />
         <div class="flex-1">
-          <div class="relative">
+          <!-- Header with background -->
+          <div class="relative h-32">
             <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/90 to-emerald-800/90">
               <img 
                 src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80" 
                 alt="Financial Dashboard Background"
-                class="w-full h-64 object-cover mix-blend-overlay"
+                class="w-full h-full object-cover mix-blend-overlay"
               />
             </div>
-            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
               <div class="flex justify-between items-center">
                 <div>
-                  <h1 class="text-3xl font-bold text-white mb-6">{{ $route.name || 'Dashboard' }}</h1>
+                  <h1 class="text-3xl font-bold text-white">{{ $route.name || 'Dashboard' }}</h1>
                 </div>
                 <div class="flex items-center space-x-4">
                   <button @click="handleLogout" class="bg-white/10 hover:bg-white/20 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 flex items-center">
@@ -31,7 +32,8 @@
             </div>
           </div>
 
-          <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 -mt-16">
+          <!-- Main content area -->
+          <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <router-view></router-view>
           </main>
         </div>

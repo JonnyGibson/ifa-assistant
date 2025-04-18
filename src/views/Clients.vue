@@ -1,7 +1,6 @@
 <template>
   <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">Clients</h1>
       <button 
         @click="showAddClientModal = true"
         class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -57,7 +56,7 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
                 <div class="text-sm font-medium text-gray-900">
-                  {{ client.name }}
+                  {{ client.first_name }} {{ client.last_name }}
                 </div>
               </div>
             </td>
@@ -103,12 +102,24 @@
         <h2 class="text-xl font-bold mb-4">{{ editingClient ? 'Edit Client' : 'Add New Client' }}</h2>
         <form @submit.prevent="saveClient">
           <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
-              Name
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="first_name">
+              First Name
             </label>
             <input
-              id="name"
-              v-model="clientForm.name"
+              id="first_name"
+              v-model="clientForm.first_name"
+              type="text"
+              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="last_name">
+              Last Name
+            </label>
+            <input
+              id="last_name"
+              v-model="clientForm.last_name"
               type="text"
               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               required
@@ -155,7 +166,7 @@
           <div class="flex justify-end gap-4">
             <button
               type="button"
-              @click="showAddClientModal = false"
+              @click="closeModal"
               class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
             >
               Cancel
@@ -188,106 +199,136 @@ export default {
     const filterStatus = ref('')
     const showAddClientModal = ref(false)
     const editingClient = ref(null)
-    const clientForm = ref({
-      name: '',
+
+    // Helper to define initial form state
+    const getInitialClientForm = () => ({
+      first_name: '',
+      last_name: '',
       email: '',
       phone: '',
       status: 'active'
-    })
+    });
+
+    const clientForm = ref(getInitialClientForm());
 
     const filteredClients = computed(() => {
+      if (!clients.value) return [];
       return clients.value.filter(client => {
-        const matchesSearch = client.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                            client.email.toLowerCase().includes(searchQuery.value.toLowerCase())
-        const matchesStatus = !filterStatus.value || client.status === filterStatus.value
-        return matchesSearch && matchesStatus
-      })
-    })
+        const fullName = `${client.first_name || ''} ${client.last_name || ''}`.toLowerCase();
+        const query = searchQuery.value.toLowerCase();
+        const matchesSearch = fullName.includes(query) || 
+                            (client.email || '').toLowerCase().includes(query);
+        const matchesStatus = !filterStatus.value || client.status === filterStatus.value;
+        return matchesSearch && matchesStatus;
+      });
+    });
 
     const fetchClients = async () => {
+      console.log('[Clients.vue] fetchClients() called');
       try {
         const { data, error } = await supabase
           .from('clients')
           .select('*')
-          .order('name')
+          .order('last_name')
         
-        if (error) throw error
-        clients.value = data
+        if (error) {
+          console.error('Error fetching clients details:', error);
+          throw error;
+        } 
+        console.log('[Clients.vue] Fetched clients data:', data);
+        clients.value = data || [];
       } catch (error) {
-        console.error('Error fetching clients:', error)
+        console.error('Error in fetchClients catch block:', error);
+        clients.value = [];
       }
-    }
+    };
 
     const saveClient = async () => {
+      console.log('[Clients.vue] saveClient() called for:', clientForm.value);
       try {
+        const dataToSave = { ...clientForm.value };
+        Object.keys(dataToSave).forEach(key => {
+          if (dataToSave[key] === null || dataToSave[key] === undefined) {
+            delete dataToSave[key];
+          }
+        });
+
+        let error;
         if (editingClient.value) {
-          const { error } = await supabase
+          console.log(`[Clients.vue] Updating client ID: ${editingClient.value.id}`);
+          ({ error } = await supabase
             .from('clients')
-            .update(clientForm.value)
-            .eq('id', editingClient.value.id)
-          
-          if (error) throw error
+            .update(dataToSave)
+            .eq('id', editingClient.value.id))
         } else {
-          const { error } = await supabase
+          console.log('[Clients.vue] Inserting new client');
+          ({ error } = await supabase
             .from('clients')
-            .insert([clientForm.value])
-          
-          if (error) throw error
+            .insert([dataToSave]))
         }
+        
+        if (error) {
+          console.error('Error saving client details:', error);
+          throw error;
+        }
+        console.log('[Clients.vue] Save successful');
 
         await fetchClients()
-        showAddClientModal.value = false
-        resetForm()
+        closeModal();
+
       } catch (error) {
-        console.error('Error saving client:', error)
+        console.error('Error in saveClient catch block:', error);
       }
-    }
-
-    const editClient = (client) => {
-      editingClient.value = client
-      clientForm.value = { ...client }
-      showAddClientModal.value = true
-    }
-
-    const viewClientDetails = (client) => {
-      router.push({ name: 'ClientDetails', params: { id: client.id } })
-    }
+    };
 
     const resetForm = () => {
-      clientForm.value = {
-        name: '',
-        email: '',
-        phone: '',
-        status: 'active'
-      }
-      editingClient.value = null
-    }
+      console.log('[Clients.vue] resetForm() called');
+      editingClient.value = null;
+      clientForm.value = getInitialClientForm();
+    };
 
-    // Watch for edit query parameter
-    watch(() => route.query.edit, (newId) => {
-      if (newId) {
-        const clientToEdit = clients.value.find(c => c.id === newId)
-        if (clientToEdit) {
-          editClient(clientToEdit)
-        }
-      }
-    })
+    const closeModal = () => {
+      console.log('[Clients.vue] closeModal() called');
+      showAddClientModal.value = false;
+      resetForm();
+    };
+
+    const editClient = (client) => {
+      console.log('[Clients.vue] editClient() called for:', client);
+      editingClient.value = client;
+      clientForm.value = { 
+        ...getInitialClientForm(),
+        ...client
+       }; 
+      showAddClientModal.value = true;
+    };
+
+    const viewClientDetails = (client) => {
+      console.log('[Clients.vue] viewClientDetails() called for ID:', client.id);
+      router.push({ name: 'ClientDetails', params: { id: client.id } });
+    };
+
+    watch(() => route.query, () => {
+    }, { immediate: true });
 
     onMounted(() => {
+      console.log('[Clients.vue] onMounted() called');
       fetchClients()
-    })
+    });
 
     return {
       clients,
       searchQuery,
       filterStatus,
+      filteredClients,
       showAddClientModal,
       editingClient,
       clientForm,
-      filteredClients,
+      fetchClients,
       saveClient,
       editClient,
-      viewClientDetails
+      viewClientDetails,
+      closeModal
     }
   }
 }
