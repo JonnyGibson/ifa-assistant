@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-white rounded-lg shadow">
-    <div class="p-6">
+  <div class="bg-white rounded-lg shadow-soft p-6 transition-all duration-300 hover:shadow-hover">
+    <div>
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-semibold text-gray-700">Recent Activity</h3>
         <button class="text-blue-500 hover:text-blue-700">
@@ -59,4 +59,4 @@ export default {
     }
   }
 }
-</script> 
+</script>

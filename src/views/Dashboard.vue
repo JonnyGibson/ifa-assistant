@@ -1,297 +1,252 @@
 <template>
-  <div>
-    <!-- Quick Stats with Glassmorphism -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <div class="space-y-8">
+    <!-- Stats Overview Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 -mt-14">
       <StatsCard
         title="Total Clients"
         :value="stats.totalClients"
         icon="fa-users"
+        icon-bg-color="bg-blue-100"
+        icon-text-color="text-blue-600"
+        value-color="text-blue-600"
+      />
+      <StatsCard
+        title="Active Portfolios"
+        :value="stats.activePortfolios"
+        icon="fa-chart-pie"
         icon-bg-color="bg-emerald-100"
         icon-text-color="text-emerald-600"
         value-color="text-emerald-600"
-        class="backdrop-blur-lg bg-white/80 shadow-lg"
       />
       <StatsCard
-        title="Active Clients"
-        :value="stats.activeClients"
-        icon="fa-user-check"
-        icon-bg-color="bg-green-100"
-        icon-text-color="text-green-600"
-        value-color="text-green-600"
-        class="backdrop-blur-lg bg-white/80 shadow-lg"
+        title="Pending Tasks"
+        :value="stats.pendingTasks"
+        icon="fa-clipboard-list"
+        icon-bg-color="bg-yellow-100"
+        icon-text-color="text-yellow-600"
+        value-color="text-yellow-600"
       />
       <StatsCard
-        title="Pending Documents"
-        :value="stats.pendingDocuments"
-        icon="fa-file-alt"
-        icon-bg-color="bg-amber-100"
-        icon-text-color="text-amber-600"
-        value-color="text-amber-600"
-        class="backdrop-blur-lg bg-white/80 shadow-lg"
-      />
-      <StatsCard
-        title="Overdue Compliance"
-        :value="stats.overdueCompliance"
-        icon="fa-exclamation-triangle"
-        icon-bg-color="bg-red-100"
-        icon-text-color="text-red-600"
-        value-color="text-red-600"
-        class="backdrop-blur-lg bg-white/80 shadow-lg"
+        title="Upcoming Meetings"
+        :value="stats.upcomingMeetings"
+        icon="fa-calendar"
+        icon-bg-color="bg-purple-100"
+        icon-text-color="text-purple-600"
+        value-color="text-purple-600"
       />
     </div>
 
-    <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- Charts Section -->
-      <div class="lg:col-span-2 space-y-8">
-        <ChartCard
-          title="Risk Profile Distribution"
-          ref="riskProfileChart"
-          class="backdrop-blur-lg bg-white/80 shadow-lg"
-        />
-        <ChartCard
-          title="Document Status"
-          ref="documentStatusChart"
-          class="backdrop-blur-lg bg-white/80 shadow-lg"
-        />
-      </div>
+    <!-- Quick Actions & Activity Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <QuickActions />
+      <RecentActivity />
+    </div>
 
-      <!-- Right Sidebar -->
-      <div class="space-y-8">
-        <UpcomingAppointments 
-          :appointments="upcomingAppointments"
-          class="backdrop-blur-lg bg-white/80 shadow-lg"
-        />
-        <QuickActions
-          @new-note="handleNewNote"
-          @upload-doc="handleUploadDoc"
-          @schedule="handleSchedule"
-          @export="handleExport"
-          class="backdrop-blur-lg bg-white/80 shadow-lg"
-        />
+    <!-- Fund Management Overview & Top Clients Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+      <!-- Fund Management Overview -->
+      <div class="bg-white rounded-lg shadow-soft p-6 transition-all duration-300 hover:shadow-hover">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Fund Management Overview</h3>
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-emerald-50 rounded-lg p-4">
+            <p class="text-sm text-gray-600">Total Assets Under Management</p>
+            <p class="text-2xl font-bold text-emerald-600">{{ formatCurrency(stats.totalAUM) }}</p>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-4">
+            <p class="text-sm text-gray-600">Average Portfolio Value</p>
+            <p class="text-2xl font-bold text-blue-600">{{ formatCurrency(stats.averagePortfolioValue) }}</p>
+          </div>
+        </div>
+        <div class="h-64">
+          <canvas ref="categoryChart"></canvas>
+        </div>
+      </div>
+      
+      <!-- Top Clients by Portfolio Value -->
+      <div class="bg-white rounded-lg shadow-soft p-6 transition-all duration-300 hover:shadow-hover">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Clients by Portfolio Value</h3>
+        <div class="space-y-4">
+          <div v-for="client in stats.topClients" :key="client.id" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div>
+              <p class="font-medium text-gray-900">{{ client.firstName }} {{ client.lastName }}</p>
+              <p class="text-sm text-gray-500">{{ client.riskProfile }} Risk Profile</p>
+            </div>
+            <p class="text-lg font-semibold text-emerald-600">{{ formatCurrency(client.portfolioValue) }}</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Recent Activity -->
-    <div class="mt-8">
-      <RecentActivity 
-        :activities="recentActivity"
-        class="backdrop-blur-lg bg-white/80 shadow-lg"
-      />
+    <!-- Upcoming Appointments Section -->
+    <div class="bg-white rounded-lg shadow-soft transition-all duration-300 hover:shadow-hover">
+      <UpcomingAppointments />
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
-import { Chart } from 'chart.js/auto'
-import { supabase } from '../supabase'
+import { ref, onMounted, inject, computed, nextTick } from 'vue'
+import { Chart, ArcElement, Tooltip, Legend, PieController } from 'chart.js'
+import { dataService } from '../services/db'
 import StatsCard from '../components/StatsCard.vue'
-import ChartCard from '../components/ChartCard.vue'
-import RecentActivity from '../components/RecentActivity.vue'
 import QuickActions from '../components/QuickActions.vue'
+import RecentActivity from '../components/RecentActivity.vue'
 import UpcomingAppointments from '../components/UpcomingAppointments.vue'
 
+Chart.register(ArcElement, Tooltip, Legend, PieController)
+
 export default {
-  name: 'Dashboard',
+  name: 'DashboardView',
   components: {
     StatsCard,
-    ChartCard,
-    RecentActivity,
     QuickActions,
+    RecentActivity,
     UpcomingAppointments
   },
   setup() {
-    console.log('[Dashboard.vue] setup() called'); // Log setup start
-
+    const currentUser = inject('currentUser', ref(null))
+    const userId = computed(() => currentUser.value?.id)
+    
     const stats = ref({
       totalClients: 0,
-      activeClients: 0,
-      pendingDocuments: 0,
-      overdueCompliance: 0
+      activePortfolios: 0,
+      pendingTasks: 0,
+      upcomingMeetings: 0,
+      totalAUM: 0,
+      averagePortfolioValue: 0,
+      topClients: [],
+      categoryDistribution: {}
     })
-    const recentActivity = ref([])
-    const upcomingAppointments = ref([])
-    const charts = ref({
-      riskProfile: null,
-      documentStatus: null
-    })
+
+    const formatCurrency = (value, currencyCode = 'GBP') => {
+      if (typeof value !== 'number') return 'N/A';
+      return new Intl.NumberFormat('en-GB', { 
+        style: 'currency', 
+        currency: currencyCode
+      }).format(value);
+    };
+
+    const categoryChart = ref(null);
+
+    const setupCategoryChart = () => {
+      if (!categoryChart.value) return;
+
+      const labels = Object.keys(stats.value.categoryDistribution);
+      const data = Object.values(stats.value.categoryDistribution);
+      const colors = [
+        '#10B981', '#3B82F6', '#6366F1', '#8B5CF6', 
+        '#EC4899', '#F59E0B', '#84CC16', '#14B8A6'
+      ];
+
+      new Chart(categoryChart.value, {
+        type: 'doughnut',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: colors.slice(0, labels.length),
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                usePointStyle: true
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: (context) => {
+                  const value = context.raw;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = ((value / total) * 100).toFixed(1);
+                  return `${context.label}: ${formatCurrency(value)} (${percentage}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    };
 
     const fetchDashboardData = async () => {
-      console.log('[Dashboard.vue] fetchDashboardData() starting...'); // Log fetch start
+      if (!userId.value) return;
+
       try {
-        console.log('Fetching dashboard data...')
-        
-        // Fetch client statistics
-        const { data: clients, error: clientsError } = await supabase
-          .from('clients')
-          .select('*')
-        
-        if (clientsError) throw clientsError
-        console.log('[Dashboard.vue] Fetched clients:', clients);
-        
-        // Fetch recent notes with client information
-        const { data: notes, error: notesError } = await supabase
-          .from('client_notes')
-          .select(`
-            *,
-            clients:client_id(first_name, last_name)
-          `)
-          .order('created_at', { ascending: false })
-          .limit(10)
-        
-        if (notesError) throw notesError
-        console.log('[Dashboard.vue] Fetched notes:', notes);
-        
-        // Update statistics
-        stats.value.totalClients = clients.length
-        stats.value.activeClients = clients.filter(c => c.status === 'active').length
-        stats.value.pendingDocuments = clients.filter(c => c.status === 'pending').length
-        stats.value.overdueCompliance = clients.filter(c => c.status === 'overdue').length
-        console.log('[Dashboard.vue] Stats updated:', stats.value);
-        
-        // Update recent activity with formatted data
-        recentActivity.value = notes.map(note => ({
-          id: note.id,
-          clientName: `${note.clients.first_name} ${note.clients.last_name}`,
-          note_type: note.note_type || 'general',
-          created_at: note.created_at,
-          content: note.content || 'No content available'
-        }))
-        console.log('[Dashboard.vue] Recent activity updated:', recentActivity.value);
-        
-        // Update charts
-        updateCharts(clients)
-        console.log('[Dashboard.vue] fetchDashboardData() completed.');
+        // Get clients and their holdings
+        const clients = await dataService.getClients(userId.value);
+        const clientHoldings = await Promise.all(
+          clients.map(async client => {
+            const holdings = await dataService.getHoldingsForClient(client.id);
+            const portfolioValue = holdings.reduce((sum, h) => sum + h.currentValue, 0);
+            return {
+              ...client,
+              portfolioValue,
+              holdings
+            };
+          })
+        );
+
+        // Calculate total AUM and category distribution
+        let totalAUM = 0;
+        const categoryDistribution = {};
+
+        clientHoldings.forEach(client => {
+          totalAUM += client.portfolioValue;
+          client.holdings.forEach(holding => {
+            const category = holding.fund.category;
+            categoryDistribution[category] = (categoryDistribution[category] || 0) + holding.currentValue;
+          });
+        });
+
+        // Update stats
+        stats.value.totalAUM = totalAUM;
+        stats.value.averagePortfolioValue = totalAUM / clients.length;
+        stats.value.categoryDistribution = categoryDistribution;
+        stats.value.topClients = clientHoldings
+          .sort((a, b) => b.portfolioValue - a.portfolioValue)
+          .slice(0, 5);
+
+        // Get total clients
+        stats.value.totalClients = clients.length;
+
+        // Get total active portfolios (clients with holdings)
+        stats.value.activePortfolios = clientHoldings.filter(client => client.holdings.length > 0).length;
+
+        // Count upcoming meetings (next 7 days)
+        const today = new Date();
+        const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+        const appointments = await dataService.getAppointments(userId.value);
+        stats.value.upcomingMeetings = appointments.filter(
+          appt => new Date(appt.startTime) <= nextWeek && new Date(appt.startTime) >= today
+        ).length;
+
+        // Get pending compliance items as tasks
+        const compliance = await dataService.getComplianceRequirements(userId.value);
+        stats.value.pendingTasks = compliance.filter(item => item.status === 'pending').length;
+
+        // Setup chart after data is loaded
+        nextTick(() => setupCategoryChart());
+
       } catch (error) {
-        console.error('[Dashboard.vue] Error fetching dashboard data:', error)
+        console.error('Error fetching dashboard data:', error);
       }
-    }
-
-    const updateCharts = (clients) => {
-      console.log('[Dashboard.vue] updateCharts() called.');
-      // Only proceed if we have clients data
-      if (!clients || clients.length === 0) {
-        console.log('[Dashboard.vue] No client data available for charts')
-        return
-      }
-
-      // Get canvas elements safely
-      // Using nextTick might be safer here if the component isn't fully rendered yet
-      // but let's stick with querySelector for now.
-      const riskProfileChartCanvas = document.querySelector('#riskProfileChart canvas')
-      const documentStatusChartCanvas = document.querySelector('#documentStatusChart canvas')
-
-      if (!riskProfileChartCanvas || !documentStatusChartCanvas) {
-        console.log('[Dashboard.vue] Chart canvases not found')
-        return
-      }
-      console.log('[Dashboard.vue] Chart canvases found.');
-
-      // Risk Profile Distribution
-      const riskProfiles = clients.reduce((acc, client) => {
-        const profile = client.risk_profile || 'Unknown'; // Handle null/undefined profiles
-        acc[profile] = (acc[profile] || 0) + 1
-        return acc
-      }, {})
-      
-      if (charts.value.riskProfile) {
-        console.log('[Dashboard.vue] Destroying existing risk profile chart.');
-        charts.value.riskProfile.destroy()
-      }
-      
-      const riskProfileCtx = riskProfileChartCanvas.getContext('2d')
-      console.log('[Dashboard.vue] Creating risk profile chart.');
-      charts.value.riskProfile = new Chart(riskProfileCtx, {
-        type: 'doughnut',
-        data: {
-          labels: Object.keys(riskProfiles),
-          datasets: [{
-            data: Object.values(riskProfiles),
-            backgroundColor: [
-              'rgba(75, 192, 192, 0.6)',
-              'rgba(255, 206, 86, 0.6)',
-              'rgba(255, 99, 132, 0.6)',
-              'rgba(153, 102, 255, 0.6)' // Added more colors just in case
-            ]
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false
-        }
-      })
-      
-      // Document Status
-      const documentStatuses = clients.reduce((acc, client) => {
-        const status = client.status || 'Unknown'; // Handle null/undefined statuses
-        acc[status] = (acc[status] || 0) + 1
-        return acc
-      }, {})
-      
-      if (charts.value.documentStatus) {
-        console.log('[Dashboard.vue] Destroying existing document status chart.');
-        charts.value.documentStatus.destroy()
-      }
-      
-      const documentStatusCtx = documentStatusChartCanvas.getContext('2d')
-      console.log('[Dashboard.vue] Creating document status chart.');
-      charts.value.documentStatus = new Chart(documentStatusCtx, {
-        type: 'doughnut',
-        data: {
-          labels: Object.keys(documentStatuses),
-          datasets: [{
-            data: Object.values(documentStatuses),
-            backgroundColor: [
-              'rgba(54, 162, 235, 0.6)',
-              'rgba(255, 99, 132, 0.6)',
-              'rgba(255, 206, 86, 0.6)',
-              'rgba(75, 192, 192, 0.6)' // Added more colors
-            ]
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false
-        }
-      })
-      console.log('[Dashboard.vue] updateCharts() finished.');
-    }
-
-    const handleNewNote = () => {
-      // Implement new note functionality
-      console.log('[Dashboard.vue] New note action triggered')
-    }
-
-    const handleUploadDoc = () => {
-      // Implement document upload functionality
-      console.log('[Dashboard.vue] Upload document action triggered')
-    }
-
-    const handleSchedule = () => {
-      // Implement scheduling functionality
-      console.log('[Dashboard.vue] Schedule action triggered')
-    }
-
-    const handleExport = () => {
-      // Implement export functionality
-      console.log('[Dashboard.vue] Export action triggered')
     }
 
     onMounted(() => {
-      console.log('[Dashboard.vue] onMounted() called'); // Log mount
-      fetchDashboardData()
+      if (userId.value) {
+        fetchDashboardData();
+      }
     })
 
     return {
       stats,
-      recentActivity,
-      upcomingAppointments,
-      handleNewNote,
-      handleUploadDoc,
-      handleSchedule,
-      handleExport
+      formatCurrency,
+      categoryChart
     }
   }
 }
-</script> 
+</script>

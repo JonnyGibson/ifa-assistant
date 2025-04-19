@@ -6,21 +6,24 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "db:reset": "node scripts/db-manager.js reset",
-    "db:reset-data": "node scripts/db-manager.js reset-db",
-    "db:reset-users": "node scripts/db-manager.js users:reset",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0",
+    "@vuelidate/core": "^2.0.3",
+    "@vuelidate/validators": "^2.0.4",
     "chart.js": "^4.4.0",
+    "dexie": "^3.2.4",
+    "primeicons": "^7.0.0",
+    "primevue": "^3.53.1",
+    "react-icons": "^5.5.0",
     "vue": "^3.3.4",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.1",
+    "@tailwindcss/forms": "^0.5.10",
     "@vitejs/plugin-vue": "^4.6.2",
     "autoprefixer": "^10.4.21",
     "playwright": "^1.40.1",

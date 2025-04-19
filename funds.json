@@ -1,0 +1,70 @@
+{
+  "funds": [
+    {
+      "isin": "GB00B1CDBC29",
+      "name": "abrdn Europe ex UK Equity Fund Z Acc",
+      "asset_class_mix": "Europe ex-UK Equity",
+      "link": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B1CDBC29:GBP"
+    },
+    {
+      "isin": "GB00B6Y81M17",
+      "name": "Fidelity Cash Fund W Acc",
+      "asset_class_mix": "Money Market",
+      "link": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B6Y81M17:GBP"
+    },
+    {
+      "isin": "GB00B8075Y11",
+      "name": "Fidelity Index World Fund P Acc",
+      "asset_class_mix": "Global Equity",
+      "link": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B8075Y11:GBP"
+    },
+    {
+      "isin": "GB00B8XYYQ94",
+      "name": "Royal London Short Term Money Market Fund Y Inc",
+      "asset_class_mix": "Money Market",
+      "link": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B8XYYQ94:GBP"
+    },
+    {
+      "isin": "GB00B7GJPN73",
+      "name": "Fidelity Global Dividend Fund W Acc",
+      "asset_class_mix": "Global Equity Income",
+      "link": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B7GJPN73:GBP"
+    },
+    {
+      "isin": "GB00B0CNHJ41",
+      "name": "Legal & General Cash Trust I Acc",
+      "asset_class_mix": "Money Market",
+      "link": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B0CNHJ41:GBP"
+    },
+    {
+      "isin": "GB00B9MB3P97",
+      "name": "Fidelity Global Technology Fund W Acc",
+      "asset_class_mix": "Technology Sector Equity",
+      "link": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B9MB3P97:GBP"
+    },
+    {
+      "isin": "GB00BJS8SJ34",
+      "name": "Fidelity Index UK Fund P Acc",
+      "asset_class_mix": "UK Large-Cap Equity",
+      "link": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BJS8SJ34:GBP"
+    },
+    {
+      "isin": "GB00B0CNGN12",
+      "name": "Legal & General UK Index Trust I Acc",
+      "asset_class_mix": "UK Large-Cap Equity",
+      "link": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B0CNGN12:GBP"
+    },
+    {
+      "isin": "GB00BP8RZ445",
+      "name": "Fidelity Index US Fund P Acc",
+      "asset_class_mix": "US Large-Cap Equity",
+      "link": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BP8RZ445:GBP"
+    },
+    {
+      "isin": "GB00B88V3X40",
+      "name": "Fidelity Special Situations Fund W Acc",
+      "asset_class_mix": "UK Flex-Cap Equity",
+      "link": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B88V3X40:GBP"
+    }
+  ]
+} 

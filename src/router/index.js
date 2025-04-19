@@ -54,7 +54,7 @@ const router = createRouter({
 // Restored Navigation Guard
 router.beforeEach((to, from, next) => {
   console.log(`[Router Guard] Navigating from ${from.fullPath} to ${to.fullPath}`);
-  const isAuthenticated = !!localStorage.getItem('supabase.auth.token'); // Check if token exists
+
   console.log(`[Router Guard] isAuthenticated based on localStorage: ${isAuthenticated}`);
 
   // App.vue handles showing LoginForm if !isAuthenticated internally.

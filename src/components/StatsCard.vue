@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow p-6">
+  <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 transition-all duration-300 hover:shadow-hover">
     <div class="flex items-center">
       <div :class="`p-3 rounded-full ${iconBgColor} ${iconTextColor}`">
         <i :class="`fas ${icon} text-2xl`"></i>
@@ -42,4 +42,4 @@ export default {
     }
   }
 }
-</script> 
+</script>

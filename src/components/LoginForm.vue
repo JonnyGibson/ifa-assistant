@@ -1,117 +1,177 @@
 <template>
-  <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center overflow-hidden">
-    <!-- Animated Background Container -->
-    <div class="absolute inset-0 overflow-hidden">
-      <img 
-        src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80" 
-        alt="Office Background"
-        class="absolute inset-0 w-full h-full object-cover ken-burns"
-      />
-      <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/80 to-emerald-800/80 backdrop-blur-sm"></div>
-    </div>
-    
-    <div class="relative w-full max-w-md z-10">
-      <!-- Login Form -->
-      <div class="bg-white/90 backdrop-blur-lg p-8 rounded-lg shadow-xl">
-        <div class="text-center mb-8">
-          <h2 class="text-3xl font-bold text-emerald-900">Welcome Back</h2>
-          <p class="text-gray-600 mt-2">Sign in to your account</p>
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-500 to-emerald-700 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full bg-white rounded-lg shadow-xl p-8 space-y-8">
+      <div>
+        <div class="flex flex-col items-center">
+          <h1 class="text-center font-rubik">
+            <span class="text-3xl font-bold text-emerald-600">IFA</span>
+            <span class="text-3xl text-gray-600 mx-2">|</span>
+            <span class="text-3xl font-bold text-gray-800">Assistant</span>
+          </h1>
         </div>
-        
-        <form @submit.prevent="$emit('login', loginForm)" class="space-y-6">
+        <h2 class="mt-6 text-center text-2xl font-medium text-gray-900">
+          Sign in to your account
+        </h2>
+      </div>
+      
+      <form class="mt-8 space-y-6" @submit.prevent="handleSubmit">
+        <div class="rounded-md space-y-4">
           <div>
-            <label class="block text-gray-700 text-sm font-semibold mb-2" for="email">
-              Email Address
-            </label>
-            <input 
-              v-model="loginForm.email" 
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition duration-200" 
-              type="email" 
-              placeholder="Enter your email"
-              required
-            >
-          </div>
-          
-          <div>
-            <label class="block text-gray-700 text-sm font-semibold mb-2" for="password">
-              Password
-            </label>
-            <input 
-              v-model="loginForm.password" 
-              class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition duration-200" 
-              type="password" 
-              placeholder="Enter your password"
-              required
-            >
-          </div>
-          
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <input 
-                v-model="loginForm.remember" 
-                class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded" 
-                type="checkbox"
-              >
-              <label class="ml-2 block text-sm text-gray-700">
-                Remember me
-              </label>
+            <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+            <div class="mt-1">
+              <InputText
+                id="email"
+                v-model="formData.email"
+                type="email"
+                autocomplete="email"
+                placeholder="Email address"
+                class="w-full p-inputtext-sm"
+                :class="{ 'p-invalid': v$.email.$error }"
+                aria-describedby="email-error"
+              />
+              <small v-if="v$.email.$error" id="email-error" class="text-red-600">
+                {{ v$.email.$errors[0].$message }}
+              </small>
             </div>
-            <a href="#" class="text-sm text-emerald-600 hover:text-emerald-800">
-              Forgot password?
-            </a>
           </div>
           
-          <button 
-            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition duration-300"
-            type="submit"
-          >
-            Sign In
-          </button>
-        </form>
-        
-        <div class="mt-6 text-center">
-          <p class="text-sm text-gray-600">
-            Don't have an account? 
-            <a href="#" class="text-emerald-600 hover:text-emerald-800 font-semibold">
-              Contact Support
-            </a>
-          </p>
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+            <div class="mt-1">
+              <Password
+                id="password"
+                v-model="formData.password"
+                :feedback="false"
+                :toggleMask="true"
+                placeholder="Password"
+                class="w-full p-inputtext-sm"
+                :class="{ 'p-invalid': v$.password.$error }"
+                aria-describedby="password-error"
+              />
+              <small v-if="v$.password.$error" id="password-error" class="text-red-600">
+                {{ v$.password.$errors[0].$message }}
+              </small>
+            </div>
+          </div>
         </div>
+
+        <div>
+          <Button
+            type="submit"
+            :loading="loading"
+            label="Sign in"
+            icon="pi pi-sign-in"
+            class="w-full"
+            severity="success"
+          />
+        </div>
+      </form>
+
+      <div class="flex flex-col items-center space-y-4 text-sm text-gray-600">
+        <p>Contact your administrator if you need access</p>
+        <button 
+          @click="resetDatabase" 
+          class="text-emerald-600 hover:text-emerald-700 underline"
+          :disabled="resetting"
+        >
+          {{ resetting ? 'Resetting database...' : 'Reset database to seed data' }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { ref, computed } from 'vue'
+import { useVuelidate } from '@vuelidate/core'
+import { required, email } from '@vuelidate/validators'
+import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
+import { db } from '../services/db'
+
 export default {
   name: 'LoginForm',
-  data() {
-    return {
-      loginForm: {
-        email: '',
-        password: '',
-        remember: false
+  components: {
+    Button,
+    InputText,
+    Password
+  },
+  emits: ['login'],
+  setup(props, { emit }) {
+    const formData = ref({
+      email: '',
+      password: ''
+    })
+    
+    const loading = ref(false)
+    const resetting = ref(false)
+
+    const rules = computed(() => ({
+      email: { required, email },
+      password: { required }
+    }))
+
+    const v$ = useVuelidate(rules, formData)
+
+    const handleSubmit = async () => {
+      loading.value = true
+      try {
+        const isFormCorrect = await v$.value.$validate()
+        
+        if (!isFormCorrect) {
+          return
+        }
+
+        emit('login', {
+          email: formData.value.email,
+          password: formData.value.password
+        })
+      } catch (error) {
+        console.error('Login error:', error)
+      } finally {
+        loading.value = false
       }
+    }
+
+    const resetDatabase = async () => {
+      if (!confirm('Are you sure you want to reset the database to its initial state? This will remove all changes.')) {
+        return
+      }
+      resetting.value = true
+      try {
+        await db.reset()
+        alert('Database reset successfully. You can now log in with admin@ifa.com / password')
+      } catch (error) {
+        console.error('Error resetting database:', error)
+        alert('Failed to reset database: ' + error.message)
+      } finally {
+        resetting.value = false
+      }
+    }
+
+    return {
+      formData,
+      loading,
+      resetting,
+      v$,
+      handleSubmit,
+      resetDatabase
     }
   }
 }
 </script>
 
-<style>
-@keyframes kenBurns {
-  0% {
-    transform: scale(1) translate(0, 0);
-  }
-  50% {
-    transform: scale(1.05) translate(-1%, -1%);
-  }
-  100% {
-    transform: scale(1) translate(0, 0);
-  }
+<style scoped>
+:deep(.p-password-input) {
+  width: 100%;
 }
 
-.ken-burns {
-  animation: kenBurns 45s ease-in-out infinite;
-  transform-origin: center;
+:deep(.p-inputtext) {
+  padding: 0.75rem 1rem;
 }
-</style> 
+
+:deep(.p-button) {
+  padding: 0.75rem 1.5rem;
+}
+</style>

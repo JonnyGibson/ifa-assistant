@@ -1,17 +1,15 @@
 import { createApp } from 'vue'
 import App from './src/App.vue'
-import { createClient } from '@supabase/supabase-js'
-
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
+import { initializeDatabase, authService } from './src/services/db'
 
 // Create Vue app
 const app = createApp(App)
 
-// Provide Supabase client to all components
-app.provide('supabase', supabase)
+// Initialize the local database
+initializeDatabase().catch(console.error)
+
+// Provide auth service to all components
+app.provide('auth', authService)
 
 // Mount the app
 app.mount('#app') 

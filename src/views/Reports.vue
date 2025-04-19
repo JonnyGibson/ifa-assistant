@@ -6,100 +6,59 @@
       <div class="flex space-x-4">
         <button 
           @click="generateReport"
-          class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 flex items-center"
+          class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 flex items-center"
+          disabled 
         >
-          <i class="fas fa-download mr-2"></i>Generate Report
+          <i class="fas fa-download mr-2"></i>Generate Report (TBD)
         </button>
       </div>
     </div>
 
-    <!-- Report Filters -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div>
-          <label class="block text-gray-700 mb-2">Report Type</label>
-          <select
-            v-model="selectedReportType"
-            class="w-full border border-gray-300 rounded-lg p-2"
-          >
-            <option value="client">Client Analysis</option>
-            <option value="compliance">Compliance Status</option>
-            <option value="appointments">Appointment Trends</option>
-            <option value="documents">Document Management</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-gray-700 mb-2">Date Range</label>
-          <select
-            v-model="selectedDateRange"
-            class="w-full border border-gray-300 rounded-lg p-2"
-          >
-            <option value="7">Last 7 Days</option>
-            <option value="30">Last 30 Days</option>
-            <option value="90">Last 90 Days</option>
-            <option value="custom">Custom Range</option>
-          </select>
-        </div>
-        <div v-if="selectedDateRange === 'custom'">
-          <label class="block text-gray-700 mb-2">Start Date</label>
-          <input
-            v-model="startDate"
-            type="date"
-            class="w-full border border-gray-300 rounded-lg p-2"
-          />
-        </div>
-        <div v-if="selectedDateRange === 'custom'">
-          <label class="block text-gray-700 mb-2">End Date</label>
-          <input
-            v-model="endDate"
-            type="date"
-            class="w-full border border-gray-300 rounded-lg p-2"
-          />
-        </div>
-      </div>
+    <!-- Loading Indicator -->
+    <div v-if="isLoading" class="flex justify-center items-center py-20">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
     </div>
 
-    <!-- Report Content -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <!-- Summary Cards -->
-      <div class="grid grid-cols-2 gap-6">
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <div class="flex items-center">
-            <div class="p-3 rounded-full bg-emerald-100">
-              <i class="fas fa-users text-emerald-600 text-xl"></i>
-            </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-600">Total Clients</p>
-              <p class="text-2xl font-semibold text-emerald-600">{{ stats.totalClients }}</p>
-            </div>
-          </div>
-        </div>
+    <template v-else>
+      <!-- Key Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div class="bg-white rounded-lg shadow-md p-6">
           <div class="flex items-center">
             <div class="p-3 rounded-full bg-blue-100">
-              <i class="fas fa-calendar-check text-blue-600 text-xl"></i>
+              <i class="fas fa-users text-blue-600 text-xl"></i>
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-600">Completed Appointments</p>
-              <p class="text-2xl font-semibold text-blue-600">{{ stats.completedAppointments }}</p>
+              <p class="text-sm font-medium text-gray-600">Total Clients</p>
+              <p class="text-2xl font-semibold text-blue-600">{{ stats.totalClients }}</p>
+            </div>
+          </div>
+        </div>
+         <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-emerald-100">
+              <i class="fas fa-calendar-check text-emerald-600 text-xl"></i>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total Appointments</p>
+              <p class="text-2xl font-semibold text-emerald-600">{{ stats.totalAppointments }}</p>
             </div>
           </div>
         </div>
         <div class="bg-white rounded-lg shadow-md p-6">
           <div class="flex items-center">
             <div class="p-3 rounded-full bg-yellow-100">
-              <i class="fas fa-file-alt text-yellow-600 text-xl"></i>
+              <i class="fas fa-tasks text-yellow-600 text-xl"></i>
             </div>
             <div class="ml-4">
-              <p class="text-sm font-medium text-gray-600">Pending Documents</p>
-              <p class="text-2xl font-semibold text-yellow-600">{{ stats.pendingDocuments }}</p>
+              <p class="text-sm font-medium text-gray-600">Open Tasks</p>
+              <p class="text-2xl font-semibold text-yellow-600">{{ stats.openTasks }}</p>
             </div>
           </div>
         </div>
         <div class="bg-white rounded-lg shadow-md p-6">
           <div class="flex items-center">
             <div class="p-3 rounded-full bg-red-100">
-              <i class="fas fa-exclamation-circle text-red-600 text-xl"></i>
+              <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
             </div>
             <div class="ml-4">
               <p class="text-sm font-medium text-gray-600">Overdue Compliance</p>
@@ -109,196 +68,196 @@
         </div>
       </div>
 
-      <!-- Charts Section -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Client Growth</h2>
-        <div class="h-64">
-          <!-- Chart will be rendered here -->
-          <div class="flex items-center justify-center h-full text-gray-500">
-            Chart loading...
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Detailed Reports -->
-    <div class="mt-8">
-      <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="p-6">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4">Detailed Report</h2>
+      <!-- Report Content Sections -->
+      <div class="space-y-8">
+        <!-- Client Activity -->
+        <section class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Recent Client Activity</h2>
           <div class="overflow-x-auto">
             <table class="min-w-full">
-              <thead>
-                <tr class="bg-gray-50">
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="item in reportData" :key="item.id" class="hover:bg-gray-50">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {{ formatDate(item.date) }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {{ item.client_name }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {{ item.type }}
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full" :class="getStatusClass(item.status)">
-                      {{ item.status }}
-                    </span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {{ item.details }}
-                  </td>
-                </tr>
-              </tbody>
+               <thead>
+                    <tr class="bg-gray-50">
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Activity</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Details</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr v-if="recentActivity.length === 0">
+                        <td colspan="4" class="px-4 py-3 text-center text-gray-500">No recent activity found.</td>
+                    </tr>
+                    <tr v-for="item in recentActivity" :key="item.id">
+                        <td class="px-4 py-3 whitespace-nowrap text-sm">{{ formatDate(item.date) }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm">{{ item.clientName }}</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm">{{ item.type }}</td>
+                        <td class="px-4 py-3 text-sm">{{ item.details }}</td>
+                    </tr>
+                </tbody>
             </table>
           </div>
-        </div>
+        </section>
+
+        <!-- Add more report sections/charts here as needed -->
+         <!-- Example: Compliance Status Breakdown -->
+        <section class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Compliance Status</h2>
+             <div class="overflow-x-auto">
+                 <table class="min-w-full">
+                     <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Requirement</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Due Date</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        </tr>
+                    </thead>
+                     <tbody class="bg-white divide-y divide-gray-200">
+                         <tr v-if="complianceItems.length === 0">
+                            <td colspan="4" class="px-4 py-3 text-center text-gray-500">No compliance items found.</td>
+                         </tr>
+                         <tr v-for="item in complianceItems" :key="item.id">
+                             <td class="px-4 py-3 whitespace-nowrap text-sm">{{ item.title }}</td>
+                             <td class="px-4 py-3 whitespace-nowrap text-sm">{{ item.category }}</td>
+                             <td class="px-4 py-3 whitespace-nowrap text-sm">{{ formatDate(item.dueDate) }}</td>
+                             <td class="px-4 py-3 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full" :class="getStatusClass(item.status)">
+                                    {{ item.status }}
+                                </span>
+                             </td>
+                         </tr>
+                     </tbody>
+                 </table>
+             </div>
+        </section>
+
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
-import { supabase } from '../supabase'
+import { ref, computed, onMounted, inject, watch } from 'vue'
+import { dataService } from '../services/db' // Use our data service
 
 export default {
   name: 'Reports',
   setup() {
-    const selectedReportType = ref('client')
-    const selectedDateRange = ref('30')
-    const startDate = ref('')
-    const endDate = ref('')
+    const isLoading = ref(true);
     const stats = ref({
       totalClients: 0,
-      completedAppointments: 0,
-      pendingDocuments: 0,
+      totalAppointments: 0,
+      openTasks: 0,
       overdueCompliance: 0
-    })
-    const reportData = ref([])
+    });
+    const recentActivity = ref([]); // Combined list of recent actions
+    const complianceItems = ref([]); // For compliance table
 
-    const fetchStats = async () => {
+    const currentUser = inject('currentUser', ref(null)); 
+    const userId = computed(() => currentUser.value?.id);
+
+    const fetchData = async () => {
+      if (!userId.value) return;
+      isLoading.value = true;
       try {
-        // Fetch total clients
-        const { data: clientsData, error: clientsError } = await supabase
-          .from('clients')
-          .select('id', { count: 'exact' })
-        
-        if (clientsError) throw clientsError
-        stats.value.totalClients = clientsData.length
+        // Fetch data needed for stats and reports
+        const [clients, appointments, tasks, compliance] = await Promise.all([
+          dataService.getClients(userId.value),
+          dataService.getAppointments(userId.value),
+          dataService.getTasks(userId.value),
+          dataService.getComplianceRequirements(userId.value)
+        ]);
 
-        // Fetch completed appointments
-        const { data: appointmentsData, error: appointmentsError } = await supabase
-          .from('appointments')
-          .select('id')
-          .eq('status', 'completed')
+        // Calculate Stats
+        stats.value.totalClients = clients.length;
+        stats.value.totalAppointments = appointments.length;
+        stats.value.openTasks = tasks.filter(t => !t.completed).length;
+        stats.value.overdueCompliance = compliance.filter(c => c.status === 'overdue').length;
         
-        if (appointmentsError) throw appointmentsError
-        stats.value.completedAppointments = appointmentsData.length
+        // Prepare Compliance Table Data (sorted by due date)
+        complianceItems.value = compliance.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
 
-        // Fetch pending documents
-        const { data: documentsData, error: documentsError } = await supabase
-          .from('documents')
-          .select('id')
-          .eq('status', 'pending')
+        // Prepare Recent Activity (example: last 5 appointments and tasks)
+        const clientMap = new Map(clients.map(c => [c.id, `${c.firstName} ${c.lastName}`]));
+        const recentAppointments = appointments
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 5)
+          .map(a => ({ 
+              id: `appt-${a.id}`, 
+              date: a.createdAt, 
+              clientName: clientMap.get(a.clientId) || 'N/A', 
+              type: 'Appointment', 
+              details: a.title 
+          }));
         
-        if (documentsError) throw documentsError
-        stats.value.pendingDocuments = documentsData.length
+        const recentTasks = tasks
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 5)
+          .map(t => ({ 
+              id: `task-${t.id}`, 
+              date: t.createdAt, 
+              clientName: clientMap.get(t.clientId) || 'N/A', // Assuming tasks can be linked to clients
+              type: 'Task', 
+              details: t.title 
+          }));
 
-        // Fetch overdue compliance
-        const { data: complianceData, error: complianceError } = await supabase
-          .from('compliance_requirements')
-          .select('id')
-          .eq('status', 'overdue')
-        
-        if (complianceError) throw complianceError
-        stats.value.overdueCompliance = complianceData.length
+        recentActivity.value = [...recentAppointments, ...recentTasks]
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(0, 10); // Show latest 10 combined activities
 
       } catch (error) {
-        console.error('Error fetching stats:', error)
+        console.error('Error fetching report data:', error);
+        alert('Failed to load report data.');
+      } finally {
+        isLoading.value = false;
       }
-    }
+    };
 
-    const fetchReportData = async () => {
-      try {
-        let query = supabase
-          .from('reports')
-          .select('*')
-          .order('date', { ascending: false })
+    const generateReport = () => {
+      // Placeholder for future report generation logic (e.g., PDF export)
+      alert('Report generation feature not yet implemented.');
+    };
 
-        // Apply date range filter
-        if (selectedDateRange.value !== 'custom') {
-          const days = parseInt(selectedDateRange.value)
-          const startDate = new Date()
-          startDate.setDate(startDate.getDate() - days)
-          query = query.gte('date', startDate.toISOString())
-        } else if (startDate.value && endDate.value) {
-          query = query
-            .gte('date', startDate.value)
-            .lte('date', endDate.value)
-        }
-
-        const { data, error } = await query
-        
-        if (error) throw error
-        reportData.value = data
-      } catch (error) {
-        console.error('Error fetching report data:', error)
-      }
-    }
-
-    const generateReport = async () => {
-      try {
-        // Generate report based on selected type and date range
-        await fetchReportData()
-        
-        // Here you would typically:
-        // 1. Generate the report data
-        // 2. Format it for download
-        // 3. Trigger the download
-        console.log('Generating report...')
-      } catch (error) {
-        console.error('Error generating report:', error)
-      }
-    }
-
-    const formatDate = (date) => {
-      return new Date(date).toLocaleDateString()
-    }
+    const formatDate = (dateStr) => {
+      if (!dateStr) return 'N/A';
+      return new Date(dateStr).toLocaleDateString('en-GB');
+    };
 
     const getStatusClass = (status) => {
-      const classes = {
-        completed: 'bg-emerald-100 text-emerald-800',
-        pending: 'bg-yellow-100 text-yellow-800',
-        overdue: 'bg-red-100 text-red-800'
+      // Re-use compliance status styling
+      const baseClasses = 'px-2 py-1 rounded-full border';
+      switch (status) {
+        case 'completed': return `${baseClasses} bg-green-100 text-green-800 border-green-300`;
+        case 'pending': return `${baseClasses} bg-yellow-100 text-yellow-800 border-yellow-300`;
+        case 'overdue': return `${baseClasses} bg-red-100 text-red-800 border-red-300`;
+        default: return `${baseClasses} bg-gray-100 text-gray-800 border-gray-300`;
       }
-      return classes[status] || 'bg-gray-100 text-gray-800'
-    }
+    };
 
-    onMounted(() => {
-      fetchStats()
-      fetchReportData()
-    })
+    // Fetch data on mount or when user changes
+     onMounted(() => {
+        if (userId.value) {
+            fetchData();
+        } else {
+            const unwatch = watch(userId, (newUserId) => {
+                if (newUserId) {
+                    fetchData();
+                    unwatch();
+                }
+            });
+        }
+    });
 
     return {
-      selectedReportType,
-      selectedDateRange,
-      startDate,
-      endDate,
+      isLoading,
       stats,
-      reportData,
+      recentActivity,
+      complianceItems,
       generateReport,
       formatDate,
-      getStatusClass
-    }
+      getStatusClass,
+      // Add filters and chart data/options here later
+    };
   }
-}
+}; 
 </script> 

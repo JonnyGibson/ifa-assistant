@@ -5,7 +5,7 @@
       <h1 class="text-3xl font-bold text-gray-800">Appointment Management</h1>
       <div class="flex space-x-4">
         <button 
-          @click="showNewAppointmentModal = true"
+          @click="openModal()" 
           class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 flex items-center"
         >
           <i class="fas fa-calendar-plus mr-2"></i>New Appointment
@@ -13,73 +13,60 @@
       </div>
     </div>
 
+    <!-- Loading Indicator -->
+    <div v-if="isLoading" class="flex justify-center items-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+    </div>
+
     <!-- Calendar and Schedule View -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Calendar Section -->
       <div class="lg:col-span-2">
         <div class="bg-white rounded-lg shadow-md p-6">
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold text-gray-800">Calendar</h2>
             <div class="flex space-x-2">
-              <button 
-                @click="previousMonth"
-                class="p-2 text-gray-600 hover:text-gray-800"
-              >
+              <button @click="previousMonth" class="p-2 text-gray-600 hover:text-gray-800">
                 <i class="fas fa-chevron-left"></i>
               </button>
               <span class="text-lg font-medium">{{ currentMonthYear }}</span>
-              <button 
-                @click="nextMonth"
-                class="p-2 text-gray-600 hover:text-gray-800"
-              >
+              <button @click="nextMonth" class="p-2 text-gray-600 hover:text-gray-800">
                 <i class="fas fa-chevron-right"></i>
               </button>
             </div>
           </div>
           <div class="grid grid-cols-7 gap-1">
-            <div 
-              v-for="day in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']" 
-              :key="day"
-              class="text-center text-sm font-medium text-gray-500 py-2"
-            >
+            <div v-for="day in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']" :key="day" class="text-center text-sm font-medium text-gray-500 py-2">
               {{ day }}
             </div>
             <div 
               v-for="(day, index) in calendarDays" 
               :key="index"
-              class="border border-gray-200 p-2 min-h-24"
+              class="border border-gray-200 p-2 min-h-[100px]"
               :class="{
                 'bg-gray-50': !day.isCurrentMonth,
-                'hover:bg-gray-50 cursor-pointer': day.isCurrentMonth
+                'bg-emerald-50': isSelectedDate(day.date),
+                'hover:bg-gray-50': day.isCurrentMonth
               }"
               @click="selectDate(day.date)"
             >
-              <div class="flex justify-between">
-                <span 
-                  class="text-sm"
-                  :class="{
-                    'text-gray-400': !day.isCurrentMonth,
-                    'font-semibold': isToday(day.date)
-                  }"
-                >
+              <div class="flex justify-between items-center">
+                <span class="text-sm" :class="{'text-gray-400': !day.isCurrentMonth, 'font-semibold': isToday(day.date)}">
                   {{ day.day }}
                 </span>
-                <span 
-                  v-if="getAppointmentsCount(day.date) > 0"
-                  class="text-xs bg-emerald-100 text-emerald-800 rounded-full px-2 py-1"
-                >
+                <span v-if="getAppointmentsCount(day.date) > 0" class="text-xs bg-emerald-100 text-emerald-800 rounded-full px-2 py-0.5">
                   {{ getAppointmentsCount(day.date) }}
                 </span>
               </div>
-              <div class="mt-1 space-y-1">
+              <div class="mt-1 space-y-1 overflow-hidden">
                 <div 
                   v-for="appointment in getAppointmentsForDay(day.date)" 
                   :key="appointment.id"
-                  class="text-xs p-1 rounded"
+                  class="text-xs p-1 rounded truncate cursor-pointer"
                   :class="getAppointmentClass(appointment)"
-                  @click.stop="viewAppointment(appointment)"
+                  @click.stop="editAppointment(appointment)"
                 >
-                  {{ formatTime(appointment.start_time) }} - {{ appointment.client_name }}
+                  {{ formatTime(appointment.startTime) }} - {{ appointment.clientName || 'N/A' }}
                 </div>
               </div>
             </div>
@@ -87,160 +74,89 @@
         </div>
       </div>
 
-      <!-- Schedule Section -->
+      <!-- Selected Date Schedule Section -->
       <div class="space-y-6">
-        <!-- Today's Appointments -->
         <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4">Today's Schedule</h2>
-          <div class="space-y-4">
-            <div 
-              v-for="appointment in todaysAppointments" 
-              :key="appointment.id"
-              class="border-l-4 p-4"
-              :class="getAppointmentBorderClass(appointment)"
-            >
-              <div class="flex justify-between items-start">
-                <div>
-                  <h3 class="font-medium text-gray-900">{{ appointment.client_name }}</h3>
-                  <p class="text-sm text-gray-500">{{ formatTime(appointment.start_time) }} - {{ formatTime(appointment.end_time) }}</p>
-                </div>
-                <div class="flex space-x-2">
-                  <button 
-                    @click="editAppointment(appointment)"
-                    class="text-blue-600 hover:text-blue-800"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button 
-                    @click="cancelAppointment(appointment)"
-                    class="text-red-600 hover:text-red-800"
-                  >
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-              </div>
-              <p class="text-sm text-gray-600 mt-2">{{ appointment.notes }}</p>
-            </div>
-            <p 
-              v-if="todaysAppointments.length === 0"
-              class="text-gray-500 text-center py-4"
-            >
-              No appointments scheduled for today
-            </p>
+          <h2 class="text-xl font-semibold text-gray-800 mb-4">Schedule for {{ formatDate(selectedDate) }}</h2>
+          <div v-if="isLoadingAppointments" class="text-center py-4">
+             <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-emerald-500 mx-auto"></div>
           </div>
-        </div>
-
-        <!-- Upcoming Appointments -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-xl font-semibold text-gray-800 mb-4">Upcoming Appointments</h2>
-          <div class="space-y-4">
+          <div v-else class="space-y-4">
             <div 
-              v-for="appointment in upcomingAppointments" 
+              v-for="appointment in selectedDateAppointments" 
               :key="appointment.id"
-              class="border-l-4 p-4"
+              class="border-l-4 p-4 bg-gray-50 rounded"
               :class="getAppointmentBorderClass(appointment)"
             >
               <div class="flex justify-between items-start">
                 <div>
-                  <h3 class="font-medium text-gray-900">{{ appointment.client_name }}</h3>
-                  <p class="text-sm text-gray-500">{{ formatDate(appointment.date) }} at {{ formatTime(appointment.start_time) }}</p>
+                  <h3 class="font-medium text-gray-900">{{ appointment.clientName || 'Unknown Client' }}</h3>
+                  <p class="text-sm text-gray-500">{{ formatTime(appointment.startTime) }} - {{ formatTime(appointment.endTime) }}</p>
+                  <p class="text-sm text-gray-600 mt-1">{{ appointment.title }}</p>
                 </div>
-                <div class="flex space-x-2">
-                  <button 
-                    @click="editAppointment(appointment)"
-                    class="text-blue-600 hover:text-blue-800"
-                  >
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button 
-                    @click="cancelAppointment(appointment)"
-                    class="text-red-600 hover:text-red-800"
-                  >
-                    <i class="fas fa-times"></i>
-                  </button>
+                <div class="flex space-x-2 flex-shrink-0">
+                  <button @click="editAppointment(appointment)" class="text-blue-600 hover:text-blue-800"><i class="fas fa-edit"></i></button>
+                  <button @click="confirmDeleteAppointment(appointment.id)" class="text-red-600 hover:text-red-800"><i class="fas fa-trash-alt"></i></button>
                 </div>
               </div>
-              <p class="text-sm text-gray-600 mt-2">{{ appointment.notes }}</p>
+              <p v-if="appointment.description" class="text-sm text-gray-600 mt-2">{{ appointment.description }}</p>
             </div>
-            <p 
-              v-if="upcomingAppointments.length === 0"
-              class="text-gray-500 text-center py-4"
-            >
-              No upcoming appointments
+            <p v-if="selectedDateAppointments.length === 0" class="text-gray-500 text-center py-4">
+              No appointments scheduled for this day.
             </p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- New Appointment Modal -->
-    <div v-if="showNewAppointmentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <!-- Appointment Modal (Add/Edit) -->
+    <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-8 max-w-2xl w-full">
-        <h2 class="text-2xl font-bold mb-6">New Appointment</h2>
-        <form @submit.prevent="createAppointment">
+        <h2 class="text-2xl font-bold mb-6">{{ editingAppointment ? 'Edit Appointment' : 'New Appointment' }}</h2>
+        <form @submit.prevent="saveAppointment">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label class="block text-gray-700 mb-2">Client</label>
-              <select
-                v-model="newAppointment.client_id"
-                class="w-full border border-gray-300 rounded-lg p-2"
-                required
-              >
-                <option value="">Select Client</option>
+              <label class="block text-gray-700 mb-1 text-sm font-medium">Client</label>
+              <select v-model="appointmentForm.clientId" class="w-full border border-gray-300 rounded-lg p-2 text-sm" required>
+                <option disabled value="">Select Client</option>
                 <option v-for="client in clients" :key="client.id" :value="client.id">
-                  {{ client.first_name }} {{ client.last_name }}
+                  {{ client.firstName }} {{ client.lastName }}
                 </option>
               </select>
             </div>
-            <div>
-              <label class="block text-gray-700 mb-2">Date</label>
-              <input
-                v-model="newAppointment.date"
-                type="date"
-                class="w-full border border-gray-300 rounded-lg p-2"
-                required
-              />
+             <div>
+              <label class="block text-gray-700 mb-1 text-sm font-medium">Appointment Title</label>
+              <input v-model="appointmentForm.title" type="text" class="w-full border border-gray-300 rounded-lg p-2 text-sm" required/>
             </div>
             <div>
-              <label class="block text-gray-700 mb-2">Start Time</label>
-              <input
-                v-model="newAppointment.start_time"
-                type="time"
-                class="w-full border border-gray-300 rounded-lg p-2"
-                required
-              />
+              <label class="block text-gray-700 mb-1 text-sm font-medium">Date</label>
+              <input v-model="appointmentForm.date" type="date" class="w-full border border-gray-300 rounded-lg p-2 text-sm" required/>
+            </div>
+             <div>
+              <label class="block text-gray-700 mb-1 text-sm font-medium">Status</label>
+               <select v-model="appointmentForm.status" class="w-full border border-gray-300 rounded-lg p-2 text-sm" required>
+                  <option value="scheduled">Scheduled</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+              </select>
             </div>
             <div>
-              <label class="block text-gray-700 mb-2">End Time</label>
-              <input
-                v-model="newAppointment.end_time"
-                type="time"
-                class="w-full border border-gray-300 rounded-lg p-2"
-                required
-              />
+              <label class="block text-gray-700 mb-1 text-sm font-medium">Start Time</label>
+              <input v-model="appointmentForm.startTime" type="time" class="w-full border border-gray-300 rounded-lg p-2 text-sm" required/>
+            </div>
+            <div>
+              <label class="block text-gray-700 mb-1 text-sm font-medium">End Time</label>
+              <input v-model="appointmentForm.endTime" type="time" class="w-full border border-gray-300 rounded-lg p-2 text-sm" required/>
             </div>
             <div class="md:col-span-2">
-              <label class="block text-gray-700 mb-2">Notes</label>
-              <textarea
-                v-model="newAppointment.notes"
-                class="w-full border border-gray-300 rounded-lg p-2"
-                rows="3"
-              ></textarea>
+              <label class="block text-gray-700 mb-1 text-sm font-medium">Description/Notes</label>
+              <textarea v-model="appointmentForm.description" class="w-full border border-gray-300 rounded-lg p-2 text-sm" rows="3"></textarea>
             </div>
           </div>
           <div class="flex justify-end space-x-4 mt-6">
-            <button
-              type="button"
-              @click="showNewAppointmentModal = false"
-              class="px-4 py-2 text-gray-600 hover:text-gray-800"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg"
-            >
-              Create
+            <button type="button" @click="closeModal" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg">
+              {{ editingAppointment ? 'Update' : 'Create' }}
             </button>
           </div>
         </form>
@@ -250,276 +166,293 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
-import { supabase } from '../supabase'
+import { ref, onMounted, computed, watch, inject } from 'vue'
+import { dataService } from '../services/db' // Use our data service
+
+const defaultAppointmentForm = () => ({
+  clientId: '',
+  title: '',
+  description: '',
+  date: '',
+  startTime: '',
+  endTime: '',
+  status: 'scheduled',
+  userId: null
+});
 
 export default {
   name: 'Appointments',
   setup() {
-    const appointments = ref([])
-    const clients = ref([])
-    const showNewAppointmentModal = ref(false)
-    const currentDate = ref(new Date())
-    
-    const newAppointment = ref({
-      client_id: '',
-      date: '',
-      start_time: '',
-      end_time: '',
-      notes: '',
-      status: 'scheduled'
-    })
+    const appointments = ref([]);
+    const clients = ref([]);
+    const isLoading = ref(true);
+    const isLoadingAppointments = ref(false);
+    const showModal = ref(false);
+    const editingAppointment = ref(null);
+    const appointmentForm = ref(defaultAppointmentForm());
+    const currentDate = ref(new Date());
+    const selectedDate = ref(new Date().toISOString().split('T')[0]); // YYYY-MM-DD
+
+    const currentUser = inject('currentUser', ref(null)); 
+    const userId = computed(() => currentUser.value?.id);
 
     const fetchAppointments = async () => {
+      if (!userId.value) return;
+      isLoadingAppointments.value = true;
       try {
-        const { data, error } = await supabase
-          .from('appointments')
-          .select(`
-            *,
-            clients:client_id(first_name, last_name)
-          `)
-          .order('date', { ascending: true })
-          .order('start_time', { ascending: true })
-        
-        if (error) throw error
-        appointments.value = data.map(appointment => ({
-          ...appointment,
-          client_name: `${appointment.clients.first_name} ${appointment.clients.last_name}`
-        }))
+        appointments.value = await dataService.getAppointments(userId.value);
+        // Optionally enrich with client names if not done in dataService
+        await enrichAppointmentsWithClientNames(); 
       } catch (error) {
-        console.error('Error fetching appointments:', error)
+        console.error('Error fetching appointments:', error);
+        alert('Failed to load appointments.');
+      } finally {
+        isLoadingAppointments.value = false;
       }
-    }
+    };
 
     const fetchClients = async () => {
+      if (!userId.value) return;
       try {
-        const { data, error } = await supabase
-          .from('clients')
-          .select('id, first_name, last_name')
-          .order('last_name', { ascending: true })
-        
-        if (error) throw error
-        clients.value = data
+        clients.value = await dataService.getClients(userId.value);
       } catch (error) {
-        console.error('Error fetching clients:', error)
+        console.error('Error fetching clients:', error);
+        alert('Failed to load clients for dropdown.');
       }
-    }
+    };
 
-    const createAppointment = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('appointments')
-          .insert([newAppointment.value])
+    // Helper to add client names to appointments
+    const enrichAppointmentsWithClientNames = async () => {
+      if (clients.value.length === 0) await fetchClients(); // Ensure clients are loaded
+      const clientMap = new Map(clients.value.map(c => [c.id, `${c.firstName} ${c.lastName}`]));
+      appointments.value = appointments.value.map(appt => ({
+        ...appt,
+        clientName: clientMap.get(appt.clientId) || 'Unknown Client'
+      }));
+    };
 
-        if (error) throw error
-
-        showNewAppointmentModal.value = false
-        newAppointment.value = {
-          client_id: '',
-          date: '',
-          start_time: '',
-          end_time: '',
-          notes: '',
-          status: 'scheduled'
-        }
-        fetchAppointments()
-      } catch (error) {
-        console.error('Error creating appointment:', error)
-      }
-    }
-
-    const editAppointment = (appointment) => {
-      // Implement edit functionality
-      console.log('Edit appointment:', appointment)
-    }
-
-    const cancelAppointment = async (appointment) => {
-      if (!confirm('Are you sure you want to cancel this appointment?')) return
-
-      try {
-        const { error } = await supabase
-          .from('appointments')
-          .update({ status: 'cancelled' })
-          .eq('id', appointment.id)
-
-        if (error) throw error
-        fetchAppointments()
-      } catch (error) {
-        console.error('Error cancelling appointment:', error)
-      }
-    }
-
-    const viewAppointment = (appointment) => {
-      // Implement view functionality
-      console.log('View appointment:', appointment)
-    }
-
-    const selectDate = (date) => {
-      // Implement date selection functionality
-      console.log('Selected date:', date)
-    }
-
-    const previousMonth = () => {
-      currentDate.value = new Date(
-        currentDate.value.getFullYear(),
-        currentDate.value.getMonth() - 1,
-        1
-      )
-    }
-
-    const nextMonth = () => {
-      currentDate.value = new Date(
-        currentDate.value.getFullYear(),
-        currentDate.value.getMonth() + 1,
-        1
-      )
-    }
-
+    // Calendar logic
     const currentMonthYear = computed(() => {
-      return currentDate.value.toLocaleString('default', { month: 'long', year: 'numeric' })
-    })
+      return currentDate.value.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+    });
 
     const calendarDays = computed(() => {
-      const year = currentDate.value.getFullYear()
-      const month = currentDate.value.getMonth()
-      
-      const firstDay = new Date(year, month, 1)
-      const lastDay = new Date(year, month + 1, 0)
-      
-      const days = []
-      
-      // Add days from previous month
-      const prevMonthLastDay = new Date(year, month, 0).getDate()
-      const firstDayOfWeek = firstDay.getDay()
-      
-      for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-        days.push({
-          day: prevMonthLastDay - i,
-          date: new Date(year, month - 1, prevMonthLastDay - i),
-          isCurrentMonth: false
-        })
+      const year = currentDate.value.getFullYear();
+      const month = currentDate.value.getMonth();
+      const firstDayOfMonth = new Date(year, month, 1);
+      const lastDayOfMonth = new Date(year, month + 1, 0);
+      const daysInMonth = lastDayOfMonth.getDate();
+      const startDayOfWeek = firstDayOfMonth.getDay(); // 0 = Sunday
+
+      const days = [];
+      // Days from previous month
+      const prevMonthLastDay = new Date(year, month, 0).getDate();
+      for (let i = startDayOfWeek - 1; i >= 0; i--) {
+        const date = new Date(year, month - 1, prevMonthLastDay - i);
+        days.push({ day: prevMonthLastDay - i, date: date.toISOString().split('T')[0], isCurrentMonth: false });
       }
-      
-      // Add days from current month
-      for (let i = 1; i <= lastDay.getDate(); i++) {
-        days.push({
-          day: i,
-          date: new Date(year, month, i),
-          isCurrentMonth: true
-        })
+
+      // Days in current month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        days.push({ day, date: date.toISOString().split('T')[0], isCurrentMonth: true });
       }
-      
-      // Add days from next month
-      const remainingDays = 42 - days.length // 6 rows * 7 days
-      for (let i = 1; i <= remainingDays; i++) {
-        days.push({
-          day: i,
-          date: new Date(year, month + 1, i),
-          isCurrentMonth: false
-        })
+
+      // Days from next month
+      const remainingCells = 42 - days.length; // Assuming 6 rows
+      for (let i = 1; i <= remainingCells; i++) {
+        const date = new Date(year, month + 1, i);
+        days.push({ day: i, date: date.toISOString().split('T')[0], isCurrentMonth: false });
       }
-      
-      return days
-    })
+      return days;
+    });
 
-    const todaysAppointments = computed(() => {
-      const today = new Date().toISOString().split('T')[0]
-      return appointments.value.filter(a => 
-        a.date === today && 
-        a.status === 'scheduled'
-      )
-    })
+    const previousMonth = () => {
+      currentDate.value = new Date(currentDate.value.setMonth(currentDate.value.getMonth() - 1));
+    };
 
-    const upcomingAppointments = computed(() => {
-      const today = new Date().toISOString().split('T')[0]
-      return appointments.value.filter(a => 
-        a.date > today && 
-        a.status === 'scheduled'
-      ).slice(0, 5)
-    })
+    const nextMonth = () => {
+      currentDate.value = new Date(currentDate.value.setMonth(currentDate.value.getMonth() + 1));
+    };
 
-    const getAppointmentsForDay = (date) => {
-      const dateStr = date.toISOString().split('T')[0]
-      return appointments.value.filter(a => 
-        a.date === dateStr && 
-        a.status === 'scheduled'
-      )
-    }
+    const isToday = (dateStr) => {
+      return dateStr === new Date().toISOString().split('T')[0];
+    };
 
-    const getAppointmentsCount = (date) => {
-      return getAppointmentsForDay(date).length
-    }
+    const isSelectedDate = (dateStr) => {
+        return dateStr === selectedDate.value;
+    };
 
-    const isToday = (date) => {
-      const today = new Date()
-      return date.getDate() === today.getDate() &&
-             date.getMonth() === today.getMonth() &&
-             date.getFullYear() === today.getFullYear()
-    }
+    const selectDate = (dateStr) => {
+      selectedDate.value = dateStr;
+    };
 
-    const formatDate = (date) => {
-      return new Date(date).toLocaleDateString()
-    }
+    const getAppointmentsForDay = (dateStr) => {
+      return appointments.value.filter(appt => appt.date === dateStr);
+    };
 
-    const formatTime = (time) => {
-      return new Date(`2000-01-01T${time}`).toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      })
-    }
+    const getAppointmentsCount = (dateStr) => {
+      return getAppointmentsForDay(dateStr).length;
+    };
 
-    const getAppointmentClass = (appointment) => {
-      const now = new Date()
-      const appointmentTime = new Date(`${appointment.date}T${appointment.start_time}`)
-      
-      if (appointmentTime < now) {
-        return 'bg-gray-100 text-gray-600'
+    // Schedule logic
+    const selectedDateAppointments = computed(() => {
+      return appointments.value
+        .filter(appt => appt.date === selectedDate.value)
+        .sort((a, b) => a.startTime.localeCompare(b.startTime));
+    });
+
+    // Modal and Form logic
+    const openModal = (appointment = null) => {
+      if (appointment) {
+        editingAppointment.value = appointment;
+        // Format date and time correctly for input fields
+        appointmentForm.value = {
+          ...appointment,
+          date: appointment.date, // Already YYYY-MM-DD
+          startTime: appointment.startTime, // Already HH:mm
+          endTime: appointment.endTime, // Already HH:mm
+        };
+      } else {
+        editingAppointment.value = null;
+        appointmentForm.value = defaultAppointmentForm();
+        appointmentForm.value.date = selectedDate.value; // Default to selected date
       }
+      showModal.value = true;
+    };
+
+    const closeModal = () => {
+      showModal.value = false;
+      editingAppointment.value = null;
+      appointmentForm.value = defaultAppointmentForm();
+    };
+
+    const saveAppointment = async () => {
+      if (!userId.value) {
+        alert('User not authenticated.');
+        return;
+      }
+      appointmentForm.value.userId = userId.value;
       
-      return 'bg-emerald-100 text-emerald-800'
-    }
+      // Basic validation
+      if (appointmentForm.value.endTime <= appointmentForm.value.startTime) {
+          alert('End time must be after start time.');
+          return;
+      }
+
+      try {
+        if (editingAppointment.value) {
+          await dataService.updateAppointment(userId.value, editingAppointment.value.id, appointmentForm.value);
+        } else {
+          await dataService.addAppointment(userId.value, appointmentForm.value);
+        }
+        await fetchAppointments();
+        closeModal();
+      } catch (error) {
+        console.error('Error saving appointment:', error);
+        alert('Failed to save appointment.');
+      }
+    };
+
+    const confirmDeleteAppointment = async (appointmentId) => {
+      if (!userId.value) {
+        alert('User not authenticated.');
+        return;
+      }
+      if (confirm('Are you sure you want to delete this appointment?')) {
+        try {
+          await dataService.deleteAppointment(userId.value, appointmentId);
+          await fetchAppointments();
+        } catch (error) {
+          console.error('Error deleting appointment:', error);
+          alert('Failed to delete appointment.');
+        }
+      }
+    };
+    
+    const editAppointment = (appointment) => {
+        openModal(appointment);
+    };
+
+    // Formatting helpers
+    const formatDate = (dateStr) => {
+      if (!dateStr) return '';
+      return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-GB', { 
+          year: 'numeric', month: 'long', day: 'numeric' 
+      });
+    };
+
+    const formatTime = (timeStr) => {
+      if (!timeStr) return '';
+      // Assuming timeStr is HH:mm
+      const [hours, minutes] = timeStr.split(':');
+      const date = new Date();
+      date.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
+      return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: true });
+    };
+
+    // Styling helpers
+     const getAppointmentClass = (appointment) => {
+        switch (appointment.status) {
+            case 'completed': return 'bg-green-100 text-green-800';
+            case 'cancelled': return 'bg-red-100 text-red-800 opacity-70';
+            default: return 'bg-blue-100 text-blue-800'; // scheduled
+        }
+    };
 
     const getAppointmentBorderClass = (appointment) => {
-      const now = new Date()
-      const appointmentTime = new Date(`${appointment.date}T${appointment.start_time}`)
-      
-      if (appointmentTime < now) {
-        return 'border-gray-400'
-      }
-      
-      return 'border-emerald-500'
-    }
+        switch (appointment.status) {
+            case 'completed': return 'border-green-500';
+            case 'cancelled': return 'border-red-500';
+            default: return 'border-blue-500'; // scheduled
+        }
+    };
 
-    onMounted(() => {
-      fetchAppointments()
-      fetchClients()
-    })
+    onMounted(async () => {
+      isLoading.value = true;
+      if (userId.value) {
+        await Promise.all([fetchClients(), fetchAppointments()]);
+      } else {
+        const unwatch = watch(userId, async (newUserId) => {
+          if (newUserId) {
+            await Promise.all([fetchClients(), fetchAppointments()]);
+            unwatch();
+          }
+        });
+      }
+      isLoading.value = false;
+    });
 
     return {
       appointments,
       clients,
-      showNewAppointmentModal,
+      isLoading,
+      isLoadingAppointments,
+      showModal,
+      editingAppointment,
+      appointmentForm,
       currentDate,
-      newAppointment,
-      calendarDays,
-      todaysAppointments,
-      upcomingAppointments,
+      selectedDate,
       currentMonthYear,
-      createAppointment,
-      editAppointment,
-      cancelAppointment,
-      viewAppointment,
-      selectDate,
+      calendarDays,
+      selectedDateAppointments,
       previousMonth,
       nextMonth,
+      isToday,
+      isSelectedDate,
+      selectDate,
       getAppointmentsForDay,
       getAppointmentsCount,
-      isToday,
+      openModal,
+      closeModal,
+      saveAppointment,
+      editAppointment,
+      confirmDeleteAppointment,
       formatDate,
       formatTime,
       getAppointmentClass,
-      getAppointmentBorderClass
-    }
+      getAppointmentBorderClass,
+    };
   }
-}
+};
 </script> 

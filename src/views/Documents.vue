@@ -3,12 +3,14 @@
     <!-- Header Section -->
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-3xl font-bold text-gray-800">Document Management</h1>
+      <p class="text-red-500 text-sm">(Note: File upload/download disabled - Local Dev Mode)</p>
       <div class="flex space-x-4">
         <button 
           @click="showUploadModal = true"
-          class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 flex items-center"
+          class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 flex items-center disabled:opacity-50"
+          :disabled="true" 
         >
-          <i class="fas fa-upload mr-2"></i>Upload Document
+          <i class="fas fa-upload mr-2"></i>Upload Document (Disabled)
         </button>
         <button 
           @click="showNewFolderModal = true"
@@ -27,7 +29,7 @@
             <input
               v-model="searchQuery"
               type="text"
-              placeholder="Search documents..."
+              placeholder="Search documents or folders..."
               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
             <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
@@ -48,131 +50,75 @@
             class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           >
             <option value="name">Name</option>
-            <option value="date">Date</option>
+            <option value="date">Date Added</option>
             <option value="type">Type</option>
           </select>
         </div>
       </div>
     </div>
 
+    <!-- Loading Indicator -->
+    <div v-if="isLoading" class="flex justify-center items-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+    </div>
+
     <!-- Documents Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
       <!-- Folders -->
       <div 
         v-for="folder in filteredFolders" 
-        :key="folder.id"
-        class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-        @click="openFolder(folder)"
+        :key="`folder-${folder.id}`"
+        class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300 cursor-pointer flex flex-col justify-between"
+        @dblclick="openFolder(folder.id)" 
       >
-        <div class="flex items-center">
-          <i class="fas fa-folder text-yellow-500 text-3xl mr-4"></i>
-          <div>
-            <h3 class="font-semibold text-gray-800">{{ folder.name }}</h3>
-            <p class="text-sm text-gray-500">{{ folder.document_count }} documents</p>
-          </div>
+        <div class="flex items-center mb-2">
+          <i class="fas fa-folder text-yellow-500 text-3xl mr-3"></i>
+          <h3 class="font-semibold text-gray-800 truncate flex-1" :title="folder.name">{{ folder.name }}</h3>
+        </div>
+        <div class="text-right text-sm text-gray-500">
+          <button @click.stop="confirmDeleteFolder(folder.id)" class="text-red-500 hover:text-red-700 text-xs">
+              <i class="fas fa-trash"></i>
+          </button>
         </div>
       </div>
 
-      <!-- Documents -->
+      <!-- Documents (Metadata only) -->
       <div 
         v-for="document in filteredDocuments" 
-        :key="document.id"
-        class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300"
+        :key="`doc-${document.id}`"
+        class="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between"
       >
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center">
-            <i :class="getFileIcon(document.type)" class="text-3xl mr-4"></i>
-            <div>
-              <h3 class="font-semibold text-gray-800">{{ document.name }}</h3>
-              <p class="text-sm text-gray-500">{{ formatDate(document.created_at) }}</p>
-            </div>
+        <div>
+          <div class="flex items-center mb-2">
+            <i :class="getFileIcon(document.type)" class="text-3xl mr-3"></i>
+            <h3 class="font-semibold text-gray-800 truncate flex-1" :title="document.name">{{ document.name }}</h3>
           </div>
-          <div class="dropdown relative">
-            <button 
-              @click="toggleDropdown(document.id)"
-              class="text-gray-500 hover:text-gray-700"
-            >
-              <i class="fas fa-ellipsis-v"></i>
-            </button>
-            <div 
-              v-if="activeDropdown === document.id"
-              class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10"
-            >
-              <button 
-                @click="downloadDocument(document)"
-                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                <i class="fas fa-download mr-2"></i>Download
-              </button>
-              <button 
-                @click="shareDocument(document)"
-                class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-              >
-                <i class="fas fa-share mr-2"></i>Share
-              </button>
-              <button 
-                @click="deleteDocument(document)"
-                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-              >
-                <i class="fas fa-trash mr-2"></i>Delete
-              </button>
-            </div>
-          </div>
+          <p class="text-xs text-gray-500 mb-2">Added: {{ formatDate(document.createdAt) }}</p>
+          <p class="text-xs text-gray-500 mb-2">Client: {{ document.clientName || 'N/A' }}</p>
         </div>
-        <div class="flex justify-between items-center">
-          <span class="text-sm text-gray-500">{{ document.size }}</span>
-          <span 
-            :class="getStatusClass(document.status)"
-            class="px-2 py-1 rounded-full text-xs"
-          >
-            {{ document.status }}
-          </span>
+        <div class="flex justify-between items-center mt-2">
+          <span class="text-xs text-gray-500">{{ document.type || 'N/A' }}</span>
+           <button @click.stop="confirmDeleteDocument(document.id)" class="text-red-500 hover:text-red-700 text-xs">
+              <i class="fas fa-trash"></i>
+           </button>
         </div>
+      </div>
+       <!-- Grid Placeholder if empty -->
+      <div v-if="!isLoading && filteredFolders.length === 0 && filteredDocuments.length === 0" class="col-span-full text-center py-10 text-gray-500">
+        No documents or folders found.
       </div>
     </div>
 
-    <!-- Upload Modal -->
+    <!-- Upload Modal (Disabled) -->
     <div v-if="showUploadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-lg p-8 max-w-2xl w-full">
-        <h2 class="text-2xl font-bold mb-6">Upload Document</h2>
-        <form @submit.prevent="handleUpload">
-          <div class="mb-6">
-            <label class="block text-gray-700 mb-2">Select File</label>
-            <input
-              type="file"
-              @change="handleFileChange"
-              class="w-full border border-gray-300 rounded-lg p-2"
-              accept=".pdf,.doc,.docx,.xls,.xlsx"
-            />
-          </div>
-          <div class="mb-6">
-            <label class="block text-gray-700 mb-2">Folder</label>
-            <select
-              v-model="uploadFolder"
-              class="w-full border border-gray-300 rounded-lg p-2"
-            >
-              <option value="">Root Folder</option>
-              <option v-for="folder in folders" :key="folder.id" :value="folder.id">
-                {{ folder.name }}
-              </option>
-            </select>
-          </div>
-          <div class="flex justify-end space-x-4">
-            <button
-              type="button"
-              @click="showUploadModal = false"
-              class="px-4 py-2 text-gray-600 hover:text-gray-800"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg"
-            >
-              Upload
-            </button>
-          </div>
-        </form>
+        <h2 class="text-2xl font-bold mb-6">Upload Document (Disabled)</h2>
+        <p class="text-gray-600 mb-4">File uploads are disabled in local development mode as IndexedDB is not suitable for large file storage.</p>
+        <div class="flex justify-end">
+          <button type="button" @click="showUploadModal = false" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+            Close
+          </button>
+        </div>
       </div>
     </div>
 
@@ -186,22 +132,25 @@
             <input
               v-model="newFolderName"
               type="text"
+              required
               class="w-full border border-gray-300 rounded-lg p-2"
               placeholder="Enter folder name"
             />
           </div>
+           <div class="mb-6">
+              <label class="block text-gray-700 mb-1 text-sm font-medium">Assign to Client (Optional)</label>
+              <select v-model="newFolderClientId" class="w-full border border-gray-300 rounded-lg p-2 text-sm">
+                <option value="">None</option>
+                <option v-for="client in clients" :key="client.id" :value="client.id">
+                  {{ client.firstName }} {{ client.lastName }}
+                </option>
+              </select>
+            </div>
           <div class="flex justify-end space-x-4">
-            <button
-              type="button"
-              @click="showNewFolderModal = false"
-              class="px-4 py-2 text-gray-600 hover:text-gray-800"
-            >
+            <button type="button" @click="closeFolderModal" class="px-4 py-2 text-gray-600 hover:text-gray-800">
               Cancel
             </button>
-            <button
-              type="submit"
-              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg"
-            >
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg">
               Create
             </button>
           </div>
@@ -212,278 +161,192 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
-import { supabase } from '../supabase'
+import { ref, computed, onMounted, inject, watch } from 'vue'
+import { dataService } from '../services/db' // Use our data service
 
 export default {
   name: 'Documents',
   setup() {
-    const documents = ref([])
-    const folders = ref([])
-    const searchQuery = ref('')
-    const selectedFolder = ref('')
-    const sortBy = ref('name')
-    const showUploadModal = ref(false)
-    const showNewFolderModal = ref(false)
-    const activeDropdown = ref(null)
-    const uploadFolder = ref('')
-    const newFolderName = ref('')
-    const selectedFile = ref(null)
+    const documents = ref([]);
+    const folders = ref([]);
+    const clients = ref([]); // To map client IDs to names
+    const isLoading = ref(true);
+    const searchQuery = ref('');
+    const selectedFolder = ref(''); // For filtering, though folders aren't hierarchical yet
+    const sortBy = ref('name');
+    const showUploadModal = ref(false);
+    const showNewFolderModal = ref(false);
+    const newFolderName = ref('');
+    const newFolderClientId = ref('');
 
-    const fetchDocuments = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('documents')
-          .select('*')
-          .order('created_at', { ascending: false })
-        
-        if (error) throw error
-        documents.value = data
-      } catch (error) {
-        console.error('Error fetching documents:', error)
-      }
-    }
+    const currentUser = inject('currentUser', ref(null)); 
+    const userId = computed(() => currentUser.value?.id);
 
-    const fetchFolders = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('folders')
-          .select('*')
-        
-        if (error) throw error
-        folders.value = data
-      } catch (error) {
-        console.error('Error fetching folders:', error)
-      }
-    }
+    const fetchData = async () => {
+        if (!userId.value) return;
+        isLoading.value = true;
+        try {
+            const [docsData, foldersData, clientsData] = await Promise.all([
+                dataService.getDocuments(userId.value),
+                dataService.getFolders(userId.value),
+                dataService.getClients(userId.value) // Fetch clients for names
+            ]);
+            documents.value = docsData;
+            folders.value = foldersData;
+            clients.value = clientsData;
+            enrichDocumentsWithClientNames(); // Add client names to documents
+        } catch (error) {
+            console.error('Error fetching documents/folders/clients:', error);
+            alert('Failed to load data.');
+        } finally {
+            isLoading.value = false;
+        }
+    };
+    
+    const enrichDocumentsWithClientNames = () => {
+        const clientMap = new Map(clients.value.map(c => [c.id, `${c.firstName} ${c.lastName}`]));
+        documents.value = documents.value.map(doc => ({
+            ...doc,
+            clientName: clientMap.get(doc.clientId)
+        }));
+    };
 
     const filteredDocuments = computed(() => {
-      let filtered = documents.value
-
+      let filtered = documents.value;
+      // Filter by search query (name)
       if (searchQuery.value) {
         filtered = filtered.filter(doc => 
           doc.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-        )
+        );
       }
+      // Filter by folder (if implemented fully)
+      // if (selectedFolder.value) {
+      //   filtered = filtered.filter(doc => doc.folderId === selectedFolder.value);
+      // }
 
-      if (selectedFolder.value) {
-        filtered = filtered.filter(doc => doc.folder_id === selectedFolder.value)
-      }
-
+      // Sort
       return filtered.sort((a, b) => {
-        switch (sortBy.value) {
-          case 'name':
-            return a.name.localeCompare(b.name)
-          case 'date':
-            return new Date(b.created_at) - new Date(a.created_at)
-          case 'type':
-            return a.type.localeCompare(b.type)
-          default:
-            return 0
+        if (sortBy.value === 'date') {
+          return new Date(b.createdAt) - new Date(a.createdAt);
         }
-      })
-    })
+        if (sortBy.value === 'type') {
+          return (a.type || '').localeCompare(b.type || '');
+        }
+        return a.name.localeCompare(b.name); // Default sort by name
+      });
+    });
 
-    const filteredFolders = computed(() => {
-      return folders.value.filter(folder => 
-        folder.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-      )
-    })
+     const filteredFolders = computed(() => {
+        let filtered = folders.value;
+        // Filter by search query (name)
+        if (searchQuery.value) {
+            filtered = filtered.filter(folder => 
+            folder.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+            );
+        }
+        // Add sorting if needed, e.g., by name
+        return filtered.sort((a, b) => a.name.localeCompare(b.name));
+    });
 
-    const handleFileChange = (event) => {
-      selectedFile.value = event.target.files[0]
-    }
-
-    const handleUpload = async () => {
-      if (!selectedFile.value) return
-
-      try {
-        const fileExt = selectedFile.value.name.split('.').pop()
-        const fileName = `${Math.random()}.${fileExt}`
-        
-        const { data, error } = await supabase.storage
-          .from('documents')
-          .upload(fileName, selectedFile.value)
-
-        if (error) throw error
-
-        const { data: document, error: insertError } = await supabase
-          .from('documents')
-          .insert({
-            name: selectedFile.value.name,
-            type: fileExt,
-            size: formatFileSize(selectedFile.value.size),
-            folder_id: uploadFolder.value || null,
-            status: 'active'
-          })
-
-        if (insertError) throw insertError
-
-        showUploadModal.value = false
-        selectedFile.value = null
-        fetchDocuments()
-      } catch (error) {
-        console.error('Error uploading document:', error)
-      }
-    }
+    const closeFolderModal = () => {
+      showNewFolderModal.value = false;
+      newFolderName.value = '';
+      newFolderClientId.value = '';
+    };
 
     const createFolder = async () => {
-      if (!newFolderName.value) return
-
+      if (!userId.value || !newFolderName.value) return;
       try {
-        const { data, error } = await supabase
-          .from('folders')
-          .insert({
-            name: newFolderName.value
-          })
-
-        if (error) throw error
-
-        showNewFolderModal.value = false
-        newFolderName.value = ''
-        fetchFolders()
+        await dataService.addFolder(userId.value, { 
+            name: newFolderName.value, 
+            clientId: newFolderClientId.value || null // Store null if no client selected
+        });
+        await fetchData(); // Refresh data
+        closeFolderModal();
       } catch (error) {
-        console.error('Error creating folder:', error)
+        console.error('Error creating folder:', error);
+        alert('Failed to create folder.');
       }
-    }
+    };
 
-    const downloadDocument = async (document) => {
-      try {
-        const { data, error } = await supabase.storage
-          .from('documents')
-          .download(document.path)
+    const confirmDeleteFolder = async (folderId) => {
+        if (!userId.value) return;
+        if (confirm('Are you sure you want to delete this folder? Any documents inside will need to be reassigned (functionality TBD).')) {
+             try {
+                await dataService.deleteFolder(userId.value, folderId);
+                await fetchData(); // Refresh data
+            } catch (error) {
+                console.error('Error deleting folder:', error);
+                alert('Failed to delete folder.');
+            }
+        }
+    };
 
-        if (error) throw error
+    const confirmDeleteDocument = async (documentId) => {
+        if (!userId.value) return;
+        if (confirm('Are you sure you want to delete this document record?')) {
+            try {
+                await dataService.deleteDocument(userId.value, documentId);
+                await fetchData(); // Refresh data
+            } catch (error) {
+                console.error('Error deleting document:', error);
+                alert('Failed to delete document record.');
+            }
+        }
+    };
 
-        const url = window.URL.createObjectURL(data)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = document.name
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        window.URL.revokeObjectURL(url)
-      } catch (error) {
-        console.error('Error downloading document:', error)
-      }
-    }
-
-    const shareDocument = async (document) => {
-      try {
-        const { data, error } = await supabase
-          .from('document_shares')
-          .insert({
-            document_id: document.id,
-            shared_with: 'user@example.com' // Replace with actual user selection
-          })
-
-        if (error) throw error
-      } catch (error) {
-        console.error('Error sharing document:', error)
-      }
-    }
-
-    const deleteDocument = async (document) => {
-      if (!confirm('Are you sure you want to delete this document?')) return
-
-      try {
-        const { error } = await supabase
-          .from('documents')
-          .delete()
-          .eq('id', document.id)
-
-        if (error) throw error
-
-        fetchDocuments()
-      } catch (error) {
-        console.error('Error deleting document:', error)
-      }
-    }
-
-    const toggleDropdown = (documentId) => {
-      activeDropdown.value = activeDropdown.value === documentId ? null : documentId
-    }
-
-    const openFolder = (folder) => {
-      selectedFolder.value = folder.id
-    }
-
-    const formatDate = (date) => {
-      return new Date(date).toLocaleDateString()
-    }
-
-    const formatFileSize = (bytes) => {
-      const sizes = ['Bytes', 'KB', 'MB', 'GB']
-      if (bytes === 0) return '0 Byte'
-      const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
-      return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i]
-    }
-
+    // Function to determine file icon class
     const getFileIcon = (type) => {
-      const icons = {
-        pdf: 'fas fa-file-pdf text-red-500',
-        doc: 'fas fa-file-word text-blue-500',
-        docx: 'fas fa-file-word text-blue-500',
-        xls: 'fas fa-file-excel text-green-500',
-        xlsx: 'fas fa-file-excel text-green-500',
-        default: 'fas fa-file text-gray-500'
-      }
-      return icons[type] || icons.default
-    }
+      if (!type) return 'fas fa-file text-gray-500';
+      if (type.includes('pdf')) return 'fas fa-file-pdf text-red-500';
+      if (type.includes('word')) return 'fas fa-file-word text-blue-500';
+      if (type.includes('excel')) return 'fas fa-file-excel text-green-500';
+      if (type.includes('image')) return 'fas fa-file-image text-purple-500';
+      return 'fas fa-file-alt text-gray-500'; // Default
+    };
 
-    const getStatusClass = (status) => {
-      const classes = {
-        active: 'bg-green-100 text-green-800',
-        pending: 'bg-yellow-100 text-yellow-800',
-        archived: 'bg-gray-100 text-gray-800'
-      }
-      return classes[status] || 'bg-gray-100 text-gray-800'
-    }
+    // Function to format date
+    const formatDate = (dateStr) => {
+      if (!dateStr) return 'N/A';
+      return new Date(dateStr).toLocaleDateString('en-GB');
+    };
 
-    onMounted(() => {
-      fetchDocuments()
-      fetchFolders()
-    })
+    // Fetch data when component mounts or user changes
+     onMounted(() => {
+        if (userId.value) {
+            fetchData();
+        } else {
+            const unwatch = watch(userId, (newUserId) => {
+                if (newUserId) {
+                    fetchData();
+                    unwatch();
+                }
+            });
+        }
+    });
 
     return {
       documents,
       folders,
+      clients,
+      isLoading,
       searchQuery,
       selectedFolder,
       sortBy,
       showUploadModal,
       showNewFolderModal,
-      activeDropdown,
-      uploadFolder,
       newFolderName,
+      newFolderClientId,
       filteredDocuments,
       filteredFolders,
-      handleFileChange,
-      handleUpload,
       createFolder,
-      downloadDocument,
-      shareDocument,
-      deleteDocument,
-      toggleDropdown,
-      openFolder,
-      formatDate,
+      confirmDeleteFolder,
+      confirmDeleteDocument,
+      closeFolderModal,
       getFileIcon,
-      getStatusClass
-    }
+      formatDate,
+      // Note: upload/download/share functionality removed or disabled
+    };
   }
-}
-</script>
-
-<style scoped>
-.dropdown-menu {
-  display: none;
-  position: absolute;
-  right: 0;
-  top: 100%;
-  z-index: 10;
-}
-
-.dropdown:hover .dropdown-menu {
-  display: block;
-}
-</style> 
+}; 
+</script> 

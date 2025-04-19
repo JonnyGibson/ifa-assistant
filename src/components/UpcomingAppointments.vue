@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow p-6">
+  <div class="bg-glass backdrop-blur-xs p-6 transition-all duration-300">
     <h3 class="text-lg font-semibold text-gray-700 mb-4">Upcoming Appointments</h3>
     <div class="space-y-4">
       <div v-for="appointment in appointments" :key="appointment.id" class="border-l-4 border-blue-500 pl-4">
@@ -26,4 +26,4 @@ export default {
     }
   }
 }
-</script> 
+</script>

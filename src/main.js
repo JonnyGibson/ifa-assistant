@@ -1,23 +1,33 @@
 import { createApp } from 'vue'
-import { createClient } from '@supabase/supabase-js'
-import Chart from 'chart.js/auto'
 import App from './App.vue'
 import router from './router'
+import { initializeDatabase, authService } from './services/db'
 import './assets/main.css'
 
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
+// Import PrimeVue
+import PrimeVue from 'primevue/config'
+import 'primevue/resources/themes/lara-light-green/theme.css'
+import 'primeicons/primeicons.css'
+
+// Initialize the local database first
+initializeDatabase().catch(error => {
+  console.error("Failed to initialize database:", error);
+});
 
 // Create the Vue app
 const app = createApp(App)
 
-// Use router
+// Use PrimeVue
+app.use(PrimeVue, {
+  ripple: true,
+  inputStyle: "filled"
+})
+
+// Use plugins
 app.use(router)
 
-// Provide Supabase client to all components
-app.provide('supabase', supabase)
+// Provide our auth service to all components
+app.provide('auth', authService)
 
 // Mount the app
-app.mount('#app') 
+app.mount('#app')

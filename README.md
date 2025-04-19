@@ -1,30 +1,26 @@
 # IFA Assistant
 
-A modern financial advisor assistant platform built with Vue.js and Supabase, designed to help financial advisors manage their clients, appointments, and documents efficiently.
+A modern financial advisor assistant platform built with Vue.js and a local-first IndexedDB approach (using Dexie.js), designed to help financial advisors manage their clients, appointments, and documents efficiently during development.
 
 **Note for AI Assistant:** Please consult this README and the `.cursorrules` file before making changes or suggestions.
 
 ## Tech Stack
 
 ### Frontend
-- **Framework:** Vue.js 3 (Primarily Composition API, Options API used in `Sidebar.vue`)
+- **Framework:** Vue.js 3 (Primarily Composition API)
 - **Routing:** Vue Router
 - **Build Tool:** Vite
 - **Styling:** Tailwind CSS
 - **Data Visualization:** Chart.js (used in `Dashboard.vue`)
-- **State Management:** Implicit via Supabase and component state (no dedicated state library like Pinia/Vuex currently)
 
-### Backend & Database
-- **Platform:** Supabase
-  - **Database:** PostgreSQL
-  - **Authentication:** Supabase Auth (Email/Password)
-  - **Storage:** Supabase Storage (for documents)
-  - **Real-time:** Supabase Realtime (potential use)
-  - **Security:** Row Level Security (RLS)
+### Data Management (Local Development)
+- **Database:** Browser IndexedDB
+- **Wrapper:** Dexie.js
+- **Authentication:** Custom local auth service (`src/services/db.js`) using IndexedDB
+- **Seeding:** Automatic seeding with test data on initialization
 
 ### Development
 - **Environment:** Node.js / npm
-- **Supabase CLI:** For local Supabase management
 
 ## Project Structure
 
@@ -35,18 +31,10 @@ ifa-assistant/
 │   ├── assets/        # Static assets (CSS, images)
 │   ├── components/    # Reusable Vue components (e.g., Sidebar, LoginForm, StatsCard)
 │   ├── router/        # Vue Router configuration (index.js)
+│   ├── services/      # Application services (e.g., db.js for IndexedDB access)
 │   ├── views/         # Page-level Vue components (e.g., Dashboard, Clients, Documents)
 │   ├── App.vue        # Main application component (layout, auth handling)
-│   ├── main.js        # Vue app initialization, plugins (Router)
-│   └── supabase.js    # Supabase client configuration
-├── supabase/          # Supabase local development configuration
-│   ├── migrations/    # Database migrations
-│   ├── seed.sql       # Generated seed data (if used)
-│   └── functions/     # Edge Functions (if used)
-├── scripts/           # Helper scripts (e.g., seeding, db management)
-│   ├── db-manager.js
-│   └── generate-seed-data.js
-├── .env               # Environment variables (MUST contain VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)
+│   └── main.js        # Vue app initialization, plugins (Router), DB initialization
 ├── .gitignore         # Git ignore file
 ├── README.md          # This file
 ├── package.json       # Project dependencies and scripts
@@ -55,139 +43,75 @@ ifa-assistant/
 
 ## Core Concepts & Flow
 
-1.  **Initialization (`main.js`):** Creates the Vue app, initializes the Supabase client (using `.env` variables `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`), and installs the Vue Router plugin.
+1.  **Initialization (`main.js`):** Initializes the IndexedDB database (`initializeDatabase` from `src/services/db.js`, which includes seeding if necessary), creates the Vue app, installs the Vue Router plugin, and provides the `authService`.
 2.  **Root Component (`App.vue`):**
     *   Acts as the main layout container.
-    *   Checks authentication status using `supabase.auth.getSession()` and `onAuthStateChange`.
+    *   Checks authentication status using `authService.getCurrentUser` based on a token stored in `localStorage`.
     *   Uses `v-if` directives to show either `LoginForm.vue` (if not authenticated) or the main application layout (Sidebar + router-view, if authenticated).
     *   Contains a loading state (`isLoading`) to prevent content flashing before auth is checked.
-    *   Includes the `<Sidebar />` and the `<router-view />` components.
-3.  **Routing (`router/index.js`):**
+    *   Provides the `currentUser` reactive ref to child components.
+3.  **Routing (`src/router.js`):**
     *   Defines application routes, mapping paths (e.g., `/`, `/clients`) to view components (e.g., `Dashboard.vue`, `Clients.vue`).
     *   Uses `createWebHistory`.
-    *   Includes a `beforeEach` navigation guard. **Crucially, this guard currently relies on `App.vue`'s internal logic to show/hide content based on authentication.** It primarily checks for the `supabase.auth.token` in `localStorage` and logs navigation but does *not* perform redirects itself for the main authenticated routes.
-4.  **Sidebar (`components/Sidebar.vue`):** Uses `<router-link>` components to trigger navigation changes handled by Vue Router. Uses the Options API and `$route.path` for active link styling.
-5.  **Views (`views/*.vue`):** Page-level components rendered by `<router-view>`. These fetch and display data relevant to their specific section (e.g., `Dashboard.vue` fetches client stats, notes, and renders charts).
+    *   Includes a `beforeEach` navigation guard that checks for `auth_token` in `localStorage`, validates it using `authService`, and checks for admin permissions (`user.isAdmin`) for protected routes like `/settings`.
+4.  **Sidebar (`components/Sidebar.vue`):** Uses `<router-link>` components to trigger navigation changes handled by Vue Router.
+5.  **Views (`views/*.vue`):** Page-level components rendered by `<router-view>`. These inject the `currentUser` ref (provided by `App.vue`) to get the `userId` and use `dataService` methods (from `src/services/db.js`) to fetch and manipulate data relevant to their section (e.g., `Clients.vue` uses `dataService.getClients(userId)`).
+6.  **Data Service (`src/services/db.js`):**
+    *   Uses Dexie.js to wrap IndexedDB.
+    *   Defines the database schema (tables like `users`, `clients`, `tasks`, etc.).
+    *   Handles database initialization and seeding with UK-focused test data.
+    *   Provides `authService` for login, logout, registration, and user validation.
+    *   Provides `dataService` for CRUD operations on various data types, ensuring operations are scoped to the logged-in user where appropriate.
+    *   Includes functions for resetting the database (`db.reset()`).
 
 ## AI Assistant Troubleshooting Tips & Context
 
-*   **Routing/Navigation Guard:** If navigation seems broken or components aren't rendering, first check the `router.beforeEach` guard in `router/index.js`. The issue might be related to how it interacts with `App.vue`'s authentication handling. The guard *should not* be redirecting to a 'Login' route, as `App.vue` handles this display internally. Ensure `localStorage.getItem('supabase.auth.token')` is checking the correct key.
-*   **Component Rendering:** If a view (like Dashboard) isn't rendering its content:
-    *   Verify the component's template has **exactly one root element**. (This was a recent issue with `Dashboard.vue`).
+*   **Routing/Navigation Guard:** If navigation seems broken or redirects aren't working, check the `router.beforeEach` guard in `src/router.js`. Ensure it correctly reads `auth_token` from `localStorage`, calls `authService.getCurrentUser`, and checks the `user.isAdmin` flag.
+*   **Component Rendering/Data Fetching:** If a view isn't rendering its content:
     *   Check the browser console for errors during the component's `setup` or `onMounted` lifecycle hooks.
-    *   Ensure any data fetching (`fetchDashboardData` in Dashboard) is completing successfully and updating the reactive refs (`ref`).
-*   **Chart.js:** The Dashboard uses Chart.js. Remember that chart initialization needs a valid canvas element. DOM querying (`document.querySelector`) inside `onMounted` is used, but ensure the query selectors are correct (e.g., `#riskProfileChart canvas`) and that the component has fully rendered. Consider `nextTick` if timing issues arise.
-*   **Authentication:** Auth state (`isAuthenticated`) is managed reactively within `App.vue`. Changes rely on Supabase's `getSession` and `onAuthStateChange`.
-*   **Dependencies:** Ensure `npm install` has been run. Check `package.json` for required dependencies (Vue, Vue Router, Supabase JS client, Tailwind, Chart.js).
-*   **Environment Variables:** Supabase connection requires `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to be set in a `.env` file at the project root.
+    *   Ensure data fetching methods (e.g., `fetchClients` in `Clients.vue`) are called correctly, using the injected `userId` from the `currentUser`.
+    *   Verify that the `currentUser` is being successfully provided by `App.vue` and injected into the view.
+    *   Check for errors returned by `dataService` methods.
+*   **IndexedDB Issues:**
+    *   Use browser developer tools (Application/Storage tab -> IndexedDB -> IFAAssistantDB) to inspect the database contents directly.
+    *   Check the console for logs related to database initialization, seeding, or errors from `db.js`.
+    *   If data seems missing or corrupt, try resetting using the `/settings` page (as admin) or by clearing browser application storage in dev tools.
+*   **Authentication:** Auth state (`isAuthenticated`, `currentUser`) is managed reactively within `App.vue`. Login stores a token in `localStorage`, logout removes it. `checkAuth` validates the token on page load.
+*   **Dependencies:** Ensure `npm install` has been run. Check `package.json` for required dependencies (Vue, Vue Router, Dexie, Tailwind, Chart.js).
 
 ## Local Development Setup
 
 ### Prerequisites
 - Node.js (v16+)
 - npm
-- Supabase CLI (`npm install -g supabase`) - *Optional if only connecting to a remote Supabase instance, required for local development.*
 
-### Getting Started (Connecting to Remote Supabase)
-1.  Create a `.env` file in the project root.
-2.  Add your Supabase project URL and Anon Key:
-    ```dotenv
-    VITE_SUPABASE_URL=YOUR_SUPABASE_URL
-    VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
-    ```
-3.  Install dependencies: `npm install`
-4.  Start the development server: `npm run dev` (Usually runs on http://localhost:5173)
-
-### Getting Started (Using Local Supabase)
-1.  Ensure Supabase CLI is installed.
-2.  Start the local Supabase instance: `supabase start`
-3.  Note the API URL and anon key printed in the terminal.
-4.  Create/update the `.env` file with these local keys.
-5.  Install dependencies: `npm install`
-6.  Start the development server: `npm run dev`
-
-### Database Management (Local Supabase)
-- Reset database & users: `npm run db:reset`
-- Reset only data (preserves users): `npm run db:reset-data`
-- Access Supabase Studio via the URL provided by `supabase start`.
-- Migrations are in `supabase/migrations/`.
-
-### Database Structure
-
-#### Core Tables
-- **clients** - Client information and risk profiles
-  - Personal details (name, contact, address)
-  - Risk profile and investment preferences
-  - Client status and review dates
-- **client_notes** - Meeting notes and client interactions
-  - Note types (meeting, call, email, review)
-  - Timestamps and content
-  - Client reference
-- **appointments** - Client appointments and scheduling
-  - Date/time and duration
-  - Status tracking
-  - Client reference
-- **documents** - Document management and tracking
-  - File metadata and storage paths
-  - Document types and status
-  - Client reference
-
-#### Security & Access Control
-- Row Level Security (RLS) policies implemented on all tables
-- Authentication through Supabase Auth
-- Role-based access control (RBAC)
-- Secure file storage with access controls
+### Getting Started
+1.  Clone the repository.
+2.  Install dependencies: `npm install`
+3.  Start the development server: `npm run dev` (Usually runs on http://localhost:5173 or similar)
+4.  The application uses IndexedDB. On the first run, it will automatically seed itself with test data.
 
 ### Test Users (Development)
 
-Default test users for local development:
-- user1@example.com / admin123
-- user2@example.com / admin123
-- user3@example.com / admin123
-- user4@example.com / admin123
-- user5@example.com / admin123
+Default test users seeded into IndexedDB:
+- **Admin:** username: `admin` / password: `admin123`
+- **User:** username: `testuser` / password: `test123`
+- *Additional randomly generated users are also created.* (Check `src/services/db.js` for details)
+
+### Database Management
+- Data is stored locally in your browser's IndexedDB.
+- The database automatically seeds on first load or if empty.
+- Log in as the `admin` user and navigate to the `/settings` page to:
+    - Reset the database to its initial seed state.
+    - Clear all data (except admin users).
+    - Manage users (add, edit, delete, reset password).
+- To completely clear the database, use your browser's developer tools to clear application storage for the site.
 
 ## Development Workflows
 
-### Database Migrations
-- Migration files are in `supabase/migrations/`
-- New migrations should follow the naming pattern: `YYYYMMDDHHMMSS_description.sql`
-- Migrations are automatically applied during `supabase start`
-- Always test migrations locally before deployment
-
-### Seeding Data
-- Seed data is generated using `scripts/generate-seed-data.js`
-- Seeds are automatically applied during database reset
-- Sample data includes realistic client profiles and interactions
-- Test data follows GDPR-compliant patterns
-
-### Local Development Tips
-1. Always use `supabase start` before development
-2. Use `npm run db:reset-data` to refresh data without affecting users
-3. Access Supabase Studio at the URL provided after `supabase start`
-4. Database connection details are provided after `supabase start`
-5. Monitor real-time subscriptions in Supabase Studio
-6. Use the Supabase CLI for database management tasks
-7. Keep all Supabase keys and secrets secure and never commit them
-
-### Supabase Integration
-- Client-side integration through `@supabase/supabase-js`
-- Real-time subscriptions for live updates
-- Secure file uploads to Supabase Storage
-- Authentication flows with Supabase Auth
-- Row Level Security for data protection
-
-## Local Development URLs
-
-After running `supabase start`, you'll see the following URLs in your terminal:
-- Frontend: http://localhost:5173
-- Supabase Studio
-- API URL
-- Database URL
-- Storage URL
-- Auth URL
-
-Note: The actual URLs and keys will be displayed in your terminal after running `supabase start`. Never commit these values to version control. 
+- **Feature Development:** Create new branches for features. Keep components small and focused.
+- **Styling:** Utilize Tailwind CSS utility classes.
+- **Data Handling:** Use the `dataService` and `authService` from `src/services/db.js` for all data interactions.
 
 ## Testing with MCP Server
 
@@ -195,9 +119,9 @@ The project uses MCP (Model Control Protocol) server for automated testing and U
 
 - Simulate user interactions with the application
 - Verify UI components are working correctly
-- Test form submissions and data entry
+- Test form submissions and data entry (using IndexedDB)
 - Validate navigation flows
-- Check authentication processes
+- Check authentication processes (using local auth service)
 - Ensure proper error handling
 
 ### Running MCP Tests
@@ -215,34 +139,40 @@ The project uses MCP (Model Control Protocol) server for automated testing and U
 - Always verify elements are visible and interactive before attempting interactions
 - Use proper waiting mechanisms when testing dynamic content
 - Check for proper error handling and edge cases
-- Validate form submissions and data persistence
-- Test across different authentication states
-- Verify navigation flows and routing behavior
+- Validate form submissions and data persistence in IndexedDB
+- Test across different authentication states (admin, regular user)
+- Verify navigation flows and routing behavior based on auth/admin status
 
 ### Common MCP Test Scenarios
 
 1. User Authentication
-   - Login/logout flows
+   - Login/logout flows using seeded users (`admin`, `testuser`)
    - Invalid credentials handling
-   - Session management
+   - Session token handling in `localStorage`
 
-2. Client Management
+2. Client Management (as logged-in user)
    - Adding new clients
    - Editing client information
    - Searching and filtering clients
-   - Status updates
+   - Deleting clients
 
-3. Document Handling
-   - File uploads
-   - Document previews
-   - Permission checks
+3. Document Handling (Metadata only)
+   - Creating folders
+   - Viewing document metadata
+   - Deleting document metadata/folders
 
-4. Appointment Scheduling
+4. Appointment Scheduling (as logged-in user)
    - Creating appointments
    - Updating appointment details
-   - Calendar integration
+   - Calendar interaction
 
-5. Data Validation
+5. Admin Settings Page (as `admin` user)
+   - Accessing `/settings`
+   - Resetting/Clearing database
+   - Adding/Editing/Deleting users
+   - Password resets
+
+6. Data Validation
    - Form validation
    - Error message display
    - Required field handling
