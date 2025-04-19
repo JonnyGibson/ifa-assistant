@@ -1,32 +1,25 @@
 <template>
   <div class="bg-white rounded-lg shadow-soft p-6 transition-all duration-300 hover:shadow-hover">
     <div>
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold text-gray-700">Recent Activity</h3>
-        <button class="text-blue-500 hover:text-blue-700">
-          View All
-        </button>
-      </div>
-      <div class="overflow-x-auto">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4">Recent Client Contacts</h3>
+      <div class="overflow-y-auto max-h-[400px] pr-2 scrollbar scrollbar-thin scrollbar-thumb-emerald-200 scrollbar-track-gray-100 hover:scrollbar-thumb-emerald-300">
         <table class="min-w-full">
-          <thead>
+          <thead class="sticky top-0 bg-white shadow-sm z-10">
             <tr>
-              <th class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Client</th>
-              <th class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Note Type</th>
-              <th class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
-              <th class="px-6 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Content</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase w-52">Client</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Notes</th>
             </tr>
           </thead>
-          <tbody>
-            <tr v-for="activity in activities" :key="activity.id" class="hover:bg-gray-50">
-              <td class="px-6 py-4 border-b border-gray-200">{{ activity.clientName }}</td>
-              <td class="px-6 py-4 border-b border-gray-200">
-                <span :class="getNoteTypeClass(activity.note_type)" class="px-2 py-1 rounded-full text-xs">
-                  {{ activity.note_type }}
-                </span>
+          <tbody class="divide-y divide-gray-200">
+            <tr v-if="!interactions.length" class="hover:bg-gray-50">
+              <td colspan="2" class="px-4 py-4 text-center text-gray-500">No recent contacts found</td>
+            </tr>
+            <tr v-for="interaction in interactions" :key="interaction.id" class="hover:bg-gray-50">
+              <td class="px-4 py-4 whitespace-nowrap">
+                <div class="font-medium text-gray-900">{{ interaction.clientName }}</div>
+                <div class="text-xs text-gray-500 mt-1">{{ formatDate(interaction.date) }}</div>
               </td>
-              <td class="px-6 py-4 border-b border-gray-200">{{ formatDate(activity.created_at) }}</td>
-              <td class="px-6 py-4 border-b border-gray-200">{{ activity.content }}</td>
+              <td class="px-4 py-4 text-sm text-gray-600">{{ interaction.summaryNotes }}</td>
             </tr>
           </tbody>
         </table>
@@ -36,27 +29,71 @@
 </template>
 
 <script>
+import { ref, onMounted, inject, computed, watch } from 'vue'
+import { dataService } from '../services/db'
+
 export default {
   name: 'RecentActivity',
-  props: {
-    activities: {
-      type: Array,
-      required: true
-    }
-  },
-  methods: {
-    formatDate(date) {
-      return new Date(date).toLocaleDateString()
-    },
-    getNoteTypeClass(type) {
-      const classes = {
-        meeting: 'bg-blue-100 text-blue-800',
-        call: 'bg-green-100 text-green-800',
-        email: 'bg-yellow-100 text-yellow-800',
-        general: 'bg-gray-100 text-gray-800'
+  setup() {
+    const interactions = ref([]);
+    const isLoading = ref(true);
+    const currentUser = inject('currentUser', ref(null));
+    const userId = computed(() => currentUser.value?.id);
+
+    const fetchRecentInteractions = async () => {
+      if (!userId.value) return;
+      try {
+        const [allInteractions, clients] = await Promise.all([
+          dataService.getAllInteractions(userId.value),
+          dataService.getClients(userId.value)
+        ]);
+
+        const clientMap = new Map(clients.map(c => [c.id, `${c.firstName} ${c.lastName}`]));
+
+        interactions.value = allInteractions
+          .map(interaction => ({
+            ...interaction,
+            clientName: clientMap.get(interaction.clientId) || 'Unknown Client'
+          }))
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .slice(0, 20);
+      } catch (error) {
+        console.error('Error fetching recent interactions:', error);
+      } finally {
+        isLoading.value = false;
       }
-      return classes[type] || 'bg-gray-100 text-gray-800'
-    }
+    };
+
+    const formatDate = (date) => {
+      if (!date) return 'N/A';
+      const d = new Date(date);
+      if (isNaN(d.getTime())) return 'Invalid Date';
+      
+      return d.toLocaleDateString('en-GB', { 
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).split('/').reverse().join('-');
+    };
+
+    onMounted(() => {
+      if (userId.value) {
+        fetchRecentInteractions();
+      } else {
+        const unwatch = watch(userId, (newId) => {
+          if (newId) {
+            fetchRecentInteractions();
+            unwatch();
+          }
+        });
+      }
+    });
+
+    return {
+      interactions,
+      isLoading,
+      formatDate
+    };
   }
 }
 </script>

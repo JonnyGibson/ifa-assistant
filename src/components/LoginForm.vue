@@ -19,7 +19,8 @@
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
             <div class="mt-1">
-              <InputText
+              <InputText 
+            
                 id="email"
                 v-model="formData.email"
                 type="email"
@@ -100,8 +101,8 @@ export default {
   emits: ['login'],
   setup(props, { emit }) {
     const formData = ref({
-      email: '',
-      password: ''
+      email: 'admin@webserve.it',
+      password: 'password'
     })
     
     const loading = ref(false)
@@ -141,7 +142,7 @@ export default {
       resetting.value = true
       try {
         await db.reset()
-        alert('Database reset successfully. You can now log in with admin@ifa.com / password')
+        alert('Database reset successfully. You can now log in with admin@webserve.it / password')
       } catch (error) {
         console.error('Error resetting database:', error)
         alert('Failed to reset database: ' + error.message)

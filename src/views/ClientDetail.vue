@@ -2,19 +2,19 @@
   <div v-if="isLoading" class="flex justify-center items-center py-10">
      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
   </div>
-  <div v-else-if="client" class="space-y-8">
+  <div v-else-if="client" class="space-y-8 relative">
     <!-- Client Header -->
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center bg-white bg-opacity-90 px-6 py-3 rounded-lg shadow-sm -mt-14 relative z-10 mx-4">
       <div>
-        <h1 class="text-3xl font-bold text-gray-900">{{ client.firstName }} {{ client.lastName }}</h1>
-        <p class="text-sm text-gray-500">Client ID: {{ client.id }}</p>
+        <h1 class="text-3xl font-bold text-emerald-600">{{ client.firstName }} {{ client.lastName }}</h1>
+        <p class="text-base font-medium text-emerald-600/75 mt-1">Client ID: {{ client.id }}</p>
       </div>
-       <span 
-         :class="getRiskProfileBadgeClass(client.riskProfile)"
-         class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full"
-        >
-         {{ client.riskProfile }} Risk
-       </span>
+      <span 
+        :class="getRiskProfileBadgeClass(client.riskProfile)"
+        class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full"
+      >
+        Risk Appetite: {{ client.riskProfile }}
+      </span>
     </div>
 
     <!-- Client Details Grid -->
@@ -80,8 +80,8 @@
       <!-- Category Distribution -->
       <div class="bg-white shadow p-6 rounded-lg">
         <h3 class="text-lg font-semibold text-gray-800 mb-4">Category Distribution</h3>
-        <div v-if="holdings.length > 0" class="h-[400px] relative flex items-center justify-center">
-          <canvas ref="categoryChart"></canvas>
+        <div v-if="holdings.length > 0" class="h-[400px] relative">
+          <canvas ref="categoryChart" style="max-height: 100%; width: 100%;"></canvas>
         </div>
         <p v-else class="text-gray-500 text-center py-4">No holdings data available</p>
       </div>
@@ -191,18 +191,33 @@ export default {
     };
 
     const setupCategoryChart = () => {
-      if (!categoryChart.value) return;
+      if (!categoryChart.value || !holdings.value.length) return;
+
+      // Clean up any existing chart instance
+      const existingChart = Chart.getChart(categoryChart.value);
+      if (existingChart) {
+        existingChart.destroy();
+      }
 
       // Calculate category distribution
       const categoryData = holdings.value.reduce((acc, holding) => {
         const category = holding.fund.category;
-        acc[category] = (acc[category] || 0) + holding.currentValue;
+        if (!acc[category]) acc[category] = 0;
+        acc[category] += holding.currentValue || 0;
         return acc;
       }, {});
 
+      // Sort categories by value for better visualization
+      const sortedCategories = Object.entries(categoryData)
+        .sort(([, a], [, b]) => b - a)
+        .reduce((acc, [key, value]) => {
+          acc[key] = value;
+          return acc;
+        }, {});
+
       // Prepare chart data
-      const labels = Object.keys(categoryData);
-      const data = Object.values(categoryData);
+      const labels = Object.keys(sortedCategories);
+      const data = Object.values(sortedCategories);
       const colors = [
         '#10B981', '#3B82F6', '#6366F1', '#8B5CF6', 
         '#EC4899', '#F59E0B', '#84CC16', '#14B8A6'
@@ -215,16 +230,21 @@ export default {
           datasets: [{
             data,
             backgroundColor: colors.slice(0, labels.length),
-            borderWidth: 1
+            borderWidth: 1,
+            borderColor: '#fff'
           }]
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             legend: {
               position: 'right',
               labels: {
                 usePointStyle: true,
+                font: {
+                  size: 12
+                }
               }
             },
             tooltip: {
@@ -241,6 +261,13 @@ export default {
         }
       });
     };
+
+    // Make sure we call setupCategoryChart when holdings change
+    watch(() => holdings.value, () => {
+      if (holdings.value.length > 0) {
+        nextTick(setupCategoryChart);
+      }
+    });
 
     // Computed map for easy lookup of interaction type names by ID
     const interactionTypeMap = computed(() => {

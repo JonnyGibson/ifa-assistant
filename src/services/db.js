@@ -163,9 +163,9 @@ const generateSeedData = async () => {
   const interactions = [];
 
   // 1. Generate IFA Users (1 admin, 2 normal)
-  ifaUsers.push({ id: 1, username: 'admin.ifa', email: 'admin@ifa.com', password: 'password', firstName: 'Admin', lastName: 'Advisor', isAdmin: true, createdAt: new Date() });
-  ifaUsers.push({ id: 2, username: 'john.doe', email: 'john.doe@ifa.com', password: 'password', firstName: 'John', lastName: 'Doe', isAdmin: false, createdAt: new Date() });
-  ifaUsers.push({ id: 3, username: 'jane.smith', email: 'jane.smith@ifa.com', password: 'password', firstName: 'Jane', lastName: 'Smith', isAdmin: false, createdAt: new Date() });
+  ifaUsers.push({ id: 1, username: 'admin.ifa', email: 'admin@webserve.it', password: 'password', firstName: 'Admin', lastName: 'Advisor', isAdmin: true, createdAt: new Date() });
+  ifaUsers.push({ id: 2, username: 'john.doe', email: 'john.doe@webserve.it', password: 'password', firstName: 'John', lastName: 'Doe', isAdmin: false, createdAt: new Date() });
+  ifaUsers.push({ id: 3, username: 'jane.smith', email: 'jane.smith@webserve.it', password: 'password', firstName: 'Jane', lastName: 'Smith', isAdmin: false, createdAt: new Date() });
   console.log(`👥 Generated ${ifaUsers.length} IFA users.`);
 
   // 2. Process imported funds data
@@ -687,7 +687,22 @@ export const dataService = {
       .reverse() // Show most recent first
       .sortBy('date');
   },
-  
+
+  async getAllInteractions(ifaUserId = null) {
+    try {
+      let query = db.interactions;
+      if (ifaUserId) {
+        query = query.where('ifaUserId').equals(ifaUserId);
+      }
+      return await query
+        .reverse()
+        .sortBy('date');
+    } catch (error) {
+      console.error('[DataService] Error fetching all interactions:', error);
+      return [];
+    }
+  },
+
   async addInteraction(interactionData) {
       // Caller must provide interactionTypeId
       if (!interactionData.clientId || !interactionData.ifaUserId || !interactionData.date || !interactionData.interactionTypeId) {

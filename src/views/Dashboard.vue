@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-8">
-    <!-- Stats Overview Section -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 -mt-14">
+    <!-- Stats Overview Section - Added relative positioning and z-index -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 -mt-14 relative z-10">
       <StatsCard
         title="Total Clients"
         :value="stats.totalClients"
@@ -17,6 +17,7 @@
         icon-bg-color="bg-emerald-100"
         icon-text-color="text-emerald-600"
         value-color="text-emerald-600"
+        subtext="updated in past 3m"
       />
       <StatsCard
         title="Pending Tasks"
@@ -39,7 +40,9 @@
     <!-- Quick Actions & Activity Section -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <QuickActions />
-      <RecentActivity />
+      <div class="bg-white rounded-lg shadow-soft transition-all duration-300 hover:shadow-hover">
+        <RecentActivity />
+      </div>
     </div>
 
     <!-- Fund Management Overview & Top Clients Section -->
@@ -67,9 +70,20 @@
         <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Clients by Portfolio Value</h3>
         <div class="space-y-4">
           <div v-for="client in stats.topClients" :key="client.id" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div>
+            <div class="flex items-center space-x-3">
               <p class="font-medium text-gray-900">{{ client.firstName }} {{ client.lastName }}</p>
-              <p class="text-sm text-gray-500">{{ client.riskProfile }} Risk Profile</p>
+              <span 
+                :class="[
+                  'px-2 py-0.5 text-xs leading-5 font-medium rounded-full',
+                  {
+                    'risk-averse': client.riskProfile === 'Averse',
+                    'risk-minimal': client.riskProfile === 'Minimal',
+                    'risk-cautious': client.riskProfile === 'Cautious',
+                    'risk-open': client.riskProfile === 'Open',
+                    'risk-eager': client.riskProfile === 'Eager'
+                  }
+                ]"
+              >{{ client.riskProfile }}</span>
             </div>
             <p class="text-lg font-semibold text-emerald-600">{{ formatCurrency(client.portfolioValue) }}</p>
           </div>
@@ -250,3 +264,25 @@ export default {
   }
 }
 </script>
+
+<style lang="postcss" scoped>
+.risk-averse {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.risk-minimal {
+  @apply bg-green-100 text-green-800;
+}
+
+.risk-cautious {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.risk-open {
+  @apply bg-orange-100 text-orange-800;
+}
+
+.risk-eager {
+  @apply bg-red-100 text-red-800;
+}
+</style>

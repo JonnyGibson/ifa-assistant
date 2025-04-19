@@ -1,12 +1,13 @@
 <template>
-  <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 transition-all duration-300 hover:shadow-hover">
+  <div class="bg-white rounded-lg shadow-md p-6">
     <div class="flex items-center">
-      <div :class="`p-3 rounded-full ${iconBgColor} ${iconTextColor}`">
-        <i :class="`fas ${icon} text-2xl`"></i>
+      <div :class="iconBgColor" class="p-3 rounded-full">
+        <i :class="['fas', icon, iconTextColor]" class="text-xl"></i>
       </div>
       <div class="ml-4">
-        <h3 class="text-lg font-semibold text-gray-700">{{ title }}</h3>
-        <p :class="`text-3xl font-bold ${valueColor}`">{{ value }}</p>
+        <p class="text-sm font-medium text-gray-600">{{ title }}</p>
+        <p :class="['text-2xl font-semibold', valueColor]">{{ value }}</p>
+        <p v-if="subtext" class="text-xs text-gray-500 mt-1">{{ subtext }}</p>
       </div>
     </div>
   </div>
@@ -21,7 +22,7 @@ export default {
       required: true
     },
     value: {
-      type: [String, Number],
+      type: [Number, String],
       required: true
     },
     icon: {
@@ -39,6 +40,10 @@ export default {
     valueColor: {
       type: String,
       default: 'text-blue-600'
+    },
+    subtext: {
+      type: String,
+      default: ''
     }
   }
 }
