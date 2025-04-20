@@ -1,142 +1,164 @@
 <template>
-  <div>
-    <!-- Search Input -->
-    <div class="relative -mt-14 z-10 px-4">
-        <input 
-            type="text" 
-            v-model="searchQuery"
-            placeholder="Search by name or email..."
-            class="w-64 px-4 py-2 border border-gray-300 rounded-md shadow-lg focus:ring-emerald-500 focus:border-emerald-500 bg-white"
-        />
+  <div class="px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Page Header with Search -->
+    <div class="mb-8">
+      <div class="sm:flex sm:items-center sm:justify-between">
+        <div class="relative z-10 bg-white bg-opacity-90 inline-block px-6 py-3 rounded-lg shadow-sm">
+          <h1 class="text-3xl font-bold text-emerald-600 mb-0">Clients</h1>
+        </div>
+        <div class="mt-4 sm:mt-0 w-64">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-search text-gray-400"></i>
+            </div>
+            <input 
+              type="text" 
+              v-model="searchQuery"
+              placeholder="Search clients..."
+              class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm transition duration-150 ease-in-out"
+            />
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Loading Indicator: Use combined loading state -->
-    <div v-if="isLoading || infoLoading" class="flex justify-center items-center py-10">
-      <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-500"></div>
-      <span class="ml-3 text-gray-500">Loading client data...</span>
-    </div>
+    <!-- Content Area -->
+    <div class="bg-white rounded-lg shadow">
+      <!-- Loading Indicator -->
+      <div v-if="isLoading || infoLoading" class="flex justify-center items-center py-10">
+        <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-500"></div>
+        <span class="ml-3 text-gray-500">Loading client data...</span>
+      </div>
 
-    <!-- Client Table: Render only when both states are false -->
-    <div v-else class="table-container bg-white shadow border border-gray-200 overflow-hidden sm:rounded-lg">
-      <table class="client-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Contact</th>
-            <th>Risk Appetite</th>
-            <th>Last Contact</th>
-            <th>
-              <span class="sr-only">View Details</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-if="paginatedClients.length === 0">
-            <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-              {{ clients.length === 0 ? 'No clients found.' : 'No clients match your search.' }}
-            </td>
-          </tr>
-          <tr v-for="client in paginatedClients" :key="client.id" class="client-row">
-            <td>
-              <div class="client-name">{{ client.firstName }} {{ client.lastName }}</div>
-              <div class="client-dob">DOB: {{ formatDate(client.dateOfBirth) }}</div>
-            </td>
-            <td>
-              <a :href="'mailto:' + client.email" class="client-email">{{ client.email }}</a>
-              <div class="client-phone">{{ client.phone }}</div>
-            </td>
-            <td>
-              <div class="relative group">
-                <span 
-                  :class="[
-                    'risk-pill',
-                    {
-                      'risk-averse': client.riskProfile === 'Averse',
-                      'risk-minimal': client.riskProfile === 'Minimal',
-                      'risk-cautious': client.riskProfile === 'Cautious',
-                      'risk-open': client.riskProfile === 'Open',
-                      'risk-eager': client.riskProfile === 'Eager'
-                    }
-                  ]"
-                >
-                  {{ client.riskProfile }}
-                </span>
-                <div class="risk-tooltip">
-                  <div v-if="client.riskProfile === 'Averse'" class="tooltip-content">
-                    Individuals in this category are very cautious, preferring to minimize risk and prioritize capital preservation. They are unlikely to invest in the stock market and may prefer safer options like savings accounts.
+      <!-- Client Table -->
+      <div v-else>
+        <div class="table-container bg-white shadow border border-gray-200 overflow-hidden sm:rounded-lg">
+          <table class="client-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>Risk Appetite</th>
+                <th>Last Contact</th>
+                <th>
+                  <span class="sr-only">View Details</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-if="paginatedClients.length === 0">
+                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                  {{ clients.length === 0 ? 'No clients found.' : 'No clients match your search.' }}
+                </td>
+              </tr>
+              <tr v-for="client in paginatedClients" :key="client.id" class="client-row">
+                <td>
+                  <router-link 
+                    :to="{ name: 'ClientDetail', params: { id: client.id } }" 
+                    class="client-name hover:text-emerald-600"
+                  >
+                    {{ client.firstName }} {{ client.lastName }}
+                  </router-link>
+                  <div class="client-dob">DOB: {{ formatDate(client.dateOfBirth) }}</div>
+                </td>
+                <td>
+                  <a :href="'mailto:' + client.email" class="client-email">{{ client.email }}</a>
+                  <div class="client-phone">{{ client.phone }}</div>
+                </td>
+                <td>
+                  <div class="relative group">
+                    <span 
+                      :class="[
+                        'risk-pill',
+                        {
+                          'risk-averse': client.riskProfile === 'Averse',
+                          'risk-minimal': client.riskProfile === 'Minimal',
+                          'risk-cautious': client.riskProfile === 'Cautious',
+                          'risk-open': client.riskProfile === 'Open',
+                          'risk-eager': client.riskProfile === 'Eager'
+                        }
+                      ]"
+                    >
+                      {{ client.riskProfile }}
+                    </span>
+                    <div class="risk-tooltip">
+                      <div v-if="client.riskProfile === 'Averse'" class="tooltip-content">
+                        Individuals in this category are very cautious, preferring to minimize risk and prioritize capital preservation. They are unlikely to invest in the stock market and may prefer safer options like savings accounts.
+                      </div>
+                      <div v-if="client.riskProfile === 'Minimal'" class="tooltip-content">
+                        This level suggests a low tolerance for risk and a preference for stability.
+                      </div>
+                      <div v-if="client.riskProfile === 'Cautious'" class="tooltip-content">
+                        Individuals in this category are more comfortable with some degree of risk and are willing to accept moderate volatility for the potential of higher returns.
+                      </div>
+                      <div v-if="client.riskProfile === 'Open'" class="tooltip-content">
+                        This level indicates a moderate willingness to take on risk and a preference for a balanced approach, potentially including a mix of lower and higher-risk assets.
+                      </div>
+                      <div v-if="client.riskProfile === 'Eager'" class="tooltip-content">
+                        This is the highest risk appetite level, with individuals willing to accept a high degree of risk and potential volatility in pursuit of significant returns.
+                      </div>
+                    </div>
                   </div>
-                  <div v-if="client.riskProfile === 'Minimal'" class="tooltip-content">
-                    This level suggests a low tolerance for risk and a preference for stability.
-                  </div>
-                  <div v-if="client.riskProfile === 'Cautious'" class="tooltip-content">
-                    Individuals in this category are more comfortable with some degree of risk and are willing to accept moderate volatility for the potential of higher returns.
-                  </div>
-                  <div v-if="client.riskProfile === 'Open'" class="tooltip-content">
-                    This level indicates a moderate willingness to take on risk and a preference for a balanced approach, potentially including a mix of lower and higher-risk assets.
-                  </div>
-                  <div v-if="client.riskProfile === 'Eager'" class="tooltip-content">
-                    This is the highest risk appetite level, with individuals willing to accept a high degree of risk and potential volatility in pursuit of significant returns.
-                  </div>
-                </div>
+                </td>
+                <td class="text-sm text-gray-500">
+                  {{ formatRelativeTime(client.lastInteractionDate) }}
+                </td>
+                <td class="text-right">
+                  <router-link 
+                    :to="{ name: 'ClientDetail', params: { id: client.id } }" 
+                    class="view-details"
+                  >
+                    View Details
+                  </router-link>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <!-- Improved Pagination Controls -->
+          <div 
+            v-if="totalPages > 1" 
+            class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6"
+          >
+              <div class="flex-1 flex justify-between sm:hidden">
+                  <button @click="prevPage" :disabled="currentPage === 1" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"> Previous </button>
+                  <button @click="nextPage" :disabled="currentPage === totalPages" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"> Next </button>
               </div>
-            </td>
-            <td class="text-sm text-gray-500">
-              {{ formatRelativeTime(client.lastInteractionDate) }}
-            </td>
-            <td class="text-right">
-              <router-link 
-                :to="{ name: 'ClientDetail', params: { id: client.id } }" 
-                class="view-details"
-              >
-                View Details
-              </router-link>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      
-      <!-- Improved Pagination Controls -->
-      <div 
-        v-if="totalPages > 1" 
-        class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6"
-      >
-          <div class="flex-1 flex justify-between sm:hidden">
-              <button @click="prevPage" :disabled="currentPage === 1" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"> Previous </button>
-              <button @click="nextPage" :disabled="currentPage === totalPages" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"> Next </button>
+              <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                  <div>
+                      <p class="text-sm text-gray-700">
+                          Showing <span class="font-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span>
+                          to <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, filteredClients.length) }}</span>
+                          of <span class="font-medium">{{ filteredClients.length }}</span> results
+                      </p>
+                  </div>
+                  <div>
+                      <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                          <button 
+                            @click="prevPage" 
+                            :disabled="currentPage === 1" 
+                            class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                              <span class="sr-only">Previous</span>
+                              <i class="fas fa-chevron-left h-5 w-5" aria-hidden="true"></i>
+                          </button>
+                          <!-- Page info -->
+                          <span aria-current="page" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500">
+                             Page {{ currentPage }} of {{ totalPages }}
+                          </span>
+                           <button 
+                             @click="nextPage" 
+                             :disabled="currentPage === totalPages" 
+                             class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <span class="sr-only">Next</span>
+                               <i class="fas fa-chevron-right h-5 w-5" aria-hidden="true"></i>
+                          </button>
+                      </nav>
+                  </div>
+              </div>
           </div>
-          <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-              <div>
-                  <p class="text-sm text-gray-700">
-                      Showing <span class="font-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span>
-                      to <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, filteredClients.length) }}</span>
-                      of <span class="font-medium">{{ filteredClients.length }}</span> results
-                  </p>
-              </div>
-              <div>
-                  <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                      <button 
-                        @click="prevPage" 
-                        :disabled="currentPage === 1" 
-                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                          <span class="sr-only">Previous</span>
-                          <i class="fas fa-chevron-left h-5 w-5" aria-hidden="true"></i>
-                      </button>
-                      <!-- Page info -->
-                      <span aria-current="page" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500">
-                         Page {{ currentPage }} of {{ totalPages }}
-                      </span>
-                       <button 
-                         @click="nextPage" 
-                         :disabled="currentPage === totalPages" 
-                         class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <span class="sr-only">Next</span>
-                           <i class="fas fa-chevron-right h-5 w-5" aria-hidden="true"></i>
-                      </button>
-                  </nav>
-              </div>
-          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -396,7 +418,7 @@ export default {
 
 <style scoped lang="postcss">
 .table-container {
-  @apply overflow-x-auto;
+  @apply rounded-lg border-0 overflow-hidden;
 }
 
 .client-table {
@@ -404,7 +426,7 @@ export default {
 }
 
 .client-table th {
-  @apply px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0;
+  @apply px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 first:rounded-tl-lg last:rounded-tr-lg;
 }
 
 .client-table td {
@@ -416,7 +438,7 @@ export default {
 }
 
 .client-name {
-  @apply text-sm font-medium text-gray-900;
+  @apply text-sm font-medium text-gray-900 hover:text-emerald-600 transition-colors duration-150;
 }
 
 .client-dob {
