@@ -71,17 +71,44 @@
             <div>
               <h3 class="text-lg font-semibold mb-4">Asset Allocation</h3>
               <div class="grid grid-cols-3 gap-4">
-                <div class="bg-white p-3 rounded-lg shadow-sm">
-                  <p class="text-sm text-gray-600 mb-2">UK Bonds</p>
-                  <span class="font-medium">{{ formatPercentage(slotProps.data.allocation?.ukBond) }}</span>
-                </div>
-                <div class="bg-white p-3 rounded-lg shadow-sm">
-                  <p class="text-sm text-gray-600 mb-2">Non-UK Bonds</p>
-                  <span class="font-medium">{{ formatPercentage(slotProps.data.allocation?.nonUKBond) }}</span>
-                </div>
-                <div class="bg-white p-3 rounded-lg shadow-sm">
-                  <p class="text-sm text-gray-600 mb-2">Cash</p>
-                  <span class="font-medium">{{ formatPercentage(slotProps.data.allocation?.cash) }}</span>
+                <template v-if="slotProps.data.allocation?.nonUKStock">
+                  <div class="bg-white p-3 rounded-lg shadow-sm">
+                    <p class="text-sm text-gray-600 mb-2">Non-UK Stock</p>
+                    <span class="font-medium">{{ formatPercentage(slotProps.data.allocation.nonUKStock) }}</span>
+                  </div>
+                </template>
+                <template v-if="slotProps.data.allocation?.ukStock">
+                  <div class="bg-white p-3 rounded-lg shadow-sm">
+                    <p class="text-sm text-gray-600 mb-2">UK Stock</p>
+                    <span class="font-medium">{{ formatPercentage(slotProps.data.allocation.ukStock) }}</span>
+                  </div>
+                </template>
+                <template v-if="slotProps.data.allocation?.nonUKBond">
+                  <div class="bg-white p-3 rounded-lg shadow-sm">
+                    <p class="text-sm text-gray-600 mb-2">Non-UK Bonds</p>
+                    <span class="font-medium">{{ formatPercentage(slotProps.data.allocation.nonUKBond) }}</span>
+                  </div>
+                </template>
+                <template v-if="slotProps.data.allocation?.ukBond">
+                  <div class="bg-white p-3 rounded-lg shadow-sm">
+                    <p class="text-sm text-gray-600 mb-2">UK Bonds</p>
+                    <span class="font-medium">{{ formatPercentage(slotProps.data.allocation.ukBond) }}</span>
+                  </div>
+                </template>
+                <template v-if="slotProps.data.allocation?.cash">
+                  <div class="bg-white p-3 rounded-lg shadow-sm">
+                    <p class="text-sm text-gray-600 mb-2">Cash</p>
+                    <span class="font-medium">{{ formatPercentage(slotProps.data.allocation.cash) }}</span>
+                  </div>
+                </template>
+                <template v-if="slotProps.data.allocation?.other">
+                  <div class="bg-white p-3 rounded-lg shadow-sm">
+                    <p class="text-sm text-gray-600 mb-2">Other</p>
+                    <span class="font-medium">{{ formatPercentage(slotProps.data.allocation.other) }}</span>
+                  </div>
+                </template>
+                <div v-if="!hasAnyAllocation(slotProps.data.allocation)" class="col-span-3 text-gray-500 text-center py-2">
+                  No allocation data available
                 </div>
               </div>
             </div>
@@ -131,6 +158,10 @@ const formatDate = (dateString) => {
     hour: '2-digit',
     minute: '2-digit'
   });
+};
+
+const hasAnyAllocation = (allocation) => {
+  return allocation?.ukBond || allocation?.nonUKBond || allocation?.cash || allocation?.ukStock || allocation?.nonUKStock || allocation?.other;
 };
 
 export default {
@@ -191,7 +222,8 @@ export default {
       onRowCollapse,
       formatPercentage,
       formatDate,
-      getCategorySeverity
+      getCategorySeverity,
+      hasAnyAllocation
     };
   }
 };

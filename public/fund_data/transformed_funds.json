@@ -1,67 +1,27 @@
 [
   {
-    "isin": "FR0010250290",
-    "sedol": "1025029",
-    "name": "HSBC Europe Equity Income ZHSBC Europe Equity Income Z",
-    "price": 23,
-    "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:43:58.512Z",
-    "performance": {
-      "threeYearChange": 13.8,
-      "oneYearChange": 13.77,
-      "threeMonthChange": 3.83
-    },
-    "allocation": {
-      "nonUKBond": 0,
-      "ukBond": 0,
-      "cash": 2.05
-    },
-    "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010250290",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0010250290"
-    }
-  },
-  {
-    "isin": "FR0010250308",
-    "sedol": "1025030",
-    "name": "HSBC Europe Equity Income KHSBC Europe Equity Income K",
-    "price": 1,
-    "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:44:03.031Z",
-    "performance": {
-      "threeYearChange": 13.43,
-      "oneYearChange": 13.4,
-      "threeMonthChange": 3.75
-    },
-    "allocation": {
-      "nonUKBond": 0,
-      "ukBond": 0,
-      "cash": 2.05
-    },
-    "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010250308",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0010250308"
-    }
-  },
-  {
     "isin": "DE000A2DL4R1",
-    "sedol": "A2DL4R",
-    "name": "BANTLEON TOP 35 Aktien SBANTLEON TOP 35 Aktien S",
+    "sedol": null,
+    "name": "BANTLEON TOP 35 Aktien S",
     "price": 122.38,
     "currency": "GBP",
-    "category": "Equity",
-    "lastUpdated": "2025-04-20T12:44:07.440Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:10:45.857Z",
     "performance": {
+      "fiveYearChange": 14.47,
       "threeYearChange": 13.43,
       "oneYearChange": 5.33,
-      "threeMonthChange": -0.09
+      "sixMonthChange": 4.54,
+      "threeMonthChange": -0.09,
+      "oneMonthChange": -5.51
     },
     "allocation": {
+      "nonUKStock": 99.16,
+      "ukStock": 0,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 0.84
+      "cash": 0.84,
+      "other": 24.3
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=DE000A2DL4R1",
@@ -70,21 +30,27 @@
   },
   {
     "isin": "DE000A1JJJF8",
-    "sedol": "A1JJJF",
-    "name": "BANTLEON TOP 35 Aktien IBANTLEON TOP 35 Aktien I",
+    "sedol": null,
+    "name": "BANTLEON TOP 35 Aktien I",
     "price": 187.99,
     "currency": "GBP",
-    "category": "Equity",
-    "lastUpdated": "2025-04-20T12:44:11.845Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:10:51.940Z",
     "performance": {
+      "fiveYearChange": 14.32,
       "threeYearChange": 13.28,
       "oneYearChange": 5.21,
-      "threeMonthChange": -0.1
+      "sixMonthChange": 4.55,
+      "threeMonthChange": -0.1,
+      "oneMonthChange": -5.51
     },
     "allocation": {
+      "nonUKStock": 99.16,
+      "ukStock": 0,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 0.84
+      "cash": 0.84,
+      "other": 24.3
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=DE000A1JJJF8",
@@ -92,22 +58,86 @@
     }
   },
   {
-    "isin": "FR0013287091",
-    "sedol": "1328709",
-    "name": "HSBC Europe Equity Income BCHSBC Europe Equity Income BC",
-    "price": 162.93,
+    "isin": "FR0010250290",
+    "sedol": null,
+    "name": "HSBC Europe Equity Income Z",
+    "price": 23118.27,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:44:16.251Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:10:58.027Z",
     "performance": {
-      "threeYearChange": 12.97,
-      "oneYearChange": 12.99,
-      "threeMonthChange": 3.64
+      "fiveYearChange": 14.42,
+      "threeYearChange": 13.8,
+      "oneYearChange": 13.77,
+      "sixMonthChange": 6.28,
+      "threeMonthChange": 3.83,
+      "oneMonthChange": -3.41
     },
     "allocation": {
+      "nonUKStock": 85,
+      "ukStock": 13.08,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 2.05
+      "cash": 2.05,
+      "other": 29.91
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010250290",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0010250290"
+    }
+  },
+  {
+    "isin": "FR0010250308",
+    "sedol": null,
+    "name": "HSBC Europe Equity Income K",
+    "price": 1653.69,
+    "currency": "GBP",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:11:04.101Z",
+    "performance": {
+      "fiveYearChange": 14.05,
+      "threeYearChange": 13.43,
+      "oneYearChange": 13.4,
+      "sixMonthChange": 6.11,
+      "threeMonthChange": 3.75,
+      "oneMonthChange": -3.43
+    },
+    "allocation": {
+      "nonUKStock": 85,
+      "ukStock": 13.08,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 2.05,
+      "other": 29.91
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010250308",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0010250308"
+    }
+  },
+  {
+    "isin": "FR0013287091",
+    "sedol": null,
+    "name": "HSBC Europe Equity Income BC",
+    "price": 162.93,
+    "currency": "GBP",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:11:10.214Z",
+    "performance": {
+      "fiveYearChange": 13.57,
+      "threeYearChange": 12.97,
+      "oneYearChange": 12.99,
+      "sixMonthChange": 5.88,
+      "threeMonthChange": 3.64,
+      "oneMonthChange": -3.47
+    },
+    "allocation": {
+      "nonUKStock": 85,
+      "ukStock": 13.08,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 2.05,
+      "other": 29.91
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0013287091",
@@ -116,21 +146,27 @@
   },
   {
     "isin": "FR0011271626",
-    "sedol": "1127162",
-    "name": "HSBC Europe Equity Income ICHSBC Europe Equity Income IC",
-    "price": 2,
+    "sedol": null,
+    "name": "HSBC Europe Equity Income IC",
+    "price": 2552.88,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:44:20.697Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:11:16.242Z",
     "performance": {
+      "fiveYearChange": 13.57,
       "threeYearChange": 12.95,
       "oneYearChange": 12.92,
-      "threeMonthChange": 3.64
+      "sixMonthChange": 5.88,
+      "threeMonthChange": 3.64,
+      "oneMonthChange": -3.47
     },
     "allocation": {
+      "nonUKStock": 85,
+      "ukStock": 13.08,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 2.05
+      "cash": 2.05,
+      "other": 29.91
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0011271626",
@@ -139,21 +175,27 @@
   },
   {
     "isin": "FR0010401075",
-    "sedol": "1040107",
-    "name": "Hugau Rendement Responsable CHugau Rendement Responsable C",
+    "sedol": null,
+    "name": "Hugau Rendement Responsable C",
     "price": 168.84,
     "currency": "GBP",
-    "category": "Unclassified",
-    "lastUpdated": "2025-04-20T12:44:25.158Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:11:22.283Z",
     "performance": {
+      "fiveYearChange": 15.62,
       "threeYearChange": 12.37,
       "oneYearChange": 9.09,
-      "threeMonthChange": 11.25
+      "sixMonthChange": 11.88,
+      "threeMonthChange": 11.25,
+      "oneMonthChange": -4.65
     },
     "allocation": {
+      "nonUKStock": 99.72,
+      "ukStock": 0,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 0.28
+      "cash": 0.28,
+      "other": 27.15
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010401075",
@@ -162,21 +204,27 @@
   },
   {
     "isin": "FR0010074690",
-    "sedol": "1007469",
-    "name": "Reaumur ActionsReaumur Actions",
-    "price": 18,
+    "sedol": null,
+    "name": "Reaumur Actions",
+    "price": 18854.08,
     "currency": "GBP",
-    "category": "Fixed Income",
-    "lastUpdated": "2025-04-20T12:44:29.755Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:11:28.351Z",
     "performance": {
+      "fiveYearChange": 13.46,
       "threeYearChange": 12.11,
       "oneYearChange": 7.26,
-      "threeMonthChange": 3.14
+      "sixMonthChange": 4.34,
+      "threeMonthChange": 3.14,
+      "oneMonthChange": -4.33
     },
     "allocation": {
+      "nonUKStock": 99.49,
+      "ukStock": 0,
       "nonUKBond": 0.44,
-      "ukBond": 0.44,
-      "cash": 0.05
+      "ukBond": 0.01,
+      "cash": 0.05,
+      "other": 28.69
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010074690",
@@ -185,21 +233,27 @@
   },
   {
     "isin": "FR0010043216",
-    "sedol": "1004321",
-    "name": "HSBC Europe Equity Income ACHSBC Europe Equity Income AC",
+    "sedol": null,
+    "name": "HSBC Europe Equity Income AC",
     "price": 294.06,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:44:34.450Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:11:34.371Z",
     "performance": {
+      "fiveYearChange": 12.71,
       "threeYearChange": 12.1,
       "oneYearChange": 12.08,
-      "threeMonthChange": 3.45
+      "sixMonthChange": 5.49,
+      "threeMonthChange": 3.45,
+      "oneMonthChange": -3.54
     },
     "allocation": {
+      "nonUKStock": 85,
+      "ukStock": 13.08,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 2.05
+      "cash": 2.05,
+      "other": 29.91
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010043216",
@@ -208,21 +262,27 @@
   },
   {
     "isin": "FR0010043224",
-    "sedol": "1004322",
-    "name": "HSBC Europe Equity Income ADHSBC Europe Equity Income AD",
+    "sedol": null,
+    "name": "HSBC Europe Equity Income AD",
     "price": 209.38,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:44:39.064Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:11:40.414Z",
     "performance": {
+      "fiveYearChange": 12.74,
       "threeYearChange": 12.1,
       "oneYearChange": 12.07,
-      "threeMonthChange": 3.45
+      "sixMonthChange": 5.49,
+      "threeMonthChange": 3.45,
+      "oneMonthChange": -3.54
     },
     "allocation": {
+      "nonUKStock": 85,
+      "ukStock": 13.08,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 2.05
+      "cash": 2.05,
+      "other": 29.91
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010043224",
@@ -231,21 +291,27 @@
   },
   {
     "isin": "FR0013300803",
-    "sedol": "1330080",
-    "name": "Mandarine Equity Income F(d)Mandarine Equity Income F(d)",
+    "sedol": null,
+    "name": "Mandarine Equity Income F(d)",
     "price": 106.33,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:44:43.917Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:11:46.506Z",
     "performance": {
+      "fiveYearChange": null,
       "threeYearChange": null,
       "oneYearChange": null,
-      "threeMonthChange": null
+      "sixMonthChange": null,
+      "threeMonthChange": null,
+      "oneMonthChange": null
     },
     "allocation": {
+      "nonUKStock": 72.53,
+      "ukStock": 22,
       "nonUKBond": 0.28,
-      "ukBond": 0.28,
-      "cash": 5.14
+      "ukBond": 0.02,
+      "cash": 5.14,
+      "other": 25.98
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0013300803",
@@ -254,21 +320,27 @@
   },
   {
     "isin": "FR0013300829",
-    "sedol": "1330082",
-    "name": "Mandarine Equity Income I(d)Mandarine Equity Income I(d)",
+    "sedol": null,
+    "name": "Mandarine Equity Income I(d)",
     "price": 107.11,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:44:48.499Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:11:52.519Z",
     "performance": {
+      "fiveYearChange": null,
       "threeYearChange": null,
       "oneYearChange": null,
-      "threeMonthChange": null
+      "sixMonthChange": null,
+      "threeMonthChange": null,
+      "oneMonthChange": null
     },
     "allocation": {
+      "nonUKStock": 72.53,
+      "ukStock": 22,
       "nonUKBond": 0.28,
-      "ukBond": 0.28,
-      "cash": 5.14
+      "ukBond": 0.02,
+      "cash": 5.14,
+      "other": 25.98
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0013300829",
@@ -277,21 +349,27 @@
   },
   {
     "isin": "FR0013300811",
-    "sedol": "1330081",
-    "name": "Mandarine Equity Income R(d)Mandarine Equity Income R(d)",
+    "sedol": null,
+    "name": "Mandarine Equity Income R(d)",
     "price": 102.87,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:44:53.099Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:11:58.518Z",
     "performance": {
+      "fiveYearChange": null,
       "threeYearChange": null,
       "oneYearChange": null,
-      "threeMonthChange": null
+      "sixMonthChange": null,
+      "threeMonthChange": null,
+      "oneMonthChange": null
     },
     "allocation": {
+      "nonUKStock": 72.53,
+      "ukStock": 22,
       "nonUKBond": 0.28,
-      "ukBond": 0.28,
-      "cash": 5.14
+      "ukBond": 0.02,
+      "cash": 5.14,
+      "other": 25.98
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0013300811",
@@ -300,21 +378,27 @@
   },
   {
     "isin": "FR0013466158",
-    "sedol": "1346615",
-    "name": "Pergam Active Dividend RPergam Active Dividend R",
+    "sedol": null,
+    "name": "Pergam Active Dividend R",
     "price": 99.66,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:44:57.703Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:12:04.611Z",
     "performance": {
+      "fiveYearChange": null,
       "threeYearChange": null,
       "oneYearChange": -2.72,
-      "threeMonthChange": -2.11
+      "sixMonthChange": 2.08,
+      "threeMonthChange": -2.11,
+      "oneMonthChange": -5.63
     },
     "allocation": {
+      "nonUKStock": 90.9,
+      "ukStock": 7.27,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 1.83
+      "cash": 1.83,
+      "other": 24.49
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0013466158",
@@ -323,21 +407,27 @@
   },
   {
     "isin": "LU2918480018",
-    "sedol": "291848001",
-    "name": "Popso (Suisse) Investment Fund - European Equity Dividend A distPopso (Suisse) Investment Fund - European Equity Dividend A dist",
+    "sedol": null,
+    "name": "Popso (Suisse) Investment Fund - European Equity Dividend A dist",
     "price": 9.17,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:45:02.321Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:12:10.614Z",
     "performance": {
+      "fiveYearChange": null,
       "threeYearChange": null,
       "oneYearChange": null,
-      "threeMonthChange": null
+      "sixMonthChange": null,
+      "threeMonthChange": null,
+      "oneMonthChange": null
     },
     "allocation": {
+      "nonUKStock": 76.13,
+      "ukStock": 21.22,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 2
+      "cash": 2,
+      "other": 24.74
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2918480018",
@@ -346,21 +436,27 @@
   },
   {
     "isin": "LU2477750645",
-    "sedol": "247775064",
-    "name": "Swiss Life Funds (LUX) - Equity Europe High Dividend I EUR IncSwiss Life Funds (LUX) - Equity Europe High Dividend I EUR Inc",
+    "sedol": null,
+    "name": "Swiss Life Funds (LUX) - Equity Europe High Dividend I EUR Inc",
     "price": 129.83,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:45:06.925Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:12:16.649Z",
     "performance": {
+      "fiveYearChange": null,
       "threeYearChange": null,
       "oneYearChange": 17.9,
-      "threeMonthChange": 6.46
+      "sixMonthChange": 7.24,
+      "threeMonthChange": 6.46,
+      "oneMonthChange": -1.67
     },
     "allocation": {
+      "nonUKStock": 74.34,
+      "ukStock": 21.19,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 4.47
+      "cash": 4.47,
+      "other": 22.53
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2477750645",
@@ -369,21 +465,27 @@
   },
   {
     "isin": "LU2477750728",
-    "sedol": "247775072",
-    "name": "Swiss Life Funds (LUX) - Equity Europe High Dividend R EUR IncSwiss Life Funds (LUX) - Equity Europe High Dividend R EUR Inc",
+    "sedol": null,
+    "name": "Swiss Life Funds (LUX) - Equity Europe High Dividend R EUR Inc",
     "price": 126.34,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:45:11.464Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:12:22.664Z",
     "performance": {
+      "fiveYearChange": null,
       "threeYearChange": null,
       "oneYearChange": 16.79,
-      "threeMonthChange": 6.21
+      "sixMonthChange": 6.73,
+      "threeMonthChange": 6.21,
+      "oneMonthChange": -1.76
     },
     "allocation": {
+      "nonUKStock": 74.34,
+      "ukStock": 21.19,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 4.47
+      "cash": 4.47,
+      "other": 22.53
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2477750728",
@@ -392,21 +494,27 @@
   },
   {
     "isin": "LU2793224283",
-    "sedol": "279322428",
-    "name": "UBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - (CHF hedged) K-1-accUBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - (CHF hedged) K-1-acc",
-    "price": 4,
+    "sedol": null,
+    "name": "UBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - (CHF hedged) K-1-acc",
+    "price": 4839974.86,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:45:15.980Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:12:28.808Z",
     "performance": {
+      "fiveYearChange": null,
       "threeYearChange": null,
       "oneYearChange": null,
-      "threeMonthChange": -0.75
+      "sixMonthChange": -0.41,
+      "threeMonthChange": -0.75,
+      "oneMonthChange": -2.67
     },
     "allocation": {
+      "nonUKStock": 64.13,
+      "ukStock": 21.85,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 12.01
+      "cash": 12.01,
+      "other": 17.51
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2793224283",
@@ -415,21 +523,27 @@
   },
   {
     "isin": "LU2523255490",
-    "sedol": "252325549",
-    "name": "UBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - F-qdistUBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - F-qdist",
+    "sedol": null,
+    "name": "UBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - F-qdist",
     "price": 111.06,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:45:20.512Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:12:34.785Z",
     "performance": {
+      "fiveYearChange": null,
       "threeYearChange": null,
       "oneYearChange": 6.42,
-      "threeMonthChange": -1.43
+      "sixMonthChange": -0.47,
+      "threeMonthChange": -1.43,
+      "oneMonthChange": -6.08
     },
     "allocation": {
+      "nonUKStock": 64.13,
+      "ukStock": 21.85,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 12.01
+      "cash": 12.01,
+      "other": 17.51
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2523255490",
@@ -438,21 +552,27 @@
   },
   {
     "isin": "LU2793224010",
-    "sedol": "279322401",
-    "name": "UBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - I-A1-accUBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - I-A1-acc",
+    "sedol": null,
+    "name": "UBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - I-A1-acc",
     "price": 99.07,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:45:25.011Z",
+    "category": "Europe Equity Income",
+    "lastUpdated": "2025-04-20T21:12:40.764Z",
     "performance": {
+      "fiveYearChange": null,
       "threeYearChange": null,
       "oneYearChange": null,
-      "threeMonthChange": -1.46
+      "sixMonthChange": -0.54,
+      "threeMonthChange": -1.46,
+      "oneMonthChange": -6.09
     },
     "allocation": {
+      "nonUKStock": 64.13,
+      "ukStock": 21.85,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 12.01
+      "cash": 12.01,
+      "other": 17.51
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2793224010",
@@ -461,21 +581,27 @@
   },
   {
     "isin": "GB00BYPG0H78",
-    "sedol": "BYPG0H7",
-    "name": "SW Woodford Equity Income Series 4 Pension FundSW Woodford Equity Income Series 4 Pension Fund",
+    "sedol": null,
+    "name": "SW Woodford Equity Income Series 4 Pension Fund",
     "price": 1.22,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:45:29.514Z",
+    "category": "UK Equity Income",
+    "lastUpdated": "2025-04-20T21:12:46.770Z",
     "performance": {
+      "fiveYearChange": 17.64,
       "threeYearChange": 26.44,
       "oneYearChange": 2.18,
-      "threeMonthChange": -4.76
+      "sixMonthChange": -4.76,
+      "threeMonthChange": -4.76,
+      "oneMonthChange": -5.05
     },
     "allocation": {
+      "nonUKStock": 20.35,
+      "ukStock": 55.79,
       "nonUKBond": 0.42,
-      "ukBond": 0.42,
-      "cash": -1.92
+      "ukBond": 0,
+      "cash": -1.92,
+      "other": 6.74
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BYPG0H78",
@@ -484,21 +610,27 @@
   },
   {
     "isin": "GB00BYPG0F54",
-    "sedol": "BYPG0F5",
-    "name": "SW Woodford Equity Income Series 1 Pension FundSW Woodford Equity Income Series 1 Pension Fund",
+    "sedol": null,
+    "name": "SW Woodford Equity Income Series 1 Pension Fund",
     "price": 1.08,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:45:34.036Z",
+    "category": "UK Equity Income",
+    "lastUpdated": "2025-04-20T21:12:52.768Z",
     "performance": {
+      "fiveYearChange": 16.67,
       "threeYearChange": 25.42,
       "oneYearChange": 1.31,
-      "threeMonthChange": -4.92
+      "sixMonthChange": -5.08,
+      "threeMonthChange": -4.92,
+      "oneMonthChange": -5.08
     },
     "allocation": {
+      "nonUKStock": 20.35,
+      "ukStock": 55.79,
       "nonUKBond": 0.42,
-      "ukBond": 0.42,
-      "cash": -1.92
+      "ukBond": 0,
+      "cash": -1.92,
+      "other": 6.74
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BYPG0F54",
@@ -507,21 +639,27 @@
   },
   {
     "isin": "GB00BYPG0G61",
-    "sedol": "BYPG0G6",
-    "name": "SW Woodford Equity Income Series 2 Pension FundSW Woodford Equity Income Series 2 Pension Fund",
+    "sedol": null,
+    "name": "SW Woodford Equity Income Series 2 Pension Fund",
     "price": 1.13,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:45:38.563Z",
+    "category": "UK Equity Income",
+    "lastUpdated": "2025-04-20T21:12:58.761Z",
     "performance": {
+      "fiveYearChange": 16.53,
       "threeYearChange": 25.26,
       "oneYearChange": 1.17,
-      "threeMonthChange": -4.97
+      "sixMonthChange": -5.21,
+      "threeMonthChange": -4.97,
+      "oneMonthChange": -5.13
     },
     "allocation": {
+      "nonUKStock": 20.35,
+      "ukStock": 55.79,
       "nonUKBond": 0.42,
-      "ukBond": 0.42,
-      "cash": -1.92
+      "ukBond": 0,
+      "cash": -1.92,
+      "other": 6.74
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BYPG0G61",
@@ -530,21 +668,27 @@
   },
   {
     "isin": "GB00B0ZLFN59",
-    "sedol": "B0ZLFN5",
-    "name": "ReAssure LG Invesco Perp High Inc 25ReAssure LG Invesco Perp High Inc 25",
+    "sedol": null,
+    "name": "ReAssure LG Invesco Perp High Inc 25",
     "price": 2.85,
     "currency": "GBP",
-    "category": "Unclassified",
-    "lastUpdated": "2025-04-20T12:45:43.126Z",
+    "category": "UK Equity Income",
+    "lastUpdated": "2025-04-20T21:13:04.870Z",
     "performance": {
+      "fiveYearChange": 13.63,
       "threeYearChange": 10.82,
       "oneYearChange": 19.4,
-      "threeMonthChange": 1.75
+      "sixMonthChange": -0.66,
+      "threeMonthChange": 1.75,
+      "oneMonthChange": -1.11
     },
     "allocation": {
+      "nonUKStock": 13.29,
+      "ukStock": 81.72,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 0.82
+      "cash": 0.82,
+      "other": 24.41
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B0ZLFN59",
@@ -553,21 +697,27 @@
   },
   {
     "isin": "GB00BYPG0J92",
-    "sedol": "BYPG0J9",
-    "name": "SW Woodford Equity Income Life FundSW Woodford Equity Income Life Fund",
+    "sedol": null,
+    "name": "SW Woodford Equity Income Life Fund",
     "price": 0.765,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:45:47.659Z",
+    "category": "UK Equity Income",
+    "lastUpdated": "2025-04-20T21:13:10.930Z",
     "performance": {
+      "fiveYearChange": 9.45,
       "threeYearChange": 10.76,
       "oneYearChange": 1.73,
-      "threeMonthChange": -5.09
+      "sixMonthChange": -5.32,
+      "threeMonthChange": -5.09,
+      "oneMonthChange": -5.32
     },
     "allocation": {
+      "nonUKStock": 20.35,
+      "ukStock": 55.79,
       "nonUKBond": 0.42,
-      "ukBond": 0.42,
-      "cash": -1.92
+      "ukBond": 0,
+      "cash": -1.92,
+      "other": 6.74
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BYPG0J92",
@@ -576,21 +726,27 @@
   },
   {
     "isin": "GB00B63QPG78",
-    "sedol": "B63QPG7",
-    "name": "BNY Mellon Investment Funds - Newton UK Income Fund X IncomeBNY Mellon Investment Funds - Newton UK Income Fund X Income",
+    "sedol": null,
+    "name": "BNY Mellon Investment Funds - Newton UK Income Fund X Income",
     "price": 1.74,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:45:52.231Z",
+    "category": "UK Equity Income",
+    "lastUpdated": "2025-04-20T21:13:17.061Z",
     "performance": {
+      "fiveYearChange": 12.93,
       "threeYearChange": 9.36,
       "oneYearChange": 7.1,
-      "threeMonthChange": -4.35
+      "sixMonthChange": -0.44,
+      "threeMonthChange": -4.35,
+      "oneMonthChange": -7.23
     },
     "allocation": {
+      "nonUKStock": 26.16,
+      "ukStock": 73.43,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 0.42
+      "cash": 0.42,
+      "other": 16.02
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B63QPG78",
@@ -599,21 +755,27 @@
   },
   {
     "isin": "GB00B1TRHS53",
-    "sedol": "B1TRHS5",
-    "name": "BNY Mellon Investment Funds - Newton UK Income Fund X AccumulationBNY Mellon Investment Funds - Newton UK Income Fund X Accumulation",
+    "sedol": null,
+    "name": "BNY Mellon Investment Funds - Newton UK Income Fund X Accumulation",
     "price": 7.35,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:45:56.663Z",
+    "category": "UK Equity Income",
+    "lastUpdated": "2025-04-20T21:13:23.118Z",
     "performance": {
+      "fiveYearChange": 12.93,
       "threeYearChange": 9.36,
       "oneYearChange": 7.1,
-      "threeMonthChange": -4.34
+      "sixMonthChange": -0.43,
+      "threeMonthChange": -4.34,
+      "oneMonthChange": -7.22
     },
     "allocation": {
+      "nonUKStock": 26.16,
+      "ukStock": 73.43,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 0.42
+      "cash": 0.42,
+      "other": 16.02
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B1TRHS53",
@@ -622,21 +784,27 @@
   },
   {
     "isin": "GB00B1NKCQ38",
-    "sedol": "B1NKCQ3",
-    "name": "Aviva Pension BNY Mellon UK Income Pension FundAviva Pension BNY Mellon UK Income Pension Fund",
+    "sedol": null,
+    "name": "Aviva Pension BNY Mellon UK Income Pension Fund",
     "price": 3.34,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:46:01.144Z",
+    "category": "UK Equity Income",
+    "lastUpdated": "2025-04-20T21:13:29.152Z",
     "performance": {
+      "fiveYearChange": 13.72,
       "threeYearChange": 9.35,
       "oneYearChange": 7.25,
-      "threeMonthChange": -4.32
+      "sixMonthChange": -0.36,
+      "threeMonthChange": -4.32,
+      "oneMonthChange": -6.83
     },
     "allocation": {
+      "nonUKStock": 26.16,
+      "ukStock": 73.43,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 0.42
+      "cash": 0.42,
+      "other": 16.02
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B1NKCQ38",
@@ -645,21 +813,27 @@
   },
   {
     "isin": "GB00B0117C28",
-    "sedol": "B0117C2",
-    "name": "Man UK ICVC - Man Income Fund Professional Accumulation Shares (Class C)Man UK ICVC - Man Income Fund Professional Accumulation Shares (Class C)",
+    "sedol": null,
+    "name": "Man UK ICVC - Man Income Fund Professional Accumulation Shares (Class C)",
     "price": 415.2,
     "currency": "GBP",
-    "category": "Fixed Income",
-    "lastUpdated": "2025-04-20T12:46:05.606Z",
+    "category": "UK Equity Income",
+    "lastUpdated": "2025-04-20T21:13:35.164Z",
     "performance": {
+      "fiveYearChange": 13.1,
       "threeYearChange": 9.27,
       "oneYearChange": 8.58,
-      "threeMonthChange": -1.68
+      "sixMonthChange": -0.1,
+      "threeMonthChange": -1.68,
+      "oneMonthChange": -4.33
     },
     "allocation": {
+      "nonUKStock": 9.5,
+      "ukStock": 85.23,
       "nonUKBond": 0.73,
-      "ukBond": 0.73,
-      "cash": 3.26
+      "ukBond": 0.23,
+      "cash": 3.26,
+      "other": 20.98
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B0117C28",
@@ -668,21 +842,27 @@
   },
   {
     "isin": "GB00B0117D35",
-    "sedol": "B0117D3",
-    "name": "Man UK ICVC - Man Income Fund Professional Income Shares (Class D)Man UK ICVC - Man Income Fund Professional Income Shares (Class D)",
+    "sedol": null,
+    "name": "Man UK ICVC - Man Income Fund Professional Income Shares (Class D)",
     "price": 132,
     "currency": "GBP",
-    "category": "Fixed Income",
-    "lastUpdated": "2025-04-20T12:46:10.068Z",
+    "category": "UK Equity Income",
+    "lastUpdated": "2025-04-20T21:13:41.185Z",
     "performance": {
+      "fiveYearChange": 13.09,
       "threeYearChange": 9.27,
       "oneYearChange": 8.61,
-      "threeMonthChange": -1.69
+      "sixMonthChange": -0.09,
+      "threeMonthChange": -1.69,
+      "oneMonthChange": -4.3
     },
     "allocation": {
+      "nonUKStock": 9.5,
+      "ukStock": 85.23,
       "nonUKBond": 0.73,
-      "ukBond": 0.73,
-      "cash": 3.26
+      "ukBond": 0.23,
+      "cash": 3.26,
+      "other": 20.98
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B0117D35",
@@ -691,21 +871,27 @@
   },
   {
     "isin": "LU1762221239",
-    "sedol": "176222123",
-    "name": "Invesco Funds - Invesco Global Founders & Owners Fund Z Annual Distribution USDInvesco Funds - Invesco Global Founders & Owners Fund Z Annual Distribution USD",
+    "sedol": null,
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund Z Annual Distribution USD",
     "price": 17.89,
     "currency": "GBP",
-    "category": "Global Equity",
-    "lastUpdated": "2025-04-20T12:46:14.553Z",
+    "category": "Global Large-Cap Growth Equity",
+    "lastUpdated": "2025-04-20T21:13:47.531Z",
     "performance": {
+      "fiveYearChange": 16.95,
       "threeYearChange": 15.69,
       "oneYearChange": 6.06,
-      "threeMonthChange": -9.23
+      "sixMonthChange": -3.62,
+      "threeMonthChange": -9.23,
+      "oneMonthChange": -3.61
     },
     "allocation": {
+      "nonUKStock": 87.91,
+      "ukStock": 4.88,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": -0.31
+      "cash": -0.31,
+      "other": 6.04
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1762221239",
@@ -714,21 +900,27 @@
   },
   {
     "isin": "LU1218204987",
-    "sedol": "121820498",
-    "name": "Invesco Funds - Invesco Global Founders & Owners Fund Z Accumulation USDInvesco Funds - Invesco Global Founders & Owners Fund Z Accumulation USD",
+    "sedol": null,
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund Z Accumulation USD",
     "price": 23.22,
     "currency": "GBP",
-    "category": "Global Equity",
-    "lastUpdated": "2025-04-20T12:46:19.026Z",
+    "category": "Global Large-Cap Growth Equity",
+    "lastUpdated": "2025-04-20T21:13:53.557Z",
     "performance": {
+      "fiveYearChange": 16.95,
       "threeYearChange": 15.67,
       "oneYearChange": 6.05,
-      "threeMonthChange": -9.29
+      "sixMonthChange": -3.65,
+      "threeMonthChange": -9.29,
+      "oneMonthChange": -3.67
     },
     "allocation": {
+      "nonUKStock": 87.91,
+      "ukStock": 4.88,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": -0.31
+      "cash": -0.31,
+      "other": 6.04
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1218204987",
@@ -737,21 +929,27 @@
   },
   {
     "isin": "LU1762221072",
-    "sedol": "176222107",
-    "name": "Invesco Funds - Invesco Global Founders & Owners Fund C Annual Distribution USDInvesco Funds - Invesco Global Founders & Owners Fund C Annual Distribution USD",
+    "sedol": null,
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund C Annual Distribution USD",
     "price": 17.75,
     "currency": "GBP",
-    "category": "Global Equity",
-    "lastUpdated": "2025-04-20T12:46:23.492Z",
+    "category": "Global Large-Cap Growth Equity",
+    "lastUpdated": "2025-04-20T21:13:59.597Z",
     "performance": {
+      "fiveYearChange": 16.71,
       "threeYearChange": 15.45,
       "oneYearChange": 5.83,
-      "threeMonthChange": -9.34
+      "sixMonthChange": -3.74,
+      "threeMonthChange": -9.34,
+      "oneMonthChange": -3.67
     },
     "allocation": {
+      "nonUKStock": 87.91,
+      "ukStock": 4.88,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": -0.31
+      "cash": -0.31,
+      "other": 6.04
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1762221072",
@@ -760,21 +958,27 @@
   },
   {
     "isin": "LU1218204631",
-    "sedol": "121820463",
-    "name": "Invesco Funds - Invesco Global Founders & Owners Fund C Accumulation USDInvesco Funds - Invesco Global Founders & Owners Fund C Accumulation USD",
+    "sedol": null,
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund C Accumulation USD",
     "price": 22.76,
     "currency": "GBP",
-    "category": "Global Equity",
-    "lastUpdated": "2025-04-20T12:46:27.902Z",
+    "category": "Global Large-Cap Growth Equity",
+    "lastUpdated": "2025-04-20T21:14:05.631Z",
     "performance": {
+      "fiveYearChange": 16.71,
       "threeYearChange": 15.45,
       "oneYearChange": 5.85,
-      "threeMonthChange": -9.32
+      "sixMonthChange": -3.73,
+      "threeMonthChange": -9.32,
+      "oneMonthChange": -3.66
     },
     "allocation": {
+      "nonUKStock": 87.91,
+      "ukStock": 4.88,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": -0.31
+      "cash": -0.31,
+      "other": 6.04
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1218204631",
@@ -783,21 +987,27 @@
   },
   {
     "isin": "LU1762220934",
-    "sedol": "176222093",
-    "name": "Invesco Funds - Invesco Global Founders & Owners Fund A Annual Distribution USDInvesco Funds - Invesco Global Founders & Owners Fund A Annual Distribution USD",
+    "sedol": null,
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund A Annual Distribution USD",
     "price": 17.27,
     "currency": "GBP",
-    "category": "Global Equity",
-    "lastUpdated": "2025-04-20T12:46:32.656Z",
+    "category": "Global Large-Cap Growth Equity",
+    "lastUpdated": "2025-04-20T21:14:11.652Z",
     "performance": {
+      "fiveYearChange": 16.03,
       "threeYearChange": 14.77,
       "oneYearChange": 5.24,
-      "threeMonthChange": -9.43
+      "sixMonthChange": -4.01,
+      "threeMonthChange": -9.43,
+      "oneMonthChange": -3.72
     },
     "allocation": {
+      "nonUKStock": 87.91,
+      "ukStock": 4.88,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": -0.31
+      "cash": -0.31,
+      "other": 6.04
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1762220934",
@@ -806,21 +1016,27 @@
   },
   {
     "isin": "LU1218204391",
-    "sedol": "121820439",
-    "name": "Invesco Funds - Invesco Global Founders & Owners Fund A Accumulation USDInvesco Funds - Invesco Global Founders & Owners Fund A Accumulation USD",
+    "sedol": null,
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund A Accumulation USD",
     "price": 21.45,
     "currency": "GBP",
-    "category": "Global Equity",
-    "lastUpdated": "2025-04-20T12:46:37.212Z",
+    "category": "Global Large-Cap Growth Equity",
+    "lastUpdated": "2025-04-20T21:14:17.725Z",
     "performance": {
+      "fiveYearChange": 16.02,
       "threeYearChange": 14.76,
       "oneYearChange": 5.22,
-      "threeMonthChange": -9.46
+      "sixMonthChange": -4.02,
+      "threeMonthChange": -9.46,
+      "oneMonthChange": -3.72
     },
     "allocation": {
+      "nonUKStock": 87.91,
+      "ukStock": 4.88,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": -0.31
+      "cash": -0.31,
+      "other": 6.04
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1218204391",
@@ -829,21 +1045,27 @@
   },
   {
     "isin": "LU1762221155",
-    "sedol": "176222115",
-    "name": "Invesco Funds - Invesco Global Founders & Owners Fund E Accumulation EURInvesco Funds - Invesco Global Founders & Owners Fund E Accumulation EUR",
+    "sedol": null,
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund E Accumulation EUR",
     "price": 18.17,
     "currency": "GBP",
-    "category": "Global Equity",
-    "lastUpdated": "2025-04-20T12:46:41.759Z",
+    "category": "Global Large-Cap Growth Equity",
+    "lastUpdated": "2025-04-20T21:14:23.719Z",
     "performance": {
+      "fiveYearChange": 15.2,
       "threeYearChange": 14.49,
       "oneYearChange": 4.49,
-      "threeMonthChange": -9.61
+      "sixMonthChange": -4.07,
+      "threeMonthChange": -9.61,
+      "oneMonthChange": -4
     },
     "allocation": {
+      "nonUKStock": 87.91,
+      "ukStock": 4.88,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": -0.31
+      "cash": -0.31,
+      "other": 6.04
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1762221155",
@@ -852,21 +1074,27 @@
   },
   {
     "isin": "LU1218204805",
-    "sedol": "121820480",
-    "name": "Invesco Funds - Invesco Global Founders & Owners Fund R Accumulation USDInvesco Funds - Invesco Global Founders & Owners Fund R Accumulation USD",
+    "sedol": null,
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund R Accumulation USD",
     "price": 20.02,
     "currency": "GBP",
-    "category": "Global Equity",
-    "lastUpdated": "2025-04-20T12:46:46.468Z",
+    "category": "Global Large-Cap Growth Equity",
+    "lastUpdated": "2025-04-20T21:14:29.720Z",
     "performance": {
+      "fiveYearChange": 15.21,
       "threeYearChange": 13.95,
       "oneYearChange": 4.47,
-      "threeMonthChange": -9.62
+      "sixMonthChange": -4.36,
+      "threeMonthChange": -9.62,
+      "oneMonthChange": -3.8
     },
     "allocation": {
+      "nonUKStock": 87.91,
+      "ukStock": 4.88,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": -0.31
+      "cash": -0.31,
+      "other": 6.04
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1218204805",
@@ -875,21 +1103,27 @@
   },
   {
     "isin": "LU2437760585",
-    "sedol": "243776058",
-    "name": "Invesco Funds - Invesco Japanese Equity Advantage Fund I Accumulation GBP HedgedInvesco Funds - Invesco Japanese Equity Advantage Fund I Accumulation GBP Hedged",
+    "sedol": null,
+    "name": "Invesco Funds - Invesco Japanese Equity Advantage Fund I Accumulation GBP Hedged",
     "price": 14.38,
     "currency": "GBP",
-    "category": "Japanese Equity",
-    "lastUpdated": "2025-04-20T12:46:51.384Z",
+    "category": "Other Equity",
+    "lastUpdated": "2025-04-20T21:14:35.733Z",
     "performance": {
+      "fiveYearChange": null,
       "threeYearChange": 11.77,
       "oneYearChange": 3.23,
-      "threeMonthChange": -4.26
+      "sixMonthChange": -4.52,
+      "threeMonthChange": -4.26,
+      "oneMonthChange": -5.77
     },
     "allocation": {
+      "nonUKStock": 98.63,
+      "ukStock": 0,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 1.37
+      "cash": 1.37,
+      "other": 19.12
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2437760585",
@@ -898,25 +1132,495 @@
   },
   {
     "isin": "GB00B8N46178",
-    "sedol": "B8N4617",
-    "name": "Invesco Global Equity Income Fund (UK) Z (Inc)Invesco Global Equity Income Fund (UK) Z (Inc)",
+    "sedol": null,
+    "name": "Invesco Global Equity Income Fund (UK) Z (Inc)",
     "price": 502.8,
     "currency": "GBP",
-    "category": "Equity Income",
-    "lastUpdated": "2025-04-20T12:46:55.962Z",
+    "category": "Global Equity Income",
+    "lastUpdated": "2025-04-20T21:14:41.760Z",
     "performance": {
+      "fiveYearChange": 14.93,
       "threeYearChange": 11.38,
       "oneYearChange": 5.38,
-      "threeMonthChange": -10.03
+      "sixMonthChange": -5.8,
+      "threeMonthChange": -10.03,
+      "oneMonthChange": -6.6
     },
     "allocation": {
+      "nonUKStock": 77.19,
+      "ukStock": 17.15,
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 0.25
+      "cash": 0.25,
+      "other": 2
     },
     "links": {
       "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B8N46178",
       "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B8N46178"
+    }
+  },
+  {
+    "isin": "LU0183517571",
+    "sedol": null,
+    "name": "Natixis International Funds (Lux) I - Vaughan Nelson U.S. Select Equity Fund I/D (USD)",
+    "price": 113.71,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:14:47.771Z",
+    "performance": {
+      "fiveYearChange": null,
+      "threeYearChange": null,
+      "oneYearChange": null,
+      "sixMonthChange": null,
+      "threeMonthChange": null,
+      "oneMonthChange": null
+    },
+    "allocation": {
+      "nonUKStock": 95.99,
+      "ukStock": 0,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 4.01,
+      "other": 19.75
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU0183517571",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU0183517571"
+    }
+  },
+  {
+    "isin": "GB0032725839",
+    "sedol": null,
+    "name": "CLI Investec UK Special Situation A",
+    "price": 6.61,
+    "currency": "GBP",
+    "category": "UK Large-Cap Equity",
+    "lastUpdated": "2025-04-20T21:14:53.924Z",
+    "performance": {
+      "fiveYearChange": 16.91,
+      "threeYearChange": 15.66,
+      "oneYearChange": 10.16,
+      "sixMonthChange": -0.6,
+      "threeMonthChange": -0.23,
+      "oneMonthChange": -2.65
+    },
+    "allocation": {
+      "nonUKStock": 10.11,
+      "ukStock": 88.2,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 1.7,
+      "other": 19.57
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB0032725839",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB0032725839"
+    }
+  },
+  {
+    "isin": "LU0960942133",
+    "sedol": null,
+    "name": "iShares North America Equity Index Fund (LU) N7 USD",
+    "price": 241.25,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:14:59.953Z",
+    "performance": {
+      "fiveYearChange": null,
+      "threeYearChange": null,
+      "oneYearChange": null,
+      "sixMonthChange": null,
+      "threeMonthChange": null,
+      "oneMonthChange": null
+    },
+    "allocation": {
+      "nonUKStock": 99.8,
+      "ukStock": 0.18,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 0.02,
+      "other": 0.36
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU0960942133",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU0960942133"
+    }
+  },
+  {
+    "isin": "LU0412075748",
+    "sedol": null,
+    "name": "Natixis International Funds (Lux) I - Vaughan Nelson U.S. Select Equity Fund S/A (USD)",
+    "price": 193.4,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:15:05.985Z",
+    "performance": {
+      "fiveYearChange": null,
+      "threeYearChange": null,
+      "oneYearChange": null,
+      "sixMonthChange": null,
+      "threeMonthChange": null,
+      "oneMonthChange": null
+    },
+    "allocation": {
+      "nonUKStock": 95.99,
+      "ukStock": 0,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 4.01,
+      "other": 19.75
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU0412075748",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU0412075748"
+    }
+  },
+  {
+    "isin": "IE00B40YNZ54",
+    "sedol": null,
+    "name": "FTGF ClearBridge US Appreciation Fund LM Class JPY Accumulating",
+    "price": 21141.19,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:15:12.021Z",
+    "performance": {
+      "fiveYearChange": null,
+      "threeYearChange": null,
+      "oneYearChange": null,
+      "sixMonthChange": null,
+      "threeMonthChange": null,
+      "oneMonthChange": null
+    },
+    "allocation": {
+      "nonUKStock": 98.45,
+      "ukStock": 0,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 1.88,
+      "other": 25.61
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=IE00B40YNZ54",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=IE00B40YNZ54"
+    }
+  },
+  {
+    "isin": "LU1956164856",
+    "sedol": null,
+    "name": "BNP Paribas Funds Sustainable US Multi-Factor Equity X USD Acc",
+    "price": 260.96,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:15:18.189Z",
+    "performance": {
+      "fiveYearChange": 12.66,
+      "threeYearChange": 13.81,
+      "oneYearChange": 19.43,
+      "sixMonthChange": 15.85,
+      "threeMonthChange": 6.89,
+      "oneMonthChange": 0.58
+    },
+    "allocation": {
+      "nonUKStock": 105.14,
+      "ukStock": 0.01,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": -5.14,
+      "other": 12
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1956164856",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU1956164856"
+    }
+  },
+  {
+    "isin": "IE00BMZ16V41",
+    "sedol": null,
+    "name": "Eagle Capital US Equity Fund R GBP Acc Class",
+    "price": 163.41,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:15:24.238Z",
+    "performance": {
+      "fiveYearChange": null,
+      "threeYearChange": 10.42,
+      "oneYearChange": -1.14,
+      "sixMonthChange": -6.27,
+      "threeMonthChange": -15.88,
+      "oneMonthChange": -8.12
+    },
+    "allocation": {
+      "nonUKStock": 93.74,
+      "ukStock": 0.92,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 5.34,
+      "other": 22.57
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=IE00BMZ16V41",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=IE00BMZ16V41"
+    }
+  },
+  {
+    "isin": "LI1151841635",
+    "sedol": null,
+    "name": "LGT PB Funds SICAV - LGT PB U.S. Equity Fund (USD) IM",
+    "price": 120.59,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:15:30.286Z",
+    "performance": {
+      "fiveYearChange": null,
+      "threeYearChange": 10.28,
+      "oneYearChange": -0.78,
+      "sixMonthChange": -11.85,
+      "threeMonthChange": -22.39,
+      "oneMonthChange": -9.27
+    },
+    "allocation": {
+      "nonUKStock": 95.89,
+      "ukStock": 0,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 4.11,
+      "other": 10.16
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LI1151841635",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LI1151841635"
+    }
+  },
+  {
+    "isin": "IE00BMZ16T29",
+    "sedol": null,
+    "name": "Eagle Capital US Equity Fund R USD Acc Class",
+    "price": 151.29,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:15:36.389Z",
+    "performance": {
+      "fiveYearChange": null,
+      "threeYearChange": 10.28,
+      "oneYearChange": -1.18,
+      "sixMonthChange": -6.21,
+      "threeMonthChange": -15.96,
+      "oneMonthChange": -8.38
+    },
+    "allocation": {
+      "nonUKStock": 93.74,
+      "ukStock": 0.92,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 5.34,
+      "other": 22.57
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=IE00BMZ16T29",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=IE00BMZ16T29"
+    }
+  },
+  {
+    "isin": "IE00BKPX1B10",
+    "sedol": null,
+    "name": "Eagle Capital US Equity Fund Z",
+    "price": 185.79,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:15:42.423Z",
+    "performance": {
+      "fiveYearChange": null,
+      "threeYearChange": 10.2,
+      "oneYearChange": -1.34,
+      "sixMonthChange": -6.36,
+      "threeMonthChange": -15.92,
+      "oneMonthChange": -8.13
+    },
+    "allocation": {
+      "nonUKStock": 93.74,
+      "ukStock": 0.92,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 5.34,
+      "other": 22.57
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=IE00BKPX1B10",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=IE00BKPX1B10"
+    }
+  },
+  {
+    "isin": "IE00BJN6GZ49",
+    "sedol": null,
+    "name": "Eagle Capital US Equity Fund Institutional USD Acc Class",
+    "price": 125.92,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:15:48.500Z",
+    "performance": {
+      "fiveYearChange": null,
+      "threeYearChange": 10.06,
+      "oneYearChange": -1.38,
+      "sixMonthChange": -6.3,
+      "threeMonthChange": -16,
+      "oneMonthChange": -8.39
+    },
+    "allocation": {
+      "nonUKStock": 93.74,
+      "ukStock": 0.92,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 5.34,
+      "other": 22.57
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=IE00BJN6GZ49",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=IE00BJN6GZ49"
+    }
+  },
+  {
+    "isin": "IE00BJN6GY32",
+    "sedol": null,
+    "name": "Eagle Capital US Equity Fund Founder",
+    "price": 195.57,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:15:54.538Z",
+    "performance": {
+      "fiveYearChange": 15.16,
+      "threeYearChange": 10.06,
+      "oneYearChange": -1.38,
+      "sixMonthChange": -6.3,
+      "threeMonthChange": -16.01,
+      "oneMonthChange": -8.39
+    },
+    "allocation": {
+      "nonUKStock": 93.74,
+      "ukStock": 0.92,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 5.34,
+      "other": 22.57
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=IE00BJN6GY32",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=IE00BJN6GY32"
+    }
+  },
+  {
+    "isin": "NO0010861735",
+    "sedol": null,
+    "name": "PLUSS USA Aksje A (Fondsforvaltning)",
+    "price": 2544.67,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:16:00.671Z",
+    "performance": {
+      "fiveYearChange": 15.43,
+      "threeYearChange": 10.01,
+      "oneYearChange": 1.71,
+      "sixMonthChange": -7.67,
+      "threeMonthChange": -15.9,
+      "oneMonthChange": -6.7
+    },
+    "allocation": {
+      "nonUKStock": 97.13,
+      "ukStock": 0,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 2.87,
+      "other": 10.96
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=NO0010861735",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=NO0010861735"
+    }
+  },
+  {
+    "isin": "GB00BYYX4447",
+    "sedol": null,
+    "name": "AP MyM Capital Grp Invmt Co of Amer C Pen",
+    "price": 3.11,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:16:06.649Z",
+    "performance": {
+      "fiveYearChange": 14.22,
+      "threeYearChange": 9.99,
+      "oneYearChange": 1.29,
+      "sixMonthChange": -8.84,
+      "threeMonthChange": -15.96,
+      "oneMonthChange": -8.26
+    },
+    "allocation": {
+      "nonUKStock": 91.91,
+      "ukStock": 3.99,
+      "nonUKBond": 0.03,
+      "ukBond": 0,
+      "cash": 3.65,
+      "other": 1.43
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BYYX4447",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BYYX4447"
+    }
+  },
+  {
+    "isin": "LU0281485770",
+    "sedol": null,
+    "name": "JPMorgan Funds - US Select Equity Plus Fund X (acc) - USD",
+    "price": 64.03,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:16:12.652Z",
+    "performance": {
+      "fiveYearChange": 15.7,
+      "threeYearChange": 9.98,
+      "oneYearChange": -3.02,
+      "sixMonthChange": -13.97,
+      "threeMonthChange": -19.96,
+      "oneMonthChange": -9.29
+    },
+    "allocation": {
+      "nonUKStock": 98.45,
+      "ukStock": 0,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 1.86,
+      "other": 23.01
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU0281485770",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU0281485770"
+    }
+  },
+  {
+    "isin": "NO0013230458",
+    "sedol": null,
+    "name": "PLUSS USA Aksje N (Fondsforvaltning)",
+    "price": 2542.73,
+    "currency": "GBP",
+    "category": "US Large-Cap Blend Equity",
+    "lastUpdated": "2025-04-20T21:16:18.641Z",
+    "performance": {
+      "fiveYearChange": 16.52,
+      "threeYearChange": 9.98,
+      "oneYearChange": 1.64,
+      "sixMonthChange": -7.74,
+      "threeMonthChange": -15.95,
+      "oneMonthChange": -6.72
+    },
+    "allocation": {
+      "nonUKStock": 97.13,
+      "ukStock": 0,
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 2.87,
+      "other": 10.96
+    },
+    "links": {
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=NO0013230458",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=NO0013230458"
     }
   }
 ]

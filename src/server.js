@@ -18,8 +18,8 @@ app.post('/api/funds/update', (req, res) => {
     message: 'Starting update process...'
   };
 
-  const scriptPath = path.join(__dirname, '../scripts/update-all-funds.sh');
-  const updateProcess = exec(`bash ${scriptPath}`, (error, stdout, stderr) => {
+  const scriptPath = path.join(__dirname, '../scripts/update-funds.js');
+  const updateProcess = exec(`node ${scriptPath}`, (error, stdout, stderr) => {
     if (error) {
       updateStatus = {
         isRunning: false,
@@ -37,11 +37,11 @@ app.post('/api/funds/update', (req, res) => {
   // Listen to script output to update progress
   updateProcess.stdout.on('data', (data) => {
     const output = data.toString();
-    if (output.includes('Processing fund:')) {
+    if (output.includes('Processing')) {
       updateStatus.current++;
       updateStatus.message = `Processing fund ${updateStatus.current} of ${updateStatus.total}...`;
-    } else if (output.includes('Found') && output.includes('funds')) {
-      const match = output.match(/Found (\d+) funds/);
+    } else if (output.includes('funds...')) {
+      const match = output.match(/Processing (\d+) funds/);
       if (match) {
         updateStatus.total = parseInt(match[1], 10);
       }
