@@ -721,5 +721,79 @@ export const dataService = {
           console.error('[DataService] Error fetching interaction types:', error);
           return []; 
       }
+  },
+
+  async updateFundCategories(progressCallback) {
+    const response = await fetch('/api/funds/update', {
+        method: 'POST'
+    });
+    
+    if (!response.ok) {
+        throw new Error('Failed to start fund update');
+    }
+    
+    // Set up EventSource to track progress
+    const eventSource = new EventSource('/api/funds/update-status');
+    
+    eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (progressCallback) {
+            progressCallback(data);
+        }
+        
+        if (data.status === 'completed' || data.status === 'error') {
+            eventSource.close();
+        }
+    };
+    
+    return eventSource;
+  },
+
+  async updateFundCategories(progressCallback) {
+    try {
+      // First notify that update is starting
+      if (progressCallback) {
+        progressCallback({ status: 'starting', message: 'Starting fund update process...' });
+      }
+
+      // Run the update script
+      const response = await fetch('/api/funds/update', {
+        method: 'POST'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to start fund update');
+      }
+
+      // Load the updated funds data
+      const updatedFunds = await this.loadFundsData();
+      
+      // Update the funds in IndexedDB
+      await db.transaction('rw', db.funds, async () => {
+        // Clear existing funds
+        await db.funds.clear();
+        // Add new funds
+        await db.funds.bulkAdd(updatedFunds);
+      });
+
+      if (progressCallback) {
+        progressCallback({ 
+          status: 'completed', 
+          message: `Successfully updated ${updatedFunds.length} funds`,
+          total: updatedFunds.length
+        });
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error updating funds:', error);
+      if (progressCallback) {
+        progressCallback({ 
+          status: 'error', 
+          message: `Error updating funds: ${error.message}` 
+        });
+      }
+      throw error;
+    }
   }
 };

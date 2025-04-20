@@ -26,6 +26,14 @@
           </div>
         </template>
       </Column>
+      <Column field="price" header="NAV" :sortable="false" style="width: 150px">
+        <template #body="slotProps">
+          <div class="flex flex-col space-y-1">
+            <div class="font-medium text-base">{{ slotProps.data.price.toFixed(2) }}</div>
+            <div class="text-xs text-emerald-600">{{ formatDate(slotProps.data.lastUpdated).split(',')[0].split(' ').slice(0, 2).join(' ') }}</div>
+          </div>
+        </template>
+      </Column>
       <Column field="category" header="Category" :sortable="true" style="width: 200px">
         <template #body="slotProps">
           <Tag :value="slotProps.data.category" :severity="getCategorySeverity(slotProps.data.category)" />
