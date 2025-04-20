@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Read the ISINs list
-const isinsPath = path.join(__dirname, '../fund_data/isins.json');
+const isinsPath = path.join(__dirname, '../public/fund_data/isins.json');
 const isins = JSON.parse(fs.readFileSync(isinsPath, 'utf8'));
 
 // Configure axios with headers to mimic a browser
@@ -55,6 +55,36 @@ async function getFTFundData(isin) {
             return null;
         }
 
+        // Extract category with multiple fallbacks
+        const categorySelectors = [
+            'td:contains("Morningstar category")',
+            'td:contains("Category")',
+            'td:contains("Fund type")',
+            'td:contains("Investment objective")'
+        ];
+        
+        let category = null;
+        for (const selector of categorySelectors) {
+            const text = $(selector).next().text().trim();
+            if (text && text !== '--') {
+                category = text;
+                break;
+            }
+        }
+
+        // If still no category, try to infer from fund name and type
+        if (!category) {
+            if (fundName.toLowerCase().includes('equity')) {
+                if (fundName.toLowerCase().includes('income')) {
+                    category = 'Equity Income';
+                } else {
+                    category = 'Equity';
+                }
+            } else if (fundName.toLowerCase().includes('bond')) {
+                category = 'Fixed Income';
+            }
+        }
+
         // Basic fund data
         const fundData = {
             isin: isin,
@@ -62,6 +92,7 @@ async function getFTFundData(isin) {
             name: fundName,
             price: parseFloat($('li:contains("Price")').text().match(/[\d.]+/)?.[0] || '0'),
             currency: 'GBP',
+            category: category,
             lastUpdated: new Date().toISOString(),
             
             // Profile data
@@ -70,7 +101,6 @@ async function getFTFundData(isin) {
                 launchDate: extractTableData($, 'Launch date'),
                 domicile: extractTableData($, 'Domicile'),
                 incomeTreatment: extractTableData($, 'Income treatment'),
-                category: extractTableData($, 'Morningstar category'),
             },
             
             // Investment details
@@ -81,15 +111,19 @@ async function getFTFundData(isin) {
                 ongoingCharge: extractTableData($, 'Net expense ratio'),
             },
             
-            // Performance data (if available)
+            // Performance data
             performance: {
-                oneYearChange: $('td:contains("1 Year change")').next().text().trim().replace('%', ''),
+                oneYearChange: parseFloat($('td:contains("1 Year")').next().text().trim().replace('+', '').replace('%', '')) || null,
+                threeYearChange: parseFloat($('td:contains("3 Year")').next().text().trim().replace('+', '').replace('%', '')) || null,
+                threeMonthChange: parseFloat($('td:contains("3 Month")').next().text().trim().replace('+', '').replace('%', '')) || null
             },
             
             // Asset allocation
             allocation: {
-                nonUKBond: parseFloat($('td:contains("Non-UK bond")').next().text().trim().replace('%', '') || '0'),
-                ukBond: parseFloat($('td:contains("UK bond")').next().text().trim().replace('%', '') || '0'),
+                nonUKBond: parseFloat($('td:contains("Non-UK bond")').next().text().trim().replace('%', '') || 
+                                    $('td:contains("International Fixed Income")').next().text().trim().replace('%', '') || '0'),
+                ukBond: parseFloat($('td:contains("UK bond")').next().text().trim().replace('%', '') || 
+                                 $('td:contains("Domestic Fixed Income")').next().text().trim().replace('%', '') || '0'),
                 cash: parseFloat($('td:contains("Cash")').next().text().trim().replace('%', '') || '0'),
             },
             
@@ -127,8 +161,6 @@ async function updateFundData() {
     const updatedFunds = [];
     
     for (const isin of isins) {
-        if (!isin.startsWith('GB')) continue; // Only process GB ISINs for now
-        
         console.log(`Processing ISIN: ${isin}...`);
         
         // Add delay between requests to avoid rate limiting
@@ -141,7 +173,7 @@ async function updateFundData() {
     }
     
     // Write the updated data to a new file
-    const outputPath = path.join(__dirname, '../fund_data/funds.json');
+    const outputPath = path.join(__dirname, '../public/fund_data/funds.json');
     fs.writeFileSync(outputPath, JSON.stringify(updatedFunds, null, 2));
     console.log(`Updated ${updatedFunds.length} funds successfully!`);
 }
@@ -164,4 +196,4 @@ const packageJson = {
 fs.writeFileSync(
     path.join(__dirname, 'package.json'), 
     JSON.stringify(packageJson, null, 2)
-); 
+);

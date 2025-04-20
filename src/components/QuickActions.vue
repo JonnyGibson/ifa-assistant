@@ -1,19 +1,38 @@
 <template>
-  <div class="bg-white rounded-lg shadow-soft p-6">
-    <h3 class="text-lg font-semibold text-gray-700 mb-4">Quick Actions</h3>
-    <div class="grid grid-cols-2 gap-4">
-      <button @click="$emit('new-note')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-plus mr-2"></i>New Note
-      </button>
-      <button @click="$emit('upload-doc')" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-upload mr-2"></i>Upload Doc
-      </button>
-      <button @click="$emit('schedule')" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-calendar-plus mr-2"></i>Schedule
-      </button>
-      <button @click="$emit('export')" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-        <i class="fas fa-file-export mr-2"></i>Export
-      </button>
+  <div class="p-6">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <router-link 
+        to="/clients" 
+        class="flex items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-150"
+      >
+        <i class="fas fa-user-plus text-emerald-600 mr-3"></i>
+        <span class="text-sm font-medium text-gray-900">Add New Client</span>
+      </router-link>
+      
+      <router-link 
+        to="/appointments" 
+        class="flex items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-150"
+      >
+        <i class="fas fa-calendar-plus text-blue-600 mr-3"></i>
+        <span class="text-sm font-medium text-gray-900">Schedule Meeting</span>
+      </router-link>
+      
+      <router-link 
+        to="/funds" 
+        class="flex items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-150"
+      >
+        <i class="fas fa-chart-line text-purple-600 mr-3"></i>
+        <span class="text-sm font-medium text-gray-900">View Fund Performance</span>
+      </router-link>
+      
+      <router-link 
+        to="/compliance" 
+        class="flex items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-150"
+      >
+        <i class="fas fa-clipboard-check text-yellow-600 mr-3"></i>
+        <span class="text-sm font-medium text-gray-900">Review Compliance</span>
+      </router-link>
     </div>
   </div>
 </template>

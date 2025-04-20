@@ -178,10 +178,13 @@ const generateSeedData = async () => {
     funds = []; // Fallback to empty array if import fails
   }
 
+  // Track fund usage to ensure all funds are used at least once
+  const fundUsageCount = new Map(funds.map(fund => [fund.id, 0]));
+  
   // 3. Generate Clients (50 samples) & Interactions based on requirements
   const riskProfiles = ['Averse', 'Minimal', 'Cautious', 'Open', 'Eager'];
   
-  // Distribution weights for risk profiles (making Cautious most common, Averse and Eager least common)
+  // Distribution weights for risk profiles (making Cautious most common)
   const riskProfileWeights = {
     'Averse': 0.1,    // 10% chance
     'Minimal': 0.2,   // 20% chance
@@ -190,6 +193,20 @@ const generateSeedData = async () => {
     'Eager': 0.1      // 10% chance
   };
 
+  // Helper function to calculate portfolio target value based on client index
+  const calculatePortfolioTargetValue = (clientIndex) => {
+    const minValue = 4500;
+    const maxValue = 1800000;
+    
+    // Use exponential distribution to create realistic wealth distribution
+    const normalizedIndex = clientIndex / 50; // 0 to 1
+    const exp = Math.pow(Math.E, normalizedIndex * 4) - 1; // Exponential growth
+    const normalized = exp / (Math.pow(Math.E, 4) - 1); // Normalize to 0-1
+    
+    return minValue + (normalized * (maxValue - minValue));
+  };
+
+  // Helper function to get weighted random risk profile
   const getWeightedRiskProfile = () => {
     const rand = Math.random();
     let cumulativeWeight = 0;
@@ -208,14 +225,17 @@ const generateSeedData = async () => {
   const sixMonthsAgo = now - (6 * 30 * 24 * 60 * 60 * 1000);
   const oneYearAgo = now - (12 * 30 * 24 * 60 * 60 * 1000);
 
+  // Create a shuffled copy of funds for initial distribution
+  let remainingFunds = [...funds];
+  
   for (let i = 0; i < 50; i++) {
-    const clientId = i + 1; // Simple sequential ID for seeding
+    const clientId = i + 1;
     const isMale = Math.random() > 0.5;
     const firstName = isMale 
       ? nameData.firstNames.men[Math.floor(Math.random() * nameData.firstNames.men.length)]
       : nameData.firstNames.women[Math.floor(Math.random() * nameData.firstNames.women.length)];
     const lastName = nameData.surnames[Math.floor(Math.random() * nameData.surnames.length)];
-    const assignedIFA = ifaUsers[Math.floor(Math.random() * ifaUsers.length)]; // Randomly assign an IFA
+    const assignedIFA = ifaUsers[Math.floor(Math.random() * ifaUsers.length)];
 
     clients.push({
       id: clientId,
@@ -225,164 +245,95 @@ const generateSeedData = async () => {
       phone: generatePhoneNumber(),
       address: generateAddress(),
       dateOfBirth: generateDOB(),
-      riskProfile: getWeightedRiskProfile(), // Use weighted distribution
-      assignedIFAUserId: assignedIFA.id, 
-      createdAt: generateRandomDate(2) // Client onboarded in last 2 years
+      riskProfile: getWeightedRiskProfile(),
+      assignedIFAUserId: assignedIFA.id,
+      createdAt: generateRandomDate(2)
     });
 
-    // 4. Generate Holdings for this Client (3-8 funds, but not more than available)
-    const maxPossibleHoldings = Math.min(8, funds.length);
-    const minHoldings = Math.min(3, maxPossibleHoldings);
-    const numHoldings = Math.floor(Math.random() * (maxPossibleHoldings - minHoldings + 1)) + minHoldings;
+    // Calculate target portfolio value for this client
+    const targetPortfolioValue = calculatePortfolioTargetValue(i);
     
-    // Randomly select funds without replacement
-    const availableFunds = [...funds];
-    const selectedFunds = [];
+    // Determine number of funds (3-8)
+    const numFunds = Math.floor(Math.random() * 6) + 3;
     
-    for (let j = 0; j < numHoldings && availableFunds.length > 0; j++) {
-      const randomIndex = Math.floor(Math.random() * availableFunds.length);
-      selectedFunds.push(availableFunds.splice(randomIndex, 1)[0]);
+    // Select funds ensuring all funds get used at least once
+    let selectedFunds = [];
+    
+    // First, add any unused funds if needed
+    const unusedFunds = funds.filter(fund => fundUsageCount.get(fund.id) === 0);
+    if (unusedFunds.length > 0 && selectedFunds.length < numFunds) {
+      const numUnusedToAdd = Math.min(
+        unusedFunds.length,
+        numFunds - selectedFunds.length
+      );
+      for (let j = 0; j < numUnusedToAdd; j++) {
+        const randomUnused = unusedFunds[Math.floor(Math.random() * unusedFunds.length)];
+        selectedFunds.push(randomUnused);
+        fundUsageCount.set(randomUnused.id, fundUsageCount.get(randomUnused.id) + 1);
+        unusedFunds.splice(unusedFunds.indexOf(randomUnused), 1);
+      }
     }
     
+    // Then fill remaining slots randomly
+    while (selectedFunds.length < numFunds) {
+      const randomFund = funds[Math.floor(Math.random() * funds.length)];
+      if (!selectedFunds.includes(randomFund)) {
+        selectedFunds.push(randomFund);
+        fundUsageCount.set(randomFund.id, fundUsageCount.get(randomFund.id) + 1);
+      }
+    }
+    
+    // Calculate units for each fund to reach target portfolio value
+    const totalValue = targetPortfolioValue;
+    const avgValuePerFund = totalValue / selectedFunds.length;
+    
     selectedFunds.forEach(fund => {
-      const unitsHeld = Math.floor(Math.random() * 5000) + 500; // 500-5500 units
+      // Vary the value distribution between funds (-30% to +30% from average)
+      const variation = 0.7 + (Math.random() * 0.6); // 0.7 to 1.3
+      const targetValue = avgValuePerFund * variation;
+      const unitsHeld = Math.floor(targetValue / fund.price);
+      
       holdings.push({
         clientId: clientId,
         fundId: fund.id,
         unitsHeld: unitsHeld,
-        acquisitionDate: generateRandomDate(1) // Acquired in the last year
+        acquisitionDate: generateRandomDate(1)
       });
     });
 
-    // 5. Generate Interactions based on Client ID Grouping
+    // Generate interactions based on client grouping...
     let numInteractions = 0;
-    let interactionStartDate = oneYearAgo; // Default oldest
+    let interactionStartDate = oneYearAgo;
 
-    const generateInteractionNote = (interactionType, clientRiskProfile) => {
-      const meetingReasons = [
-        "Annual portfolio review and rebalancing discussion",
-        "Retirement planning consultation - discussing pension options and drawdown strategies",
-        "Estate planning and inheritance tax discussion",
-        "Investment strategy review in light of market conditions",
-        "Life changes discussion - new job and pension transfer options",
-        "Risk profile reassessment - considering changes to investment approach",
-        "Tax year-end planning and ISA allocation review",
-        "Discussion about new investment opportunities and market outlook",
-        "Family wealth planning and intergenerational wealth transfer",
-        "Insurance and protection needs review"
-      ];
-
-      const callReasons = [
-        "Quick portfolio valuation update requested",
-        "Market volatility concerns - reassurance call",
-        "Query about recent fund performance",
-        "Discussion about upcoming withdrawal needs",
-        "Quick check on ISA contribution status",
-        "Question about tax certificates",
-        "Clarification on recent investment changes",
-        "Update on personal circumstances affecting investments",
-        "Query about online account access",
-        "Discussion about new address/contact details"
-      ];
-
-      const emailReasons = [
-        "Sent updated portfolio valuation statement",
-        "Provided information about new investment opportunities",
-        "Responded to query about fund charges and fees",
-        "Sent tax year-end planning reminder",
-        "Provided retirement income projection figures",
-        "Sent meeting follow-up summary and action points",
-        "Provided requested fund factsheets",
-        "Sent inheritance tax calculation summary",
-        "Provided pension contribution statement",
-        "Sent updated risk profile questionnaire"
-      ];
-
-      const reviewReasons = [
-        "Quarterly portfolio performance review completed",
-        "Annual investment strategy review",
-        "Risk profile review - ${clientRiskProfile} appetite confirmed",
-        "Income withdrawal strategy review",
-        "Tax efficiency review of current holdings",
-        "Investment costs and charges review",
-        "Portfolio rebalancing review",
-        "Retirement planning milestone review",
-        "Estate planning review",
-        "Protection needs review"
-      ];
-
-      const noteReasons = [
-        "Updated client circumstances - new grandchild",
-        "Noted change in retirement timeline",
-        "Recorded updated income requirements",
-        "Noted interest in ESG investing",
-        "Updated client's employment status",
-        "Recorded changes to family circumstances",
-        "Noted future inheritance expectations",
-        "Updated long-term investment goals",
-        "Recorded property purchase plans",
-        "Noted business sale considerations"
-      ];
-
-      let reasons;
-      switch (interactionType.name) {
-        case 'Meeting':
-          reasons = meetingReasons;
-          break;
-        case 'Call':
-          reasons = callReasons;
-          break;
-        case 'Email':
-          reasons = emailReasons;
-          break;
-        case 'Review':
-          reasons = reviewReasons;
-          break;
-        case 'Note':
-          reasons = noteReasons;
-          break;
-        default:
-          reasons = noteReasons;
-      }
-
-      return reasons[Math.floor(Math.random() * reasons.length)];
-    };
-
-    if (clientId <= 10) { // Group 1: 0 interactions (clients 1-10)
+    if (clientId <= 10) {
       numInteractions = 0;
-    } else if (clientId <= 20) { // Group 2: 3-5 interactions in last year (clients 11-20)
-      numInteractions = Math.floor(Math.random() * 3) + 3; // 3 to 5
+    } else if (clientId <= 20) {
+      numInteractions = Math.floor(Math.random() * 3) + 3;
       interactionStartDate = oneYearAgo;
-    } else if (clientId <= 40) { // Group 3: >= 2 interactions in last 6 months (clients 21-40)
-      numInteractions = Math.floor(Math.random() * 4) + 2; // 2 to 5
+    } else if (clientId <= 40) {
+      numInteractions = Math.floor(Math.random() * 4) + 2;
       interactionStartDate = sixMonthsAgo;
-    } else { // Group 4: >= 2 interactions in last 3 months (clients 41-50)
-      numInteractions = Math.floor(Math.random() * 4) + 2; // 2 to 5
+    } else {
+      numInteractions = Math.floor(Math.random() * 4) + 2;
       interactionStartDate = threeMonthsAgo;
     }
 
     for (let j = 0; j < numInteractions; j++) {
-       // Generate date between interactionStartDate and now
-       const interactionDate = new Date(interactionStartDate + Math.random() * (now - interactionStartDate));
-       // Select a random interaction type ID from the module-scoped constant
-       const randomInteractionType = INTERACTION_TYPES[Math.floor(Math.random() * INTERACTION_TYPES.length)];
-       
-       interactions.push({
+      const interactionDate = new Date(interactionStartDate + Math.random() * (now - interactionStartDate));
+      const randomInteractionType = INTERACTION_TYPES[Math.floor(Math.random() * INTERACTION_TYPES.length)];
+      
+      interactions.push({
         clientId: clientId,
         ifaUserId: assignedIFA.id,
         date: interactionDate,
         interactionTypeId: randomInteractionType.id,
-        summaryNotes: generateInteractionNote(randomInteractionType, clients[clients.length - 1].riskProfile)
+        summaryNotes: `Interaction of type ${randomInteractionType.name} for client ${clientId}`
       });
     }
   }
-  console.log(`🧑‍🤝‍🧑 Generated ${clients.length} clients.`);
-  console.log(`🧾 Generated ${holdings.length} client holdings.`);
-  console.log(`📞 Generated ${interactions.length} client interactions according to frequency requirements.`);
 
   return { ifaUsers, clients, funds, holdings, interactions, interactionTypes: INTERACTION_TYPES };
 };
-
 
 // --- Database Class ---
 class AppDatabase extends Dexie {

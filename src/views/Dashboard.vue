@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-8">
-    <!-- Stats Overview Section - Added relative positioning and z-index -->
+    <!-- Stats Overview Section -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 -mt-14 relative z-10">
       <StatsCard
         title="Total Clients"
@@ -9,6 +9,7 @@
         icon-bg-color="bg-blue-100"
         icon-text-color="text-blue-600"
         value-color="text-blue-600"
+        addLink="/clients"
       />
       <StatsCard
         title="Active Portfolios"
@@ -26,6 +27,7 @@
         icon-bg-color="bg-yellow-100"
         icon-text-color="text-yellow-600"
         value-color="text-yellow-600"
+        addLink="/compliance"
       />
       <StatsCard
         title="Upcoming Meetings"
@@ -34,93 +36,77 @@
         icon-bg-color="bg-purple-100"
         icon-text-color="text-purple-600"
         value-color="text-purple-600"
+        addLink="/appointments"
       />
     </div>
 
-    <!-- Quick Actions & Activity Section -->
+    <!-- Portfolio Overview & Activity Section -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <QuickActions />
+      <!-- Fund Category Distribution -->
+      <div class="bg-white rounded-lg shadow-soft p-6 transition-all duration-300 hover:shadow-hover">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-semibold text-gray-800">Fund Category Distribution</h3>
+          <div class="text-sm text-gray-500">
+            Total AUM: {{ formatCurrency(stats.totalAUM) }}
+          </div>
+        </div>
+        <div class="h-[300px] relative">
+          <canvas ref="categoryChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Upcoming Appointments -->
       <div class="bg-white rounded-lg shadow-soft transition-all duration-300 hover:shadow-hover">
         <RecentActivity />
       </div>
     </div>
 
-    <!-- Fund Management Overview & Top Clients Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-      <!-- Fund Management Overview -->
-      <div class="bg-white rounded-lg shadow-soft p-6 transition-all duration-300 hover:shadow-hover">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Fund Management Overview</h3>
-        <div class="grid grid-cols-2 gap-4 mb-6">
-          <div class="bg-emerald-50 rounded-lg p-4">
-            <p class="text-sm text-gray-600">Total Assets Under Management</p>
-            <p class="text-2xl font-bold text-emerald-600">{{ formatCurrency(stats.totalAUM) }}</p>
+    <!-- Top Clients Section -->
+    <div class="bg-white rounded-lg shadow-soft p-6 transition-all duration-300 hover:shadow-hover">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Clients by Portfolio Value</h3>
+      <div class="space-y-4">
+        <div v-for="client in stats.topClients" :key="client.id" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div class="flex items-center space-x-3">
+            <p class="font-medium text-gray-900">{{ client.firstName }} {{ client.lastName }}</p>
+            <span 
+              :class="[
+                'px-2 py-0.5 text-xs leading-5 font-medium rounded-full',
+                {
+                  'risk-averse': client.riskProfile === 'Averse',
+                  'risk-minimal': client.riskProfile === 'Minimal',
+                  'risk-cautious': client.riskProfile === 'Cautious',
+                  'risk-open': client.riskProfile === 'Open',
+                  'risk-eager': client.riskProfile === 'Eager'
+                }
+              ]"
+            >{{ client.riskProfile }}</span>
           </div>
-          <div class="bg-blue-50 rounded-lg p-4">
-            <p class="text-sm text-gray-600">Average Portfolio Value</p>
-            <p class="text-2xl font-bold text-blue-600">{{ formatCurrency(stats.averagePortfolioValue) }}</p>
-          </div>
-        </div>
-        <div class="h-64">
-          <canvas ref="categoryChart"></canvas>
-        </div>
-      </div>
-      
-      <!-- Top Clients by Portfolio Value -->
-      <div class="bg-white rounded-lg shadow-soft p-6 transition-all duration-300 hover:shadow-hover">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Clients by Portfolio Value</h3>
-        <div class="space-y-4">
-          <div v-for="client in stats.topClients" :key="client.id" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div class="flex items-center space-x-3">
-              <p class="font-medium text-gray-900">{{ client.firstName }} {{ client.lastName }}</p>
-              <span 
-                :class="[
-                  'px-2 py-0.5 text-xs leading-5 font-medium rounded-full',
-                  {
-                    'risk-averse': client.riskProfile === 'Averse',
-                    'risk-minimal': client.riskProfile === 'Minimal',
-                    'risk-cautious': client.riskProfile === 'Cautious',
-                    'risk-open': client.riskProfile === 'Open',
-                    'risk-eager': client.riskProfile === 'Eager'
-                  }
-                ]"
-              >{{ client.riskProfile }}</span>
-            </div>
-            <p class="text-lg font-semibold text-emerald-600">{{ formatCurrency(client.portfolioValue) }}</p>
-          </div>
+          <p class="text-lg font-semibold text-emerald-600">{{ formatCurrency(client.portfolioValue) }}</p>
         </div>
       </div>
-    </div>
-
-    <!-- Upcoming Appointments Section -->
-    <div class="bg-white rounded-lg shadow-soft transition-all duration-300 hover:shadow-hover">
-      <UpcomingAppointments />
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, inject, computed, nextTick } from 'vue'
-import { Chart, ArcElement, Tooltip, Legend, PieController } from 'chart.js'
-import { dataService } from '../services/db'
-import StatsCard from '../components/StatsCard.vue'
-import QuickActions from '../components/QuickActions.vue'
-import RecentActivity from '../components/RecentActivity.vue'
-import UpcomingAppointments from '../components/UpcomingAppointments.vue'
+import { ref, onMounted, inject, computed, nextTick, watch } from 'vue';
+import { Chart, ArcElement, Tooltip, Legend, PieController } from 'chart.js';
+import StatsCard from '../components/StatsCard.vue';
+import RecentActivity from '../components/RecentActivity.vue';
+import { dataService } from '../services/db';
 
-Chart.register(ArcElement, Tooltip, Legend, PieController)
+Chart.register(ArcElement, Tooltip, Legend, PieController);
 
 export default {
   name: 'DashboardView',
   components: {
     StatsCard,
-    QuickActions,
-    RecentActivity,
-    UpcomingAppointments
+    RecentActivity
   },
   setup() {
-    const currentUser = inject('currentUser', ref(null))
-    const userId = computed(() => currentUser.value?.id)
-    
+    const currentUser = inject('currentUser', ref(null));
+    const userId = computed(() => currentUser.value?.id);
+
     const stats = ref({
       totalClients: 0,
       activePortfolios: 0,
@@ -130,7 +116,7 @@ export default {
       averagePortfolioValue: 0,
       topClients: [],
       categoryDistribution: {}
-    })
+    });
 
     const formatCurrency = (value, currencyCode = 'GBP') => {
       if (typeof value !== 'number') return 'N/A';
@@ -143,10 +129,22 @@ export default {
     const categoryChart = ref(null);
 
     const setupCategoryChart = () => {
-      if (!categoryChart.value) return;
+      if (!categoryChart.value || !stats.value.categoryDistribution) return;
 
-      const labels = Object.keys(stats.value.categoryDistribution);
-      const data = Object.values(stats.value.categoryDistribution);
+      const existingChart = Chart.getChart(categoryChart.value);
+      if (existingChart) {
+        existingChart.destroy();
+      }
+
+      const sortedCategories = Object.entries(stats.value.categoryDistribution)
+        .sort(([, a], [, b]) => b - a)
+        .reduce((acc, [key, value]) => {
+          acc[key] = value;
+          return acc;
+        }, {});
+
+      const labels = Object.keys(sortedCategories);
+      const data = Object.values(sortedCategories);
       const colors = [
         '#10B981', '#3B82F6', '#6366F1', '#8B5CF6', 
         '#EC4899', '#F59E0B', '#84CC16', '#14B8A6'
@@ -159,16 +157,21 @@ export default {
           datasets: [{
             data,
             backgroundColor: colors.slice(0, labels.length),
-            borderWidth: 1
+            borderWidth: 1,
+            borderColor: '#fff'
           }]
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             legend: {
               position: 'right',
               labels: {
-                usePointStyle: true
+                usePointStyle: true,
+                font: {
+                  size: 12
+                }
               }
             },
             tooltip: {
@@ -186,11 +189,14 @@ export default {
       });
     };
 
+    watch(() => stats.value.categoryDistribution, () => {
+      nextTick(setupCategoryChart);
+    }, { deep: true });
+
     const fetchDashboardData = async () => {
       if (!userId.value) return;
 
       try {
-        // Get clients and their holdings
         const clients = await dataService.getClients(userId.value);
         const clientHoldings = await Promise.all(
           clients.map(async client => {
@@ -204,7 +210,6 @@ export default {
           })
         );
 
-        // Calculate total AUM and category distribution
         let totalAUM = 0;
         const categoryDistribution = {};
 
@@ -216,7 +221,6 @@ export default {
           });
         });
 
-        // Update stats
         stats.value.totalAUM = totalAUM;
         stats.value.averagePortfolioValue = totalAUM / clients.length;
         stats.value.categoryDistribution = categoryDistribution;
@@ -224,13 +228,9 @@ export default {
           .sort((a, b) => b.portfolioValue - a.portfolioValue)
           .slice(0, 5);
 
-        // Get total clients
         stats.value.totalClients = clients.length;
-
-        // Get total active portfolios (clients with holdings)
         stats.value.activePortfolios = clientHoldings.filter(client => client.holdings.length > 0).length;
 
-        // Count upcoming meetings (next 7 days)
         const today = new Date();
         const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
         const appointments = await dataService.getAppointments(userId.value);
@@ -238,31 +238,29 @@ export default {
           appt => new Date(appt.startTime) <= nextWeek && new Date(appt.startTime) >= today
         ).length;
 
-        // Get pending compliance items as tasks
         const compliance = await dataService.getComplianceRequirements(userId.value);
         stats.value.pendingTasks = compliance.filter(item => item.status === 'pending').length;
 
-        // Setup chart after data is loaded
         nextTick(() => setupCategoryChart());
 
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       }
-    }
+    };
 
     onMounted(() => {
       if (userId.value) {
         fetchDashboardData();
       }
-    })
+    });
 
     return {
       stats,
       formatCurrency,
       categoryChart
-    }
+    };
   }
-}
+};
 </script>
 
 <style lang="postcss" scoped>

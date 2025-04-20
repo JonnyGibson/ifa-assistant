@@ -32,8 +32,9 @@ async function getFundData(isin) {
         const summaryResponse = await axiosInstance.get(summaryUrl);
         const $summary = cheerio.load(summaryResponse.data);
         
-        // Extract category
-        const category = $summary('td:contains("Morningstar category")').next().text().trim();
+        // Extract category and ensure it's not empty
+        const category = $summary('td:contains("Morningstar category")').next().text().trim() || 
+                        $summary('td:contains("Fund type")').next().text().trim();
         
         // Get performance page data
         const performanceUrl = `https://markets.ft.com/data/funds/tearsheet/performance?s=${isin}`;
@@ -44,15 +45,23 @@ async function getFundData(isin) {
         const performanceRow = $performance('.mod-ui-table tbody tr').first();
         const cells = performanceRow.find('td');
         
-        // Extract performance data from spans with mod-format classes
-        const threeYearValue = cells.eq(2).find('span').text().trim();
-        const oneYearValue = cells.eq(3).find('span').text().trim();
-        const threeMonthValue = cells.eq(5).find('span').text().trim();
+        // Extract performance data with fallbacks
+        const threeYearValue = cells.eq(2).find('span').text().trim() || cells.eq(2).text().trim();
+        const oneYearValue = cells.eq(3).find('span').text().trim() || cells.eq(3).text().trim();
+        const threeMonthValue = cells.eq(5).find('span').text().trim() || cells.eq(5).text().trim();
         
-        // Get the fund name and price
+        // Get the fund name and price with fallback options
         const fundName = $summary('.mod-tearsheet-overview__header__name').text().trim();
-        const priceText = $summary('li:contains("Price")').text().match(/[\d.]+/)?.[0];
+        const priceText = $summary('li:contains("Price")').text().match(/[\d.]+/)?.[0] || 
+                         $summary('.mod-ui-table td:contains("NAV")').next().text().match(/[\d.]+/)?.[0];
         
+        // Get allocation data with international equivalents
+        const nonUKBond = parseFloat($summary('td:contains("Non-UK bond")').next().text().trim().replace('%', '') || 
+                                   $summary('td:contains("International Fixed Income")').next().text().trim().replace('%', '') || '0');
+        const ukBond = parseFloat($summary('td:contains("UK bond")').next().text().trim().replace('%', '') || 
+                                $summary('td:contains("Domestic Fixed Income")').next().text().trim().replace('%', '') || '0');
+        const cash = parseFloat($summary('td:contains("Cash")').next().text().trim().replace('%', '') || '0');
+
         return {
             name: fundName,
             price: parseFloat(priceText) || null,
@@ -61,6 +70,11 @@ async function getFundData(isin) {
                 threeYearChange: parsePerformanceValue(threeYearValue),
                 oneYearChange: parsePerformanceValue(oneYearValue),
                 threeMonthChange: parsePerformanceValue(threeMonthValue)
+            },
+            allocation: {
+                nonUKBond,
+                ukBond,
+                cash
             }
         };
     } catch (error) {
@@ -73,6 +87,11 @@ async function getFundData(isin) {
                 threeYearChange: null,
                 oneYearChange: null,
                 threeMonthChange: null
+            },
+            allocation: {
+                nonUKBond: 0,
+                ukBond: 0,
+                cash: 0
             }
         };
     }
@@ -80,8 +99,8 @@ async function getFundData(isin) {
 
 async function transformFundData() {
     try {
-        // Read the existing funds data
-        const fundsPath = path.join(__dirname, '../fund_data/funds.json');
+        // Read the funds data from public/fund_data
+        const fundsPath = path.join(__dirname, '../public/fund_data/funds.json');
         const funds = JSON.parse(fs.readFileSync(fundsPath, 'utf8'));
         
         const transformedFunds = [];
@@ -102,10 +121,10 @@ async function transformFundData() {
                 name: fundData.name || fund.name,
                 price: fundData.price || fund.price,
                 currency: fund.currency || 'GBP',
-                category: fundData.category,
+                category: fundData.category || fund.profile?.category,
                 lastUpdated: new Date().toISOString(),
                 performance: fundData.performance,
-                allocation: fund.allocation || {},
+                allocation: fundData.allocation || fund.allocation || {},
                 links: {
                     ft: `https://markets.ft.com/data/funds/tearsheet/summary?s=${fund.isin}`,
                     performance: `https://markets.ft.com/data/funds/tearsheet/performance?s=${fund.isin}`
@@ -115,8 +134,8 @@ async function transformFundData() {
             transformedFunds.push(transformedFund);
         }
         
-        // Write the transformed data to a new file
-        const outputPath = path.join(__dirname, '../fund_data/transformed_funds.json');
+        // Write the transformed data to transformed_funds.json
+        const outputPath = path.join(__dirname, '../public/fund_data/transformed_funds.json');
         fs.writeFileSync(outputPath, JSON.stringify(transformedFunds, null, 2));
         console.log(`Transformed ${transformedFunds.length} funds successfully!`);
         
@@ -125,22 +144,5 @@ async function transformFundData() {
     }
 }
 
-// Create package.json for dependencies if it doesn't exist
-const packageJson = {
-    "name": "fund-data-transformer",
-    "version": "1.0.0",
-    "dependencies": {
-        "axios": "^1.6.0",
-        "cheerio": "^1.0.0-rc.12"
-    },
-    "type": "module"
-};
-
-// Write package.json if it doesn't exist
-const packagePath = path.join(__dirname, 'package.json');
-if (!fs.existsSync(packagePath)) {
-    fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2));
-}
-
 // Execute the transformation
-transformFundData().catch(console.error); 
+transformFundData().catch(console.error);

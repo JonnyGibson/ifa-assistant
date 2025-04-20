@@ -1,1014 +1,922 @@
 [
   {
-    "isin": "GB00B777SP34",
-    "sedol": "B777SP3",
-    "name": "abrdn Global Smaller Companies Fund Institutional Accumulationabrdn Global Smaller Companies Fund Institutional Accumulation",
-    "price": 172.3,
+    "isin": "FR0010250290",
+    "sedol": "1025029",
+    "name": "HSBC Europe Equity Income ZHSBC Europe Equity Income Z",
+    "price": 23,
     "currency": "GBP",
-    "category": "Global Small/Mid-Cap Equity",
-    "lastUpdated": "2025-04-19T09:21:36.745Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:43:58.512Z",
     "performance": {
-      "threeYearChange": -1.19,
-      "oneYearChange": -2.38,
-      "threeMonthChange": -14.15
-    },
-    "allocation": {
-      "nonUKBond": 0.14,
-      "ukBond": 0.14,
-      "cash": 1.51
-    },
-    "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B777SP34",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B777SP34"
-    }
-  },
-  {
-    "isin": "GB00B2PLJR10",
-    "sedol": "B2PLJR1",
-    "name": "Artemis Strategic Bond Fund I Quarterly AccArtemis Strategic Bond Fund I Quarterly Acc",
-    "price": 1.16,
-    "currency": "GBP",
-    "category": "Global Flexible Bond - GBP Hedged",
-    "lastUpdated": "2025-04-19T09:21:41.756Z",
-    "performance": {
-      "threeYearChange": 2.62,
-      "oneYearChange": 7.86,
-      "threeMonthChange": 1.52
-    },
-    "allocation": {
-      "nonUKBond": 64.46,
-      "ukBond": 64.4634,
-      "cash": -15.81
-    },
-    "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B2PLJR10",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B2PLJR10"
-    }
-  },
-  {
-    "isin": "GB00BJT0KT28",
-    "sedol": "BJT0KT2",
-    "name": "Artemis Strategic Bond Fund I Quarterly IncArtemis Strategic Bond Fund I Quarterly Inc",
-    "price": 0.7743,
-    "currency": "GBP",
-    "category": "Global Flexible Bond - GBP Hedged",
-    "lastUpdated": "2025-04-19T09:21:46.733Z",
-    "performance": {
-      "threeYearChange": 2.62,
-      "oneYearChange": 7.85,
-      "threeMonthChange": 1.51
-    },
-    "allocation": {
-      "nonUKBond": 64.46,
-      "ukBond": 64.4634,
-      "cash": -15.81
-    },
-    "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BJT0KT28",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BJT0KT28"
-    }
-  },
-  {
-    "isin": "GB00BMMV5105",
-    "sedol": "BMMV510",
-    "name": "Artemis US Select Fund I Acc GBPArtemis US Select Fund I Acc GBP",
-    "price": 3.59,
-    "currency": "GBP",
-    "category": "US Large-Cap Growth Equity",
-    "lastUpdated": "2025-04-19T09:21:51.502Z",
-    "performance": {
-      "threeYearChange": 5.73,
-      "oneYearChange": -8.91,
-      "threeMonthChange": -23.17
+      "threeYearChange": 13.8,
+      "oneYearChange": 13.77,
+      "threeMonthChange": 3.83
     },
     "allocation": {
       "nonUKBond": 0,
       "ukBond": 0,
-      "cash": 1.32
+      "cash": 2.05
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BMMV5105",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BMMV5105"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010250290",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0010250290"
     }
   },
   {
-    "isin": "GB00BFZ91X66",
-    "sedol": "BFZ91X6",
-    "name": "Artemis Corporate Bond Fund F Acc GBPArtemis Corporate Bond Fund F Acc GBP",
-    "price": 1.11,
+    "isin": "FR0010250308",
+    "sedol": "1025030",
+    "name": "HSBC Europe Equity Income KHSBC Europe Equity Income K",
+    "price": 1,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:21:56.183Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:44:03.031Z",
     "performance": {
-      "threeYearChange": 1.12,
-      "oneYearChange": 4.8,
-      "threeMonthChange": 0.15
+      "threeYearChange": 13.43,
+      "oneYearChange": 13.4,
+      "threeMonthChange": 3.75
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 2.05
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BFZ91X66",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BFZ91X66"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010250308",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0010250308"
     }
   },
   {
-    "isin": "GB00BKPWGW41",
-    "sedol": "BKPWGW4",
-    "name": "Artemis Corporate Bond Fund F Inc GBPArtemis Corporate Bond Fund F Inc GBP",
-    "price": 0.8958,
+    "isin": "DE000A2DL4R1",
+    "sedol": "A2DL4R",
+    "name": "BANTLEON TOP 35 Aktien SBANTLEON TOP 35 Aktien S",
+    "price": 122.38,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:22:01.179Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:44:07.440Z",
     "performance": {
-      "threeYearChange": 1.07,
-      "oneYearChange": 4.8,
-      "threeMonthChange": 0.16
+      "threeYearChange": 13.43,
+      "oneYearChange": 5.33,
+      "threeMonthChange": -0.09
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 0.84
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BKPWGW41",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BKPWGW41"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=DE000A2DL4R1",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=DE000A2DL4R1"
     }
   },
   {
-    "isin": "GB00BFZ91W59",
-    "sedol": "BFZ91W5",
-    "name": "Artemis Corporate Bond Fund I Acc GBPArtemis Corporate Bond Fund I Acc GBP",
-    "price": 1.1,
+    "isin": "DE000A1JJJF8",
+    "sedol": "A1JJJF",
+    "name": "BANTLEON TOP 35 Aktien IBANTLEON TOP 35 Aktien I",
+    "price": 187.99,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:22:06.093Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:44:11.845Z",
     "performance": {
-      "threeYearChange": 1.03,
-      "oneYearChange": 4.74,
-      "threeMonthChange": 0.15
+      "threeYearChange": 13.28,
+      "oneYearChange": 5.21,
+      "threeMonthChange": -0.1
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 0.84
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BFZ91W59",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BFZ91W59"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=DE000A1JJJF8",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=DE000A1JJJF8"
     }
   },
   {
-    "isin": "GB00BKPWGV34",
-    "sedol": "BKPWGV3",
-    "name": "Artemis Corporate Bond Fund I Inc GBPArtemis Corporate Bond Fund I Inc GBP",
-    "price": 0.8914,
+    "isin": "FR0013287091",
+    "sedol": "1328709",
+    "name": "HSBC Europe Equity Income BCHSBC Europe Equity Income BC",
+    "price": 162.93,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:22:11.008Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:44:16.251Z",
     "performance": {
-      "threeYearChange": 0.99,
-      "oneYearChange": 4.74,
-      "threeMonthChange": 0.16
+      "threeYearChange": 12.97,
+      "oneYearChange": 12.99,
+      "threeMonthChange": 3.64
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 2.05
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BKPWGV34",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BKPWGV34"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0013287091",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0013287091"
     }
   },
   {
-    "isin": "GB00BNQ4FB29",
-    "sedol": "BNQ4FB2",
-    "name": "Av/Threadneedle UK Social Bd FP PnAv/Threadneedle UK Social Bd FP Pn",
-    "price": 1.35,
+    "isin": "FR0011271626",
+    "sedol": "1127162",
+    "name": "HSBC Europe Equity Income ICHSBC Europe Equity Income IC",
+    "price": 2,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:22:15.639Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:44:20.697Z",
     "performance": {
-      "threeYearChange": 1.98,
-      "oneYearChange": 5.49,
-      "threeMonthChange": 1.2
+      "threeYearChange": 12.95,
+      "oneYearChange": 12.92,
+      "threeMonthChange": 3.64
     },
     "allocation": {
-      "nonUKBond": 24.37,
-      "ukBond": 70.1824,
-      "cash": 2.99
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 2.05
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BNQ4FB29",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BNQ4FB29"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0011271626",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0011271626"
     }
   },
   {
-    "isin": "GB00BGGRZ126",
-    "sedol": "BGGRZ12",
-    "name": "Aviva Insured Funds Sustainable Stewardship Bond S14Aviva Insured Funds Sustainable Stewardship Bond S14",
-    "price": 0.9622,
+    "isin": "FR0010401075",
+    "sedol": "1040107",
+    "name": "Hugau Rendement Responsable CHugau Rendement Responsable C",
+    "price": 168.84,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:22:20.522Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:44:25.158Z",
     "performance": {
-      "threeYearChange": -0.51,
-      "oneYearChange": 3.72,
-      "threeMonthChange": -0.04
+      "threeYearChange": 12.37,
+      "oneYearChange": 9.09,
+      "threeMonthChange": 11.25
     },
     "allocation": {
-      "nonUKBond": 57.69,
-      "ukBond": 57.6941,
-      "cash": 0.58
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 0.28
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BGGRZ126",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BGGRZ126"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010401075",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0010401075"
     }
   },
   {
-    "isin": "GB00BHGHC181",
-    "sedol": "BHGHC18",
-    "name": "Aviva Life Sustainable Stewardship Bond S4Aviva Life Sustainable Stewardship Bond S4",
-    "price": 0.9393,
+    "isin": "FR0010074690",
+    "sedol": "1007469",
+    "name": "Reaumur ActionsReaumur Actions",
+    "price": 18,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:22:25.435Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:44:29.755Z",
     "performance": {
-      "threeYearChange": -0.14,
-      "oneYearChange": 3.12,
-      "threeMonthChange": -0.11
+      "threeYearChange": 12.11,
+      "oneYearChange": 7.26,
+      "threeMonthChange": 3.14
     },
     "allocation": {
-      "nonUKBond": 57.69,
-      "ukBond": 57.6941,
-      "cash": 0.58
+      "nonUKBond": 0.44,
+      "ukBond": 0.44,
+      "cash": 0.05
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BHGHC181",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BHGHC181"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010074690",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0010074690"
     }
   },
   {
-    "isin": "GB00B7199X03",
-    "sedol": "B7199X0",
-    "name": "Aviva Pension MyM Invesco Corporate Bond Pension FundAviva Pension MyM Invesco Corporate Bond Pension Fund",
-    "price": 1.65,
+    "isin": "FR0010043216",
+    "sedol": "1004321",
+    "name": "HSBC Europe Equity Income ACHSBC Europe Equity Income AC",
+    "price": 294.06,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:22:30.121Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:44:34.450Z",
     "performance": {
-      "threeYearChange": 1.44,
-      "oneYearChange": 3.73,
-      "threeMonthChange": 0.59
+      "threeYearChange": 12.1,
+      "oneYearChange": 12.08,
+      "threeMonthChange": 3.45
     },
     "allocation": {
-      "nonUKBond": 54.77,
-      "ukBond": 54.7746,
-      "cash": -2.84
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 2.05
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B7199X03",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B7199X03"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010043216",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0010043216"
     }
   },
   {
-    "isin": "GB00B1Z4D821",
-    "sedol": "B1Z4D82",
-    "name": "AXA Sterling Corporate Bond H Gross AccAXA Sterling Corporate Bond H Gross Acc",
-    "price": 176.7,
+    "isin": "FR0010043224",
+    "sedol": "1004322",
+    "name": "HSBC Europe Equity Income ADHSBC Europe Equity Income AD",
+    "price": 209.38,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:22:34.863Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:44:39.064Z",
     "performance": {
-      "threeYearChange": 1.1,
-      "oneYearChange": 5.43,
-      "threeMonthChange": 0.4
+      "threeYearChange": 12.1,
+      "oneYearChange": 12.07,
+      "threeMonthChange": 3.45
     },
     "allocation": {
-      "nonUKBond": 57.13,
-      "ukBond": 57.1342,
-      "cash": 0
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 2.05
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B1Z4D821",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B1Z4D821"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0010043224",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0010043224"
     }
   },
   {
-    "isin": "GB00BZB26M30",
-    "sedol": "BZB26M3",
-    "name": "AXA Wealth/Kames Invt Grade Bond (Life)AXA Wealth/Kames Invt Grade Bond (Life)",
-    "price": 2.2,
+    "isin": "FR0013300803",
+    "sedol": "1330080",
+    "name": "Mandarine Equity Income F(d)Mandarine Equity Income F(d)",
+    "price": 106.33,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:22:39.254Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:44:43.917Z",
     "performance": {
-      "threeYearChange": 0.68,
-      "oneYearChange": 5.01,
-      "threeMonthChange": 1.15
+      "threeYearChange": null,
+      "oneYearChange": null,
+      "threeMonthChange": null
     },
     "allocation": {
-      "nonUKBond": 98.56,
-      "ukBond": 98.5629,
-      "cash": -30.04
+      "nonUKBond": 0.28,
+      "ukBond": 0.28,
+      "cash": 5.14
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BZB26M30",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BZB26M30"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0013300803",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0013300803"
     }
   },
   {
-    "isin": "GB00BFZ91X66",
-    "sedol": "BFZ91X6",
-    "name": "Artemis Corporate Bond Fund F Acc GBPArtemis Corporate Bond Fund F Acc GBP",
-    "price": 1.11,
+    "isin": "FR0013300829",
+    "sedol": "1330082",
+    "name": "Mandarine Equity Income I(d)Mandarine Equity Income I(d)",
+    "price": 107.11,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:22:43.671Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:44:48.499Z",
     "performance": {
-      "threeYearChange": 1.12,
-      "oneYearChange": 4.8,
-      "threeMonthChange": 0.15
+      "threeYearChange": null,
+      "oneYearChange": null,
+      "threeMonthChange": null
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0.28,
+      "ukBond": 0.28,
+      "cash": 5.14
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BFZ91X66",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BFZ91X66"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0013300829",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0013300829"
     }
   },
   {
-    "isin": "GB00BKPWGW41",
-    "sedol": "BKPWGW4",
-    "name": "Artemis Corporate Bond Fund F Inc GBPArtemis Corporate Bond Fund F Inc GBP",
-    "price": 0.8958,
+    "isin": "FR0013300811",
+    "sedol": "1330081",
+    "name": "Mandarine Equity Income R(d)Mandarine Equity Income R(d)",
+    "price": 102.87,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:22:48.064Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:44:53.099Z",
     "performance": {
-      "threeYearChange": 1.07,
-      "oneYearChange": 4.8,
-      "threeMonthChange": 0.16
+      "threeYearChange": null,
+      "oneYearChange": null,
+      "threeMonthChange": null
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0.28,
+      "ukBond": 0.28,
+      "cash": 5.14
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BKPWGW41",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BKPWGW41"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0013300811",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0013300811"
     }
   },
   {
-    "isin": "GB00BFZ91W59",
-    "sedol": "BFZ91W5",
-    "name": "Artemis Corporate Bond Fund I Acc GBPArtemis Corporate Bond Fund I Acc GBP",
-    "price": 1.1,
+    "isin": "FR0013466158",
+    "sedol": "1346615",
+    "name": "Pergam Active Dividend RPergam Active Dividend R",
+    "price": 99.66,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:22:52.821Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:44:57.703Z",
     "performance": {
-      "threeYearChange": 1.03,
-      "oneYearChange": 4.74,
-      "threeMonthChange": 0.15
+      "threeYearChange": null,
+      "oneYearChange": -2.72,
+      "threeMonthChange": -2.11
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 1.83
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BFZ91W59",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BFZ91W59"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=FR0013466158",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=FR0013466158"
     }
   },
   {
-    "isin": "GB00BKPWGV34",
-    "sedol": "BKPWGV3",
-    "name": "Artemis Corporate Bond Fund I Inc GBPArtemis Corporate Bond Fund I Inc GBP",
-    "price": 0.8914,
+    "isin": "LU2918480018",
+    "sedol": "291848001",
+    "name": "Popso (Suisse) Investment Fund - European Equity Dividend A distPopso (Suisse) Investment Fund - European Equity Dividend A dist",
+    "price": 9.17,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:22:57.260Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:45:02.321Z",
     "performance": {
-      "threeYearChange": 0.99,
-      "oneYearChange": 4.74,
-      "threeMonthChange": 0.16
+      "threeYearChange": null,
+      "oneYearChange": null,
+      "threeMonthChange": null
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 2
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BKPWGV34",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BKPWGV34"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2918480018",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU2918480018"
     }
   },
   {
-    "isin": "GB00BNQ4FB29",
-    "sedol": "BNQ4FB2",
-    "name": "Av/Threadneedle UK Social Bd FP PnAv/Threadneedle UK Social Bd FP Pn",
-    "price": 1.35,
+    "isin": "LU2477750645",
+    "sedol": "247775064",
+    "name": "Swiss Life Funds (LUX) - Equity Europe High Dividend I EUR IncSwiss Life Funds (LUX) - Equity Europe High Dividend I EUR Inc",
+    "price": 129.83,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:01.927Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:45:06.925Z",
     "performance": {
-      "threeYearChange": 1.98,
-      "oneYearChange": 5.49,
-      "threeMonthChange": 1.2
+      "threeYearChange": null,
+      "oneYearChange": 17.9,
+      "threeMonthChange": 6.46
     },
     "allocation": {
-      "nonUKBond": 24.37,
-      "ukBond": 70.1824,
-      "cash": 2.99
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 4.47
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BNQ4FB29",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BNQ4FB29"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2477750645",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU2477750645"
     }
   },
   {
-    "isin": "GB00BGGRZ126",
-    "sedol": "BGGRZ12",
-    "name": "Aviva Insured Funds Sustainable Stewardship Bond S14Aviva Insured Funds Sustainable Stewardship Bond S14",
-    "price": 0.9622,
+    "isin": "LU2477750728",
+    "sedol": "247775072",
+    "name": "Swiss Life Funds (LUX) - Equity Europe High Dividend R EUR IncSwiss Life Funds (LUX) - Equity Europe High Dividend R EUR Inc",
+    "price": 126.34,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:06.299Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:45:11.464Z",
     "performance": {
-      "threeYearChange": -0.51,
-      "oneYearChange": 3.72,
-      "threeMonthChange": -0.04
+      "threeYearChange": null,
+      "oneYearChange": 16.79,
+      "threeMonthChange": 6.21
     },
     "allocation": {
-      "nonUKBond": 57.69,
-      "ukBond": 57.6941,
-      "cash": 0.58
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 4.47
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BGGRZ126",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BGGRZ126"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2477750728",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU2477750728"
     }
   },
   {
-    "isin": "GB00BHGHC181",
-    "sedol": "BHGHC18",
-    "name": "Aviva Life Sustainable Stewardship Bond S4Aviva Life Sustainable Stewardship Bond S4",
-    "price": 0.9393,
+    "isin": "LU2793224283",
+    "sedol": "279322428",
+    "name": "UBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - (CHF hedged) K-1-accUBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - (CHF hedged) K-1-acc",
+    "price": 4,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:10.735Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:45:15.980Z",
     "performance": {
-      "threeYearChange": -0.14,
-      "oneYearChange": 3.12,
-      "threeMonthChange": -0.11
+      "threeYearChange": null,
+      "oneYearChange": null,
+      "threeMonthChange": -0.75
     },
     "allocation": {
-      "nonUKBond": 57.69,
-      "ukBond": 57.6941,
-      "cash": 0.58
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 12.01
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BHGHC181",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BHGHC181"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2793224283",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU2793224283"
     }
   },
   {
-    "isin": "GB00B7199X03",
-    "sedol": "B7199X0",
-    "name": "Aviva Pension MyM Invesco Corporate Bond Pension FundAviva Pension MyM Invesco Corporate Bond Pension Fund",
-    "price": 1.65,
+    "isin": "LU2523255490",
+    "sedol": "252325549",
+    "name": "UBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - F-qdistUBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - F-qdist",
+    "price": 111.06,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:15.168Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:45:20.512Z",
     "performance": {
-      "threeYearChange": 1.44,
-      "oneYearChange": 3.73,
-      "threeMonthChange": 0.59
+      "threeYearChange": null,
+      "oneYearChange": 6.42,
+      "threeMonthChange": -1.43
     },
     "allocation": {
-      "nonUKBond": 54.77,
-      "ukBond": 54.7746,
-      "cash": -2.84
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 12.01
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B7199X03",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B7199X03"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2523255490",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU2523255490"
     }
   },
   {
-    "isin": "GB00B1Z4D821",
-    "sedol": "B1Z4D82",
-    "name": "AXA Sterling Corporate Bond H Gross AccAXA Sterling Corporate Bond H Gross Acc",
-    "price": 176.7,
+    "isin": "LU2793224010",
+    "sedol": "279322401",
+    "name": "UBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - I-A1-accUBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - I-A1-acc",
+    "price": 99.07,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:19.580Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:45:25.011Z",
     "performance": {
-      "threeYearChange": 1.1,
-      "oneYearChange": 5.43,
-      "threeMonthChange": 0.4
+      "threeYearChange": null,
+      "oneYearChange": null,
+      "threeMonthChange": -1.46
     },
     "allocation": {
-      "nonUKBond": 57.13,
-      "ukBond": 57.1342,
-      "cash": 0
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 12.01
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B1Z4D821",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B1Z4D821"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2793224010",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU2793224010"
     }
   },
   {
-    "isin": "GB00BZB26M30",
-    "sedol": "BZB26M3",
-    "name": "AXA Wealth/Kames Invt Grade Bond (Life)AXA Wealth/Kames Invt Grade Bond (Life)",
-    "price": 2.2,
+    "isin": "GB00BYPG0H78",
+    "sedol": "BYPG0H7",
+    "name": "SW Woodford Equity Income Series 4 Pension FundSW Woodford Equity Income Series 4 Pension Fund",
+    "price": 1.22,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:23.941Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:45:29.514Z",
     "performance": {
-      "threeYearChange": 0.68,
-      "oneYearChange": 5.01,
-      "threeMonthChange": 1.15
+      "threeYearChange": 26.44,
+      "oneYearChange": 2.18,
+      "threeMonthChange": -4.76
     },
     "allocation": {
-      "nonUKBond": 98.56,
-      "ukBond": 98.5629,
-      "cash": -30.04
+      "nonUKBond": 0.42,
+      "ukBond": 0.42,
+      "cash": -1.92
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BZB26M30",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BZB26M30"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BYPG0H78",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BYPG0H78"
     }
   },
   {
-    "isin": "GB00BFZ91X66",
-    "sedol": "BFZ91X6",
-    "name": "Artemis Corporate Bond Fund F Acc GBPArtemis Corporate Bond Fund F Acc GBP",
-    "price": 1.11,
+    "isin": "GB00BYPG0F54",
+    "sedol": "BYPG0F5",
+    "name": "SW Woodford Equity Income Series 1 Pension FundSW Woodford Equity Income Series 1 Pension Fund",
+    "price": 1.08,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:28.279Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:45:34.036Z",
     "performance": {
-      "threeYearChange": 1.12,
-      "oneYearChange": 4.8,
-      "threeMonthChange": 0.15
+      "threeYearChange": 25.42,
+      "oneYearChange": 1.31,
+      "threeMonthChange": -4.92
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0.42,
+      "ukBond": 0.42,
+      "cash": -1.92
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BFZ91X66",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BFZ91X66"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BYPG0F54",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BYPG0F54"
     }
   },
   {
-    "isin": "GB00BKPWGW41",
-    "sedol": "BKPWGW4",
-    "name": "Artemis Corporate Bond Fund F Inc GBPArtemis Corporate Bond Fund F Inc GBP",
-    "price": 0.8958,
+    "isin": "GB00BYPG0G61",
+    "sedol": "BYPG0G6",
+    "name": "SW Woodford Equity Income Series 2 Pension FundSW Woodford Equity Income Series 2 Pension Fund",
+    "price": 1.13,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:32.644Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:45:38.563Z",
     "performance": {
-      "threeYearChange": 1.07,
-      "oneYearChange": 4.8,
-      "threeMonthChange": 0.16
+      "threeYearChange": 25.26,
+      "oneYearChange": 1.17,
+      "threeMonthChange": -4.97
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0.42,
+      "ukBond": 0.42,
+      "cash": -1.92
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BKPWGW41",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BKPWGW41"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BYPG0G61",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BYPG0G61"
     }
   },
   {
-    "isin": "GB00BFZ91W59",
-    "sedol": "BFZ91W5",
-    "name": "Artemis Corporate Bond Fund I Acc GBPArtemis Corporate Bond Fund I Acc GBP",
-    "price": 1.1,
+    "isin": "GB00B0ZLFN59",
+    "sedol": "B0ZLFN5",
+    "name": "ReAssure LG Invesco Perp High Inc 25ReAssure LG Invesco Perp High Inc 25",
+    "price": 2.85,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:37.004Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:45:43.126Z",
     "performance": {
-      "threeYearChange": 1.03,
-      "oneYearChange": 4.74,
-      "threeMonthChange": 0.15
+      "threeYearChange": 10.82,
+      "oneYearChange": 19.4,
+      "threeMonthChange": 1.75
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 0.82
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BFZ91W59",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BFZ91W59"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B0ZLFN59",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B0ZLFN59"
     }
   },
   {
-    "isin": "GB00BKPWGV34",
-    "sedol": "BKPWGV3",
-    "name": "Artemis Corporate Bond Fund I Inc GBPArtemis Corporate Bond Fund I Inc GBP",
-    "price": 0.8914,
+    "isin": "GB00BYPG0J92",
+    "sedol": "BYPG0J9",
+    "name": "SW Woodford Equity Income Life FundSW Woodford Equity Income Life Fund",
+    "price": 0.765,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:41.344Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:45:47.659Z",
     "performance": {
-      "threeYearChange": 0.99,
-      "oneYearChange": 4.74,
-      "threeMonthChange": 0.16
+      "threeYearChange": 10.76,
+      "oneYearChange": 1.73,
+      "threeMonthChange": -5.09
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0.42,
+      "ukBond": 0.42,
+      "cash": -1.92
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BKPWGV34",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BKPWGV34"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BYPG0J92",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BYPG0J92"
     }
   },
   {
-    "isin": "GB00BNQ4FB29",
-    "sedol": "BNQ4FB2",
-    "name": "Av/Threadneedle UK Social Bd FP PnAv/Threadneedle UK Social Bd FP Pn",
-    "price": 1.35,
+    "isin": "GB00B63QPG78",
+    "sedol": "B63QPG7",
+    "name": "BNY Mellon Investment Funds - Newton UK Income Fund X IncomeBNY Mellon Investment Funds - Newton UK Income Fund X Income",
+    "price": 1.74,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:45.764Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:45:52.231Z",
     "performance": {
-      "threeYearChange": 1.98,
-      "oneYearChange": 5.49,
-      "threeMonthChange": 1.2
+      "threeYearChange": 9.36,
+      "oneYearChange": 7.1,
+      "threeMonthChange": -4.35
     },
     "allocation": {
-      "nonUKBond": 24.37,
-      "ukBond": 70.1824,
-      "cash": 2.99
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 0.42
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BNQ4FB29",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BNQ4FB29"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B63QPG78",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B63QPG78"
     }
   },
   {
-    "isin": "GB00BGGRZ126",
-    "sedol": "BGGRZ12",
-    "name": "Aviva Insured Funds Sustainable Stewardship Bond S14Aviva Insured Funds Sustainable Stewardship Bond S14",
-    "price": 0.9622,
+    "isin": "GB00B1TRHS53",
+    "sedol": "B1TRHS5",
+    "name": "BNY Mellon Investment Funds - Newton UK Income Fund X AccumulationBNY Mellon Investment Funds - Newton UK Income Fund X Accumulation",
+    "price": 7.35,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:50.248Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:45:56.663Z",
     "performance": {
-      "threeYearChange": -0.51,
-      "oneYearChange": 3.72,
-      "threeMonthChange": -0.04
+      "threeYearChange": 9.36,
+      "oneYearChange": 7.1,
+      "threeMonthChange": -4.34
     },
     "allocation": {
-      "nonUKBond": 57.69,
-      "ukBond": 57.6941,
-      "cash": 0.58
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 0.42
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BGGRZ126",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BGGRZ126"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B1TRHS53",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B1TRHS53"
     }
   },
   {
-    "isin": "GB00BHGHC181",
-    "sedol": "BHGHC18",
-    "name": "Aviva Life Sustainable Stewardship Bond S4Aviva Life Sustainable Stewardship Bond S4",
-    "price": 0.9393,
+    "isin": "GB00B1NKCQ38",
+    "sedol": "B1NKCQ3",
+    "name": "Aviva Pension BNY Mellon UK Income Pension FundAviva Pension BNY Mellon UK Income Pension Fund",
+    "price": 3.34,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:54.697Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:46:01.144Z",
     "performance": {
-      "threeYearChange": -0.14,
-      "oneYearChange": 3.12,
-      "threeMonthChange": -0.11
+      "threeYearChange": 9.35,
+      "oneYearChange": 7.25,
+      "threeMonthChange": -4.32
     },
     "allocation": {
-      "nonUKBond": 57.69,
-      "ukBond": 57.6941,
-      "cash": 0.58
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 0.42
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BHGHC181",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BHGHC181"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B1NKCQ38",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B1NKCQ38"
     }
   },
   {
-    "isin": "GB00B7199X03",
-    "sedol": "B7199X0",
-    "name": "Aviva Pension MyM Invesco Corporate Bond Pension FundAviva Pension MyM Invesco Corporate Bond Pension Fund",
-    "price": 1.65,
+    "isin": "GB00B0117C28",
+    "sedol": "B0117C2",
+    "name": "Man UK ICVC - Man Income Fund Professional Accumulation Shares (Class C)Man UK ICVC - Man Income Fund Professional Accumulation Shares (Class C)",
+    "price": 415.2,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:23:59.501Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:46:05.606Z",
     "performance": {
-      "threeYearChange": 1.44,
-      "oneYearChange": 3.73,
-      "threeMonthChange": 0.59
+      "threeYearChange": 9.27,
+      "oneYearChange": 8.58,
+      "threeMonthChange": -1.68
     },
     "allocation": {
-      "nonUKBond": 54.77,
-      "ukBond": 54.7746,
-      "cash": -2.84
+      "nonUKBond": 0.73,
+      "ukBond": 0.73,
+      "cash": 3.26
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B7199X03",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B7199X03"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B0117C28",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B0117C28"
     }
   },
   {
-    "isin": "GB00B1Z4D821",
-    "sedol": "B1Z4D82",
-    "name": "AXA Sterling Corporate Bond H Gross AccAXA Sterling Corporate Bond H Gross Acc",
-    "price": 176.7,
+    "isin": "GB00B0117D35",
+    "sedol": "B0117D3",
+    "name": "Man UK ICVC - Man Income Fund Professional Income Shares (Class D)Man UK ICVC - Man Income Fund Professional Income Shares (Class D)",
+    "price": 132,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:24:04.060Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:46:10.068Z",
     "performance": {
-      "threeYearChange": 1.1,
-      "oneYearChange": 5.43,
-      "threeMonthChange": 0.4
+      "threeYearChange": 9.27,
+      "oneYearChange": 8.61,
+      "threeMonthChange": -1.69
     },
     "allocation": {
-      "nonUKBond": 57.13,
-      "ukBond": 57.1342,
-      "cash": 0
+      "nonUKBond": 0.73,
+      "ukBond": 0.73,
+      "cash": 3.26
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B1Z4D821",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B1Z4D821"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B0117D35",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B0117D35"
     }
   },
   {
-    "isin": "GB00BZB26M30",
-    "sedol": "BZB26M3",
-    "name": "AXA Wealth/Kames Invt Grade Bond (Life)AXA Wealth/Kames Invt Grade Bond (Life)",
-    "price": 2.2,
+    "isin": "LU1762221239",
+    "sedol": "176222123",
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund Z Annual Distribution USDInvesco Funds - Invesco Global Founders & Owners Fund Z Annual Distribution USD",
+    "price": 17.89,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:24:08.558Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:46:14.553Z",
     "performance": {
-      "threeYearChange": 0.68,
-      "oneYearChange": 5.01,
-      "threeMonthChange": 1.15
+      "threeYearChange": 15.69,
+      "oneYearChange": 6.06,
+      "threeMonthChange": -9.23
     },
     "allocation": {
-      "nonUKBond": 98.56,
-      "ukBond": 98.5629,
-      "cash": -30.04
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": -0.31
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BZB26M30",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BZB26M30"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1762221239",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU1762221239"
     }
   },
   {
-    "isin": "GB00BFZ91X66",
-    "sedol": "BFZ91X6",
-    "name": "Artemis Corporate Bond Fund F Acc GBPArtemis Corporate Bond Fund F Acc GBP",
-    "price": 1.11,
+    "isin": "LU1218204987",
+    "sedol": "121820498",
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund Z Accumulation USDInvesco Funds - Invesco Global Founders & Owners Fund Z Accumulation USD",
+    "price": 23.22,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:24:13.147Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:46:19.026Z",
     "performance": {
-      "threeYearChange": 1.12,
-      "oneYearChange": 4.8,
-      "threeMonthChange": 0.15
+      "threeYearChange": 15.67,
+      "oneYearChange": 6.05,
+      "threeMonthChange": -9.29
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": -0.31
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BFZ91X66",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BFZ91X66"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1218204987",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU1218204987"
     }
   },
   {
-    "isin": "GB00BKPWGW41",
-    "sedol": "BKPWGW4",
-    "name": "Artemis Corporate Bond Fund F Inc GBPArtemis Corporate Bond Fund F Inc GBP",
-    "price": 0.8958,
+    "isin": "LU1762221072",
+    "sedol": "176222107",
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund C Annual Distribution USDInvesco Funds - Invesco Global Founders & Owners Fund C Annual Distribution USD",
+    "price": 17.75,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:24:17.620Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:46:23.492Z",
     "performance": {
-      "threeYearChange": 1.07,
-      "oneYearChange": 4.8,
-      "threeMonthChange": 0.16
+      "threeYearChange": 15.45,
+      "oneYearChange": 5.83,
+      "threeMonthChange": -9.34
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": -0.31
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BKPWGW41",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BKPWGW41"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1762221072",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU1762221072"
     }
   },
   {
-    "isin": "GB00BFZ91W59",
-    "sedol": "BFZ91W5",
-    "name": "Artemis Corporate Bond Fund I Acc GBPArtemis Corporate Bond Fund I Acc GBP",
-    "price": 1.1,
+    "isin": "LU1218204631",
+    "sedol": "121820463",
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund C Accumulation USDInvesco Funds - Invesco Global Founders & Owners Fund C Accumulation USD",
+    "price": 22.76,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:24:22.083Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:46:27.902Z",
     "performance": {
-      "threeYearChange": 1.03,
-      "oneYearChange": 4.74,
-      "threeMonthChange": 0.15
+      "threeYearChange": 15.45,
+      "oneYearChange": 5.85,
+      "threeMonthChange": -9.32
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": -0.31
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BFZ91W59",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BFZ91W59"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1218204631",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU1218204631"
     }
   },
   {
-    "isin": "GB00BKPWGV34",
-    "sedol": "BKPWGV3",
-    "name": "Artemis Corporate Bond Fund I Inc GBPArtemis Corporate Bond Fund I Inc GBP",
-    "price": 0.8914,
+    "isin": "LU1762220934",
+    "sedol": "176222093",
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund A Annual Distribution USDInvesco Funds - Invesco Global Founders & Owners Fund A Annual Distribution USD",
+    "price": 17.27,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:24:26.594Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:46:32.656Z",
     "performance": {
-      "threeYearChange": 0.99,
-      "oneYearChange": 4.74,
-      "threeMonthChange": 0.16
+      "threeYearChange": 14.77,
+      "oneYearChange": 5.24,
+      "threeMonthChange": -9.43
     },
     "allocation": {
-      "nonUKBond": 53.97,
-      "ukBond": 53.9746,
-      "cash": -0.15
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": -0.31
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BKPWGV34",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BKPWGV34"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1762220934",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU1762220934"
     }
   },
   {
-    "isin": "GB00BNQ4FB29",
-    "sedol": "BNQ4FB2",
-    "name": "Av/Threadneedle UK Social Bd FP PnAv/Threadneedle UK Social Bd FP Pn",
-    "price": 1.35,
+    "isin": "LU1218204391",
+    "sedol": "121820439",
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund A Accumulation USDInvesco Funds - Invesco Global Founders & Owners Fund A Accumulation USD",
+    "price": 21.45,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:24:31.052Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:46:37.212Z",
     "performance": {
-      "threeYearChange": 1.98,
-      "oneYearChange": 5.49,
-      "threeMonthChange": 1.2
+      "threeYearChange": 14.76,
+      "oneYearChange": 5.22,
+      "threeMonthChange": -9.46
     },
     "allocation": {
-      "nonUKBond": 24.37,
-      "ukBond": 70.1824,
-      "cash": 2.99
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": -0.31
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BNQ4FB29",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BNQ4FB29"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1218204391",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU1218204391"
     }
   },
   {
-    "isin": "GB00BGGRZ126",
-    "sedol": "BGGRZ12",
-    "name": "Aviva Insured Funds Sustainable Stewardship Bond S14Aviva Insured Funds Sustainable Stewardship Bond S14",
-    "price": 0.9622,
+    "isin": "LU1762221155",
+    "sedol": "176222115",
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund E Accumulation EURInvesco Funds - Invesco Global Founders & Owners Fund E Accumulation EUR",
+    "price": 18.17,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:24:35.500Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:46:41.759Z",
     "performance": {
-      "threeYearChange": -0.51,
-      "oneYearChange": 3.72,
-      "threeMonthChange": -0.04
+      "threeYearChange": 14.49,
+      "oneYearChange": 4.49,
+      "threeMonthChange": -9.61
     },
     "allocation": {
-      "nonUKBond": 57.69,
-      "ukBond": 57.6941,
-      "cash": 0.58
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": -0.31
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BGGRZ126",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BGGRZ126"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1762221155",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU1762221155"
     }
   },
   {
-    "isin": "GB00BHGHC181",
-    "sedol": "BHGHC18",
-    "name": "Aviva Life Sustainable Stewardship Bond S4Aviva Life Sustainable Stewardship Bond S4",
-    "price": 0.9393,
+    "isin": "LU1218204805",
+    "sedol": "121820480",
+    "name": "Invesco Funds - Invesco Global Founders & Owners Fund R Accumulation USDInvesco Funds - Invesco Global Founders & Owners Fund R Accumulation USD",
+    "price": 20.02,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:24:39.983Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:46:46.468Z",
     "performance": {
-      "threeYearChange": -0.14,
-      "oneYearChange": 3.12,
-      "threeMonthChange": -0.11
+      "threeYearChange": 13.95,
+      "oneYearChange": 4.47,
+      "threeMonthChange": -9.62
     },
     "allocation": {
-      "nonUKBond": 57.69,
-      "ukBond": 57.6941,
-      "cash": 0.58
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": -0.31
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BHGHC181",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BHGHC181"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU1218204805",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU1218204805"
     }
   },
   {
-    "isin": "GB00B7199X03",
-    "sedol": "B7199X0",
-    "name": "Aviva Pension MyM Invesco Corporate Bond Pension FundAviva Pension MyM Invesco Corporate Bond Pension Fund",
-    "price": 1.65,
+    "isin": "LU2437760585",
+    "sedol": "243776058",
+    "name": "Invesco Funds - Invesco Japanese Equity Advantage Fund I Accumulation GBP HedgedInvesco Funds - Invesco Japanese Equity Advantage Fund I Accumulation GBP Hedged",
+    "price": 14.38,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:24:44.446Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:46:51.384Z",
     "performance": {
-      "threeYearChange": 1.44,
-      "oneYearChange": 3.73,
-      "threeMonthChange": 0.59
+      "threeYearChange": 11.77,
+      "oneYearChange": 3.23,
+      "threeMonthChange": -4.26
     },
     "allocation": {
-      "nonUKBond": 54.77,
-      "ukBond": 54.7746,
-      "cash": -2.84
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 1.37
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B7199X03",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B7199X03"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=LU2437760585",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=LU2437760585"
     }
   },
   {
-    "isin": "GB00B1Z4D821",
-    "sedol": "B1Z4D82",
-    "name": "AXA Sterling Corporate Bond H Gross AccAXA Sterling Corporate Bond H Gross Acc",
-    "price": 176.7,
+    "isin": "GB00B8N46178",
+    "sedol": "B8N4617",
+    "name": "Invesco Global Equity Income Fund (UK) Z (Inc)Invesco Global Equity Income Fund (UK) Z (Inc)",
+    "price": 502.8,
     "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:24:48.928Z",
+    "category": "",
+    "lastUpdated": "2025-04-20T12:46:55.962Z",
     "performance": {
-      "threeYearChange": 1.1,
-      "oneYearChange": 5.43,
-      "threeMonthChange": 0.4
+      "threeYearChange": 11.38,
+      "oneYearChange": 5.38,
+      "threeMonthChange": -10.03
     },
     "allocation": {
-      "nonUKBond": 57.13,
-      "ukBond": 57.1342,
-      "cash": 0
+      "nonUKBond": 0,
+      "ukBond": 0,
+      "cash": 0.25
     },
     "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B1Z4D821",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B1Z4D821"
-    }
-  },
-  {
-    "isin": "GB00BZB26M30",
-    "sedol": "BZB26M3",
-    "name": "AXA Wealth/Kames Invt Grade Bond (Life)AXA Wealth/Kames Invt Grade Bond (Life)",
-    "price": 2.2,
-    "currency": "GBP",
-    "category": "GBP Corporate Bond",
-    "lastUpdated": "2025-04-19T09:24:53.384Z",
-    "performance": {
-      "threeYearChange": 0.68,
-      "oneYearChange": 5.01,
-      "threeMonthChange": 1.15
-    },
-    "allocation": {
-      "nonUKBond": 98.56,
-      "ukBond": 98.5629,
-      "cash": -30.04
-    },
-    "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00BZB26M30",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00BZB26M30"
+      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=GB00B8N46178",
+      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=GB00B8N46178"
     }
   }
 ]
