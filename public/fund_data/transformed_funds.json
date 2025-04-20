@@ -5,7 +5,7 @@
     "name": "HSBC Europe Equity Income ZHSBC Europe Equity Income Z",
     "price": 23,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:43:58.512Z",
     "performance": {
       "threeYearChange": 13.8,
@@ -28,7 +28,7 @@
     "name": "HSBC Europe Equity Income KHSBC Europe Equity Income K",
     "price": 1,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:44:03.031Z",
     "performance": {
       "threeYearChange": 13.43,
@@ -51,7 +51,7 @@
     "name": "BANTLEON TOP 35 Aktien SBANTLEON TOP 35 Aktien S",
     "price": 122.38,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity",
     "lastUpdated": "2025-04-20T12:44:07.440Z",
     "performance": {
       "threeYearChange": 13.43,
@@ -74,7 +74,7 @@
     "name": "BANTLEON TOP 35 Aktien IBANTLEON TOP 35 Aktien I",
     "price": 187.99,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity",
     "lastUpdated": "2025-04-20T12:44:11.845Z",
     "performance": {
       "threeYearChange": 13.28,
@@ -97,7 +97,7 @@
     "name": "HSBC Europe Equity Income BCHSBC Europe Equity Income BC",
     "price": 162.93,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:44:16.251Z",
     "performance": {
       "threeYearChange": 12.97,
@@ -120,7 +120,7 @@
     "name": "HSBC Europe Equity Income ICHSBC Europe Equity Income IC",
     "price": 2,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:44:20.697Z",
     "performance": {
       "threeYearChange": 12.95,
@@ -143,7 +143,7 @@
     "name": "Hugau Rendement Responsable CHugau Rendement Responsable C",
     "price": 168.84,
     "currency": "GBP",
-    "category": "",
+    "category": "Unclassified",
     "lastUpdated": "2025-04-20T12:44:25.158Z",
     "performance": {
       "threeYearChange": 12.37,
@@ -166,7 +166,7 @@
     "name": "Reaumur ActionsReaumur Actions",
     "price": 18,
     "currency": "GBP",
-    "category": "",
+    "category": "Fixed Income",
     "lastUpdated": "2025-04-20T12:44:29.755Z",
     "performance": {
       "threeYearChange": 12.11,
@@ -189,7 +189,7 @@
     "name": "HSBC Europe Equity Income ACHSBC Europe Equity Income AC",
     "price": 294.06,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:44:34.450Z",
     "performance": {
       "threeYearChange": 12.1,
@@ -212,7 +212,7 @@
     "name": "HSBC Europe Equity Income ADHSBC Europe Equity Income AD",
     "price": 209.38,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:44:39.064Z",
     "performance": {
       "threeYearChange": 12.1,
@@ -235,7 +235,7 @@
     "name": "Mandarine Equity Income F(d)Mandarine Equity Income F(d)",
     "price": 106.33,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:44:43.917Z",
     "performance": {
       "threeYearChange": null,
@@ -258,7 +258,7 @@
     "name": "Mandarine Equity Income I(d)Mandarine Equity Income I(d)",
     "price": 107.11,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:44:48.499Z",
     "performance": {
       "threeYearChange": null,
@@ -281,7 +281,7 @@
     "name": "Mandarine Equity Income R(d)Mandarine Equity Income R(d)",
     "price": 102.87,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:44:53.099Z",
     "performance": {
       "threeYearChange": null,
@@ -304,7 +304,7 @@
     "name": "Pergam Active Dividend RPergam Active Dividend R",
     "price": 99.66,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:44:57.703Z",
     "performance": {
       "threeYearChange": null,
@@ -327,7 +327,7 @@
     "name": "Popso (Suisse) Investment Fund - European Equity Dividend A distPopso (Suisse) Investment Fund - European Equity Dividend A dist",
     "price": 9.17,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:45:02.321Z",
     "performance": {
       "threeYearChange": null,
@@ -350,7 +350,7 @@
     "name": "Swiss Life Funds (LUX) - Equity Europe High Dividend I EUR IncSwiss Life Funds (LUX) - Equity Europe High Dividend I EUR Inc",
     "price": 129.83,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:45:06.925Z",
     "performance": {
       "threeYearChange": null,
@@ -373,7 +373,7 @@
     "name": "Swiss Life Funds (LUX) - Equity Europe High Dividend R EUR IncSwiss Life Funds (LUX) - Equity Europe High Dividend R EUR Inc",
     "price": 126.34,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:45:11.464Z",
     "performance": {
       "threeYearChange": null,
@@ -396,7 +396,7 @@
     "name": "UBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - (CHF hedged) K-1-accUBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - (CHF hedged) K-1-acc",
     "price": 4,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:45:15.980Z",
     "performance": {
       "threeYearChange": null,
@@ -419,7 +419,7 @@
     "name": "UBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - F-qdistUBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - F-qdist",
     "price": 111.06,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:45:20.512Z",
     "performance": {
       "threeYearChange": null,
@@ -442,7 +442,7 @@
     "name": "UBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - I-A1-accUBS (Lux) Equity SICAV - European Income Opportunity Sustainable (EUR) - I-A1-acc",
     "price": 99.07,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:45:25.011Z",
     "performance": {
       "threeYearChange": null,
@@ -465,7 +465,7 @@
     "name": "SW Woodford Equity Income Series 4 Pension FundSW Woodford Equity Income Series 4 Pension Fund",
     "price": 1.22,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:45:29.514Z",
     "performance": {
       "threeYearChange": 26.44,
@@ -488,7 +488,7 @@
     "name": "SW Woodford Equity Income Series 1 Pension FundSW Woodford Equity Income Series 1 Pension Fund",
     "price": 1.08,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:45:34.036Z",
     "performance": {
       "threeYearChange": 25.42,
@@ -511,7 +511,7 @@
     "name": "SW Woodford Equity Income Series 2 Pension FundSW Woodford Equity Income Series 2 Pension Fund",
     "price": 1.13,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:45:38.563Z",
     "performance": {
       "threeYearChange": 25.26,
@@ -534,7 +534,7 @@
     "name": "ReAssure LG Invesco Perp High Inc 25ReAssure LG Invesco Perp High Inc 25",
     "price": 2.85,
     "currency": "GBP",
-    "category": "",
+    "category": "Unclassified",
     "lastUpdated": "2025-04-20T12:45:43.126Z",
     "performance": {
       "threeYearChange": 10.82,
@@ -557,7 +557,7 @@
     "name": "SW Woodford Equity Income Life FundSW Woodford Equity Income Life Fund",
     "price": 0.765,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:45:47.659Z",
     "performance": {
       "threeYearChange": 10.76,
@@ -580,7 +580,7 @@
     "name": "BNY Mellon Investment Funds - Newton UK Income Fund X IncomeBNY Mellon Investment Funds - Newton UK Income Fund X Income",
     "price": 1.74,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:45:52.231Z",
     "performance": {
       "threeYearChange": 9.36,
@@ -603,7 +603,7 @@
     "name": "BNY Mellon Investment Funds - Newton UK Income Fund X AccumulationBNY Mellon Investment Funds - Newton UK Income Fund X Accumulation",
     "price": 7.35,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:45:56.663Z",
     "performance": {
       "threeYearChange": 9.36,
@@ -626,7 +626,7 @@
     "name": "Aviva Pension BNY Mellon UK Income Pension FundAviva Pension BNY Mellon UK Income Pension Fund",
     "price": 3.34,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:46:01.144Z",
     "performance": {
       "threeYearChange": 9.35,
@@ -649,7 +649,7 @@
     "name": "Man UK ICVC - Man Income Fund Professional Accumulation Shares (Class C)Man UK ICVC - Man Income Fund Professional Accumulation Shares (Class C)",
     "price": 415.2,
     "currency": "GBP",
-    "category": "",
+    "category": "Fixed Income",
     "lastUpdated": "2025-04-20T12:46:05.606Z",
     "performance": {
       "threeYearChange": 9.27,
@@ -672,7 +672,7 @@
     "name": "Man UK ICVC - Man Income Fund Professional Income Shares (Class D)Man UK ICVC - Man Income Fund Professional Income Shares (Class D)",
     "price": 132,
     "currency": "GBP",
-    "category": "",
+    "category": "Fixed Income",
     "lastUpdated": "2025-04-20T12:46:10.068Z",
     "performance": {
       "threeYearChange": 9.27,
@@ -695,7 +695,7 @@
     "name": "Invesco Funds - Invesco Global Founders & Owners Fund Z Annual Distribution USDInvesco Funds - Invesco Global Founders & Owners Fund Z Annual Distribution USD",
     "price": 17.89,
     "currency": "GBP",
-    "category": "",
+    "category": "Global Equity",
     "lastUpdated": "2025-04-20T12:46:14.553Z",
     "performance": {
       "threeYearChange": 15.69,
@@ -718,7 +718,7 @@
     "name": "Invesco Funds - Invesco Global Founders & Owners Fund Z Accumulation USDInvesco Funds - Invesco Global Founders & Owners Fund Z Accumulation USD",
     "price": 23.22,
     "currency": "GBP",
-    "category": "",
+    "category": "Global Equity",
     "lastUpdated": "2025-04-20T12:46:19.026Z",
     "performance": {
       "threeYearChange": 15.67,
@@ -741,7 +741,7 @@
     "name": "Invesco Funds - Invesco Global Founders & Owners Fund C Annual Distribution USDInvesco Funds - Invesco Global Founders & Owners Fund C Annual Distribution USD",
     "price": 17.75,
     "currency": "GBP",
-    "category": "",
+    "category": "Global Equity",
     "lastUpdated": "2025-04-20T12:46:23.492Z",
     "performance": {
       "threeYearChange": 15.45,
@@ -764,7 +764,7 @@
     "name": "Invesco Funds - Invesco Global Founders & Owners Fund C Accumulation USDInvesco Funds - Invesco Global Founders & Owners Fund C Accumulation USD",
     "price": 22.76,
     "currency": "GBP",
-    "category": "",
+    "category": "Global Equity",
     "lastUpdated": "2025-04-20T12:46:27.902Z",
     "performance": {
       "threeYearChange": 15.45,
@@ -787,7 +787,7 @@
     "name": "Invesco Funds - Invesco Global Founders & Owners Fund A Annual Distribution USDInvesco Funds - Invesco Global Founders & Owners Fund A Annual Distribution USD",
     "price": 17.27,
     "currency": "GBP",
-    "category": "",
+    "category": "Global Equity",
     "lastUpdated": "2025-04-20T12:46:32.656Z",
     "performance": {
       "threeYearChange": 14.77,
@@ -810,7 +810,7 @@
     "name": "Invesco Funds - Invesco Global Founders & Owners Fund A Accumulation USDInvesco Funds - Invesco Global Founders & Owners Fund A Accumulation USD",
     "price": 21.45,
     "currency": "GBP",
-    "category": "",
+    "category": "Global Equity",
     "lastUpdated": "2025-04-20T12:46:37.212Z",
     "performance": {
       "threeYearChange": 14.76,
@@ -833,7 +833,7 @@
     "name": "Invesco Funds - Invesco Global Founders & Owners Fund E Accumulation EURInvesco Funds - Invesco Global Founders & Owners Fund E Accumulation EUR",
     "price": 18.17,
     "currency": "GBP",
-    "category": "",
+    "category": "Global Equity",
     "lastUpdated": "2025-04-20T12:46:41.759Z",
     "performance": {
       "threeYearChange": 14.49,
@@ -856,7 +856,7 @@
     "name": "Invesco Funds - Invesco Global Founders & Owners Fund R Accumulation USDInvesco Funds - Invesco Global Founders & Owners Fund R Accumulation USD",
     "price": 20.02,
     "currency": "GBP",
-    "category": "",
+    "category": "Global Equity",
     "lastUpdated": "2025-04-20T12:46:46.468Z",
     "performance": {
       "threeYearChange": 13.95,
@@ -879,7 +879,7 @@
     "name": "Invesco Funds - Invesco Japanese Equity Advantage Fund I Accumulation GBP HedgedInvesco Funds - Invesco Japanese Equity Advantage Fund I Accumulation GBP Hedged",
     "price": 14.38,
     "currency": "GBP",
-    "category": "",
+    "category": "Japanese Equity",
     "lastUpdated": "2025-04-20T12:46:51.384Z",
     "performance": {
       "threeYearChange": 11.77,
@@ -902,7 +902,7 @@
     "name": "Invesco Global Equity Income Fund (UK) Z (Inc)Invesco Global Equity Income Fund (UK) Z (Inc)",
     "price": 502.8,
     "currency": "GBP",
-    "category": "",
+    "category": "Equity Income",
     "lastUpdated": "2025-04-20T12:46:55.962Z",
     "performance": {
       "threeYearChange": 11.38,

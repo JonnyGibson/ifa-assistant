@@ -2,7 +2,7 @@
 <template>
   <div class="card">
     <DataTable
-      :value="funds"
+      :value="fundsWithPortfolioCounts"
       :expandedRows="expandedRows"
       @row-expand="onRowExpand"
       @row-collapse="onRowCollapse"
@@ -28,18 +28,15 @@
       </Column>
       <Column field="category" header="Category" :sortable="true" style="width: 200px">
         <template #body="slotProps">
-          <Tag :value="slotProps.data.category" />
+          <Tag :value="slotProps.data.category" :severity="getCategorySeverity(slotProps.data.category)" />
         </template>
       </Column>
       <Column field="portfolioCount" header="Portfolios" style="width: 120px" :sortable="true">
         <template #body="slotProps">
           <div class="flex align-items-center justify-content-end gap-2">
             <i class="pi pi-users text-gray-500" />
-            <span>{{ portfolioCounts[slotProps.data.isin] || 0 }}</span>
+            <span>{{ slotProps.data.portfolioCount }}</span>
           </div>
-        </template>
-        <template #sortable="slotProps">
-          {{ portfolioCounts[slotProps.data.isin] || 0 }}
         </template>
       </Column>
       
@@ -146,9 +143,29 @@ export default {
       required: true
     }
   },
-  setup() {
+  setup(props) {
     const expandedRows = ref({});
     const filters = ref({});
+
+    const fundsWithPortfolioCounts = computed(() => {
+      return props.funds.map(fund => ({
+        ...fund,
+        portfolioCount: props.portfolioCounts[fund.isin] || 0
+      }));
+    });
+
+    const getCategorySeverity = (category) => {
+      const categoryColors = {
+        'Equity Income': 'success',    // Green
+        'Global Equity': 'primary',    // Blue
+        'Fixed Income': 'warning',     // Orange
+        'Equity': 'info',             // Light Blue
+        'Japanese Equity': 'danger',   // Red
+        'European Equity': 'help',     // Purple
+        'Unclassified': 'secondary'   // Gray
+      };
+      return categoryColors[category] || 'secondary';
+    };
 
     const onRowExpand = (event) => {
       expandedRows.value[event.data.isin] = true;
@@ -161,10 +178,12 @@ export default {
     return {
       expandedRows,
       filters,
+      fundsWithPortfolioCounts,
       onRowExpand,
       onRowCollapse,
       formatPercentage,
-      formatDate
+      formatDate,
+      getCategorySeverity
     };
   }
 };
