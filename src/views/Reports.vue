@@ -137,8 +137,8 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, inject, watch } from 'vue'
-import { dataService } from '../services/db' // Use our data service
+import { ref, onMounted, computed, inject } from 'vue';
+import { clientService, investmentService } from '../services/database';
 
 export default {
   name: 'Reports',
@@ -150,8 +150,8 @@ export default {
       openTasks: 0,
       overdueCompliance: 0
     });
-    const recentActivity = ref([]); // Combined list of recent actions
-    const complianceItems = ref([]); // For compliance table
+    const recentActivity = ref([]);
+    const complianceItems = ref([]);
 
     const currentUser = inject('currentUser', ref(null)); 
     const userId = computed(() => currentUser.value?.id);
@@ -160,104 +160,72 @@ export default {
       if (!userId.value) return;
       isLoading.value = true;
       try {
-        // Fetch data needed for stats and reports
-        const [clients, appointments, tasks, compliance] = await Promise.all([
-          dataService.getClients(userId.value),
-          dataService.getAppointments(userId.value),
-          dataService.getTasks(userId.value),
-          dataService.getComplianceRequirements(userId.value)
-        ]);
-
-        // Calculate Stats
-        stats.value.totalClients = clients.length;
-        stats.value.totalAppointments = appointments.length;
-        stats.value.openTasks = tasks.filter(t => !t.completed).length;
-        stats.value.overdueCompliance = compliance.filter(c => c.status === 'overdue').length;
+        // Fetch all client data
+        const clients = await clientService.getAllClients();
         
-        // Prepare Compliance Table Data (sorted by due date)
-        complianceItems.value = compliance.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+        // Get accounts and total values
+        const clientAccounts = await Promise.all(
+          clients.map(client => investmentService.getClientAccounts(client.id))
+        );
 
-        // Prepare Recent Activity (example: last 5 appointments and tasks)
-        const clientMap = new Map(clients.map(c => [c.id, `${c.firstName} ${c.lastName}`]));
-        const recentAppointments = appointments
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          .slice(0, 5)
-          .map(a => ({ 
-              id: `appt-${a.id}`, 
-              date: a.createdAt, 
-              clientName: clientMap.get(a.clientId) || 'N/A', 
-              type: 'Appointment', 
-              details: a.title 
-          }));
-        
-        const recentTasks = tasks
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          .slice(0, 5)
-          .map(t => ({ 
-              id: `task-${t.id}`, 
-              date: t.createdAt, 
-              clientName: clientMap.get(t.clientId) || 'N/A', // Assuming tasks can be linked to clients
-              type: 'Task', 
-              details: t.title 
-          }));
+        // Calculate total AUM and average portfolio value
+        const totalAUM = clientAccounts.reduce((total, accounts) => {
+          return total + accounts.reduce((acc, account) => acc + (account.totalValue || 0), 0);
+        }, 0);
 
-        recentActivity.value = [...recentAppointments, ...recentTasks]
-            .sort((a, b) => new Date(b.date) - new Date(a.date))
-            .slice(0, 10); // Show latest 10 combined activities
+        const activePortfolios = clientAccounts.filter(accounts => accounts.length > 0).length;
+        const averagePortfolioValue = activePortfolios > 0 ? totalAUM / activePortfolios : 0;
+
+        // Calculate category distribution
+        const categoryDistribution = {};
+        clientAccounts.forEach(accounts => {
+          accounts.forEach(account => {
+            account.holdings?.forEach(holding => {
+              const category = holding.fund.category;
+              categoryDistribution[category] = (categoryDistribution[category] || 0) + holding.currentValue;
+            });
+          });
+        });
+
+        // Get top clients by portfolio value
+        const clientsWithValues = clients.map(client => ({
+          ...client,
+          portfolioValue: clientAccounts
+            .find(accounts => accounts.some(acc => acc.clientId === client.id))
+            ?.reduce((sum, acc) => sum + (acc.totalValue || 0), 0) || 0
+        })).sort((a, b) => b.portfolioValue - a.portfolioValue);
+
+        const topClients = clientsWithValues.slice(0, 5);
+
+        // Update stats
+        stats.value = {
+          totalAUM,
+          averagePortfolioValue,
+          categoryDistribution,
+          topClients,
+          totalClients: clients.length,
+          activePortfolios
+        };
 
       } catch (error) {
         console.error('Error fetching report data:', error);
-        alert('Failed to load report data.');
       } finally {
         isLoading.value = false;
       }
     };
 
-    const generateReport = () => {
-      // Placeholder for future report generation logic (e.g., PDF export)
-      alert('Report generation feature not yet implemented.');
-    };
-
-    const formatDate = (dateStr) => {
-      if (!dateStr) return 'N/A';
-      return new Date(dateStr).toLocaleDateString('en-GB');
-    };
-
-    const getStatusClass = (status) => {
-      // Re-use compliance status styling
-      const baseClasses = 'px-2 py-1 rounded-full border';
-      switch (status) {
-        case 'completed': return `${baseClasses} bg-green-100 text-green-800 border-green-300`;
-        case 'pending': return `${baseClasses} bg-yellow-100 text-yellow-800 border-yellow-300`;
-        case 'overdue': return `${baseClasses} bg-red-100 text-red-800 border-red-300`;
-        default: return `${baseClasses} bg-gray-100 text-gray-800 border-gray-300`;
+    onMounted(() => {
+      if (userId.value) {
+        fetchData();
       }
-    };
-
-    // Fetch data on mount or when user changes
-     onMounted(() => {
-        if (userId.value) {
-            fetchData();
-        } else {
-            const unwatch = watch(userId, (newUserId) => {
-                if (newUserId) {
-                    fetchData();
-                    unwatch();
-                }
-            });
-        }
     });
 
     return {
       isLoading,
       stats,
       recentActivity,
-      complianceItems,
-      generateReport,
-      formatDate,
-      getStatusClass,
-      // Add filters and chart data/options here later
+      complianceItems
     };
   }
-}; 
-</script> 
+};
+</script>

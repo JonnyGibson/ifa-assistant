@@ -1,33 +1,27 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import { initializeDatabase, authService } from './services/db'
-import './assets/main.css'
-
-// Import PrimeVue
+import { db } from './services/database'
 import PrimeVue from 'primevue/config'
-import 'primevue/resources/themes/lara-light-green/theme.css'
+import './assets/main.css'
+import 'primevue/resources/themes/saga-green/theme.css'
+import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
+import '@fortawesome/fontawesome-free/css/all.css'
 
-// Initialize the local database first
-initializeDatabase().catch(error => {
-  console.error("Failed to initialize database:", error);
-});
-
-// Create the Vue app
 const app = createApp(App)
 
-// Use PrimeVue
-app.use(PrimeVue, {
-  ripple: true,
-  inputStyle: "filled"
-})
-
-// Use plugins
+app.use(PrimeVue)
 app.use(router)
 
-// Provide our auth service to all components
-app.provide('auth', authService)
-
-// Mount the app
-app.mount('#app')
+// Initialize database then mount app
+Promise.race([
+  db.initialize(),
+  new Promise((_, reject) => 
+    setTimeout(() => reject(new Error('Database initialization timeout')), 5000)
+  )
+])
+.then(() => {
+  app.mount('#app')
+})
+.catch(console.error)

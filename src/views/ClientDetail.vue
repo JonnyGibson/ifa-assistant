@@ -2,204 +2,414 @@
   <div v-if="isLoading" class="flex justify-center items-center py-10">
      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
   </div>
-  <div v-else-if="client" class="space-y-8 relative">
-    <!-- Client Header -->
-    <div class="flex justify-between items-center bg-white bg-opacity-90 px-6 py-3 rounded-lg shadow-sm -mt-14 relative z-10 mx-4">
-      <div>
-        <h1 class="text-3xl font-bold text-emerald-600">{{ client.firstName }} {{ client.lastName }}</h1>
-        <p class="text-base font-medium text-emerald-600/75 mt-1">Client ID: {{ client.id }}</p>
-      </div>
-      <span 
-        :class="getRiskProfileBadgeClass(client.riskProfile)"
-        class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full"
-      >
-        Risk Appetite: {{ client.riskProfile }}
-      </span>
-    </div>
-
-    <!-- Client Details Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white shadow p-6 rounded-lg">
-      <div class="md:col-span-1">
-        <h2 class="text-lg font-semibold text-gray-800 mb-2 border-b pb-1">Contact Info</h2>
-        <p class="text-sm text-gray-600"><i class="fas fa-envelope mr-2 text-gray-400 w-4"></i>{{ client.email }}</p>
-        <p class="text-sm text-gray-600 mt-1"><i class="fas fa-phone mr-2 text-gray-400 w-4"></i>{{ client.phone }}</p>
-        <p class="text-sm text-gray-600 mt-1"><i class="fas fa-birthday-cake mr-2 text-gray-400 w-4"></i>{{ formatDate(client.dateOfBirth) }}</p>
-      </div>
-      <div class="md:col-span-2">
-         <h2 class="text-lg font-semibold text-gray-800 mb-2 border-b pb-1">Address</h2>
-         <p class="text-sm text-gray-600">{{ client.address?.street }}</p>
-         <p class="text-sm text-gray-600">{{ client.address?.city }}</p>
-         <p class="text-sm text-gray-600">{{ client.address?.postcode }}</p>
-      </div>
-    </div>
-
-    <!-- Holdings Section -->
-    <div class="bg-white shadow p-6 rounded-lg">
-       <h2 class="text-xl font-semibold text-gray-800 mb-4">Portfolio Holdings</h2>
-       <div v-if="holdingsLoading" class="flex justify-center items-center py-6">
-         <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-emerald-500"></div>
-       </div>
-       <div v-else-if="holdings.length > 0">
-         <table class="min-w-full divide-y divide-gray-200 mb-4">
-           <thead class="bg-gray-50">
-             <tr>
-               <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fund Name</th>
-               <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-               <th scope="col" class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Units Held</th>
-               <th scope="col" class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
-               <th scope="col" class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
-             </tr>
-           </thead>
-           <tbody class="bg-white divide-y divide-gray-200">
-             <tr v-for="holding in holdings" :key="holding.id">
-               <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
-                 <div>
-                   {{ holding.fund.name }}
-                   <div class="text-xs text-gray-500">{{ holding.fund.isin }}</div>
-                 </div>
-               </td>
-               <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{{ holding.fund.category }}</td>
-               <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 text-right">{{ holding.unitsHeld.toLocaleString() }}</td>
-               <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 text-right">{{ formatCurrency(holding.fund.price, holding.fund.currency, 4) }}</td>
-               <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-900 text-right font-semibold">{{ formatCurrency(holding.currentValue, holding.fund.currency) }}</td>
-             </tr>
-           </tbody>
-           <tfoot class="bg-gray-50">
-             <tr>
-               <td colspan="4" class="px-4 py-2 text-right text-sm font-bold text-gray-700 uppercase">Total Portfolio Value</td>
-               <td class="px-4 py-2 text-right text-sm font-bold text-gray-900">{{ formatCurrency(totalPortfolioValue, holdings[0]?.fund.currency) }}</td>
-             </tr>
-           </tfoot>
-         </table>
-       </div>
-       <p v-else class="text-gray-500 text-center py-4">No holdings found for this client.</p>
-    </div>
-
-    <!-- Category Distribution and Interaction History side by side -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-      <!-- Category Distribution -->
-      <div class="bg-white shadow p-6 rounded-lg">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Category Distribution</h3>
-        <div v-if="holdings.length > 0" class="h-[400px] relative">
-          <canvas ref="categoryChart" style="max-height: 100%; width: 100%;"></canvas>
+  <div v-else-if="client" class="p-6 -mt-12 relative z-10">
+    <!-- Client Overview Card -->
+    <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 mb-6 transition-all duration-300 hover:shadow-hover">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Basic Info -->
+        <div>
+          <h2 class="text-2xl font-bold text-gray-900">{{ client.firstName }} {{ client.lastName }}</h2>
+          <p class="text-sm text-gray-600 mt-1">Client since {{ formatDate(client.createdAt) }}</p>
+          <div class="mt-4 space-y-2">
+            <p class="text-sm flex items-center"><i class="fas fa-envelope text-gray-400 w-5 mr-2"></i>{{ client.email }}</p>
+            <p class="text-sm flex items-center"><i class="fas fa-phone text-gray-400 w-5 mr-2"></i>{{ client.phone }}</p>
+          </div>
         </div>
-        <p v-else class="text-gray-500 text-center py-4">No holdings data available</p>
-      </div>
-
-      <!-- Interactions Section -->
-      <div class="bg-white shadow p-6 rounded-lg">
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">Interaction History</h2>
-        <div v-if="interactionsLoading" class="flex justify-center items-center py-6">
-          <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-emerald-500"></div>
+        
+        <!-- Address -->
+        <div>
+          <h3 class="text-sm font-medium text-gray-500 mb-2 flex items-center">
+            <i class="fas fa-location-dot text-gray-400 w-5 mr-2"></i>Address
+          </h3>
+          <div v-if="client.address" class="pl-7 text-sm space-y-1">
+            <p>{{ client.address.street }}</p>
+            <p>{{ client.address.city }}</p>
+            <p>{{ client.address.postcode }}</p>
+            <p>{{ client.address.country }}</p>
+          </div>
+          <div v-else class="pl-7 text-sm text-gray-400 italic">No address on file</div>
         </div>
-        <div v-else-if="interactions.length > 0" 
-             class="overflow-y-auto h-[400px] pr-2 scrollbar scrollbar-thin scrollbar-thumb-emerald-200 scrollbar-track-gray-100 hover:scrollbar-thumb-emerald-300">
-          <ul class="divide-y divide-gray-200">
-            <li v-for="interaction in interactions" :key="interaction.id" class="py-3">
-              <div class="flex justify-between items-center">
-                <span class="text-sm font-medium text-emerald-700">
-                  {{ interactionTypeMap[interaction.interactionTypeId]?.name || 'Unknown Type' }}
-                </span>
-                <span class="text-xs text-gray-500">{{ formatDate(interaction.date) }}</span>
+        
+        <!-- Risk Profile -->
+        <div>
+          <h3 class="text-sm font-medium text-gray-500 mb-2 flex items-center">
+            <i class="fas fa-chart-line text-gray-400 w-5 mr-2"></i>Risk Profile
+          </h3>
+          <div class="pl-7">
+            <span :class="['px-3 py-1.5 text-sm rounded-full inline-block', getRiskProfileBadgeClass(client.riskProfile)]">
+              {{ client.riskProfile || 'Not Set' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Portfolio Summary -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <div class="lg:col-span-2">
+        <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 h-full transition-all duration-300 hover:shadow-hover">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4 flex justify-between items-center">
+            <span>Portfolio Overview</span>
+            <span class="text-lg font-semibold text-emerald-600" aria-label="Total portfolio value">
+              {{ formatCurrency(totalPortfolioValue) }}
+            </span>
+          </h3>
+          
+          <!-- Investment Accounts Summary -->
+          <div v-if="client.accounts?.length > 0" class="mb-6">
+            <h4 class="text-sm font-medium text-gray-500 mb-3">Investment Accounts</h4>
+            <div class="space-y-3">
+              <div v-for="account in client.accounts" :key="account.id" 
+                   class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <h5 class="font-medium text-gray-900">{{ account.type }}</h5>
+                    <p class="text-sm text-gray-600">{{ account.provider }} - #{{ account.accountNumber }}</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-lg font-semibold text-emerald-600">{{ formatCurrency(calculateAccountValue(account)) }}</p>
+                    <button @click="toggleAccountDetails(account.id)" 
+                            class="text-xs text-emerald-600 hover:text-emerald-700 mt-1 flex items-center">
+                      {{ expandedAccount === account.id ? 'Hide' : 'Show' }} Details
+                      <i :class="['fas', expandedAccount === account.id ? 'fa-chevron-up' : 'fa-chevron-down', 'ml-1']"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Expandable Holdings -->
+                <div v-if="expandedAccount === account.id" class="mt-4">
+                  <div v-if="holdingsLoading" class="flex justify-center py-4">
+                    <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-emerald-500"></div>
+                  </div>
+                  <div v-else-if="account.holdings?.length" class="mt-2">
+                    <table class="min-w-full text-sm">
+                      <thead>
+                        <tr class="text-gray-500">
+                          <th class="text-left py-2">Fund Name</th>
+                          <th class="text-left py-2">Category</th>
+                          <th class="text-right py-2">Units</th>
+                          <th class="text-right py-2">Price</th>
+                          <th class="text-right py-2">Value</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-gray-100">
+                        <tr v-for="holding in account.holdings" :key="holding.id" class="hover:bg-gray-50">
+                          <td class="py-2">
+                            <a :href="holding.fund.ftLink" target="_blank" class="hover:text-emerald-600">
+                              {{ holding.fund.name }}
+                            </a>
+                          </td>
+                          <td class="py-2">
+                            <span class="px-2 py-1 rounded-full text-xs" :class="getCategoryBadgeClass(holding.fund.category)">
+                              {{ holding.fund.category }}
+                            </span>
+                          </td>
+                          <td class="text-right py-2">{{ Math.round(holding.unitsHeld) }}</td>
+                          <td class="text-right py-2">{{ formatCurrency(holding.fund.price) }}</td>
+                          <td class="text-right py-2">
+                            <span class="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700">
+                              {{ formatCurrency(holding.unitsHeld * holding.fund.price) }}
+                            </span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p v-else class="text-sm text-gray-500 text-center py-2">No holdings in this account</p>
+                </div>
               </div>
-              <p class="text-sm text-gray-700 mt-1">{{ interaction.summaryNotes }}</p>
-              <p class="text-xs text-gray-400 mt-1">Recorded by IFA ID: {{ interaction.ifaUserId }}</p>
-            </li>
-          </ul>
+            </div>
+          </div>
+          
+          <!-- Insurance Policies Summary -->
+          <div v-if="insurancePolicies.length > 0" class="mt-6">
+            <h4 class="text-sm font-medium text-gray-500 mb-3">Insurance Policies</h4>
+            <div class="space-y-3">
+              <div v-for="policy in insurancePolicies" :key="policy.id" 
+                   class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <h5 class="font-medium text-gray-900">{{ INSURANCE_TYPES[policy.type]?.name }}</h5>
+                    <p class="text-sm text-gray-600">{{ policy.provider }} - #{{ policy.policyNumber }}</p>
+                  </div>
+                  <div class="text-right">
+                    <p v-if="policy.premiumAmount != null && policy.premiumFrequency" class="text-sm font-medium text-gray-900">
+                      {{ formatCurrency(policy.premiumAmount) }}/{{ policy.premiumFrequency }}
+                    </p>
+                    <button @click="togglePolicyDetails(policy.id)"
+                            class="text-xs text-emerald-600 hover:text-emerald-700 mt-1 flex items-center">
+                      {{ expandedPolicy === policy.id ? 'Hide' : 'Show' }} Details
+                      <i :class="['fas', expandedPolicy === policy.id ? 'fa-chevron-up' : 'fa-chevron-down', 'ml-1']"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Expandable Policy Details -->
+                <div v-if="expandedPolicy === policy.id" class="mt-4 text-sm space-y-2">
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <p class="text-gray-600">Status</p>
+                      <p :class="[
+                        'inline-block px-2 py-1 rounded-full text-xs font-medium mt-1',
+                        policy.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      ]">
+                        {{ policy.status }}
+                      </p>
+                    </div>
+                    <div>
+                      <p class="text-gray-600">Start Date</p>
+                      <p class="mt-1">{{ formatDate(policy.startDate) }}</p>
+                    </div>
+                    <div v-if="policy.coverageAmount">
+                      <p class="text-gray-600">Coverage Amount</p>
+                      <p class="mt-1">{{ formatCurrency(policy.coverageAmount) }}</p>
+                    </div>
+                    <div v-if="policy.nextPaymentDate">
+                      <p class="text-gray-600">Next Payment</p>
+                      <p class="mt-1">{{ formatDate(policy.nextPaymentDate) }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="!client.accounts?.length && !insurancePolicies.length" 
+               class="text-center text-gray-500 py-6">
+            No investment accounts or insurance policies found
+          </div>
         </div>
-        <p v-else class="text-gray-500 text-center py-4">No interactions recorded for this client.</p>
+      </div>
+      
+      <!-- Interaction History Card (replacing Quick Actions) -->
+      <div>
+        <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 h-full transition-all duration-300 hover:shadow-hover">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-800">Recent Interactions</h3>
+            <router-link 
+              :to="{ name: 'Appointments', query: { client: client.id }}" 
+              class="text-xs text-emerald-600 hover:text-emerald-700 flex items-center"
+            >
+              View All
+              <i class="fas fa-arrow-right ml-1"></i>
+            </router-link>
+          </div>
+          <div v-if="interactions.length > 0" class="space-y-3">
+            <div v-for="interaction in interactions.slice(0, 5)" :key="interaction.id" 
+                 class="bg-white rounded-lg p-3 shadow-sm">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-sm font-medium text-gray-800">
+                    {{ interactionTypeMap[interaction.type]?.name || 'Unknown Type' }}
+                  </span>
+                  <p class="text-xs text-gray-500 mt-1">{{ formatDate(interaction.date) }}</p>
+                </div>
+                <span :class="[
+                  'px-2 py-1 text-xs rounded-full',
+                  interaction.status === 'completed' ? 'bg-green-100 text-green-800' :
+                  interaction.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
+                  'bg-gray-100 text-gray-800'
+                ]">
+                  {{ interaction.status }}
+                </span>
+              </div>
+              <p class="text-sm text-gray-600 mt-2 line-clamp-2">{{ interaction.notes }}</p>
+            </div>
+          </div>
+          <div v-else class="text-center py-8">
+            <i class="fas fa-history text-gray-300 text-3xl mb-2"></i>
+            <p class="text-gray-500 text-sm">No recent interactions</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fact Find Section -->
+    <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft overflow-hidden mb-6 transition-all duration-300 hover:shadow-hover">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold text-gray-800">Fact Find</h2>
+          <span class="text-sm text-gray-500">Last updated: {{ formatDate(client.factFind.lastUpdated) }}</span>
+        </div>
+
+        <!-- Personal Details -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-lg font-medium mb-3">Personal Details</h3>
+            <div class="space-y-2">
+              <p><span class="font-medium">Title:</span> {{ client.factFind.personal.title }}</p>
+              <p><span class="font-medium">DOB:</span> {{ formatDate(client.dateOfBirth) }}</p>
+              <p><span class="font-medium">Marital Status:</span> {{ client.factFind.personal.maritalStatus }}</p>
+              <p><span class="font-medium">Health:</span> {{ client.factFind.personal.healthStatus }}</p>
+            </div>
+          </div>
+          
+          <div>
+            <h3 class="text-lg font-medium mb-3">Employment</h3>
+            <div class="space-y-2">
+              <p><span class="font-medium">Occupation:</span> {{ client.factFind.employment.occupation }}</p>
+              <p><span class="font-medium">Employer:</span> {{ client.factFind.employment.employer }}</p>
+              <p><span class="font-medium">Annual Income:</span> {{ formatCurrency(client.factFind.employment.annualIncome) }}</p>
+              <p><span class="font-medium">Years in Role:</span> {{ client.factFind.employment.yearsInRole }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Objectives -->
+        <div class="mt-6">
+          <h3 class="text-lg font-medium mb-3">Financial Objectives</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <h4 class="font-medium text-sm text-gray-600">Short Term</h4>
+              <ul class="list-disc list-inside">
+                <li v-for="goal in client.factFind.objectives.shortTerm" :key="goal">{{ goal }}</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-medium text-sm text-gray-600">Medium Term</h4>
+              <ul class="list-disc list-inside">
+                <li v-for="goal in client.factFind.objectives.mediumTerm" :key="goal">{{ goal }}</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-medium text-sm text-gray-600">Long Term</h4>
+              <ul class="list-disc list-inside">
+                <li v-for="goal in client.factFind.objectives.longTerm" :key="goal">{{ goal }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
   </div>
-   <div v-else class="text-center py-10 text-red-500">
-     <h1>Client Not Found</h1>
-     <p>Could not load details for client ID: {{ id }}</p>
-     <router-link :to="{ name: 'Clients' }" class="text-emerald-600 hover:underline mt-4 inline-block">Back to Client List</router-link>
+   <div v-else class="text-center py-10">
+     <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4 max-w-lg mx-auto">
+       <div class="flex">
+         <div class="flex-shrink-0">
+           <i class="fas fa-exclamation-circle text-red-400"></i>
+         </div>
+         <div class="ml-3">
+           <h3 class="text-lg font-medium text-red-800">Client Not Found</h3>
+           <div class="mt-2 text-sm text-red-700">
+             <p>Could not find a client with ID: {{ id }}.</p>
+             <p class="mt-1">The client may have been deleted or the ID may be invalid.</p>
+           </div>
+         </div>
+       </div>
+     </div>
+     <router-link :to="{ name: 'Clients' }" class="text-emerald-600 hover:underline mt-4 inline-flex items-center">
+       <i class="fas fa-arrow-left mr-2"></i>
+       Back to Client List
+     </router-link>
    </div>
 </template>
 
 <script>
 import { ref, onMounted, computed, watch, nextTick } from 'vue';
-import { dataService } from '../services/db';
 import { useRoute } from 'vue-router';
 import { Chart, ArcElement, Tooltip, Legend, PieController } from 'chart.js';
+import { clientService, investmentService, interactionService, insuranceService } from '../services/database';
+import { INSURANCE_TYPES } from '../services/models/productTypes';
+
 Chart.register(ArcElement, Tooltip, Legend, PieController);
 
 export default {
   name: 'ClientDetailView',
   props: {
-      id: { // Accept id as a prop from the router
-          type: [String, Number],
-          required: true,
-      },
+    id: {
+      type: [String, Number],
+      required: true,
+    },
   },
   setup(props) {
-    const route = useRoute(); // Access route info if needed beyond props
+    const route = useRoute();
     const client = ref(null);
+    const insurancePolicies = ref([]);
     const holdings = ref([]);
     const interactions = ref([]);
-    const interactionTypes = ref([]); // Add state for interaction types
+    const interactionTypeMap = ref({});
     const isLoading = ref(true);
     const holdingsLoading = ref(true);
     const interactionsLoading = ref(true);
-    const typesLoading = ref(true); // Add loading state for types
     const categoryChart = ref(null);
+    const expandedAccount = ref(null);
+    const expandedPolicy = ref(null);
 
-    const clientId = computed(() => Number(props.id)); // Ensure ID is a number
+    const clientId = computed(() => Number(props.id));
 
     const fetchClientData = async () => {
       isLoading.value = true;
       holdingsLoading.value = true;
       interactionsLoading.value = true;
-      typesLoading.value = true; // Start loading types too
       console.log(`[ClientDetailView] Fetching data for client ID: ${clientId.value}`);
       try {
-        // Fetch all data in parallel, including interaction types
-        const [clientData, holdingsData, interactionsData, typesData] = await Promise.all([
-          dataService.getClientById(clientId.value),
-          dataService.getHoldingsForClient(clientId.value),
-          dataService.getInteractionsForClient(clientId.value),
-          dataService.getAllInteractionTypes() // Fetch types
+        const [clientData, interactionTypes, policies] = await Promise.all([
+          clientService.getClient(clientId.value),
+          interactionService.getAllInteractionTypes(),
+          insuranceService.getClientPolicies(clientId.value)
         ]);
 
+        console.log('[ClientDetailView] Initial client data:', clientData);
+
+        interactionTypeMap.value = interactionTypes.reduce((map, type) => {
+          map[type.id] = type;
+          return map;
+        }, {});
+
+        if (!clientData) throw new Error('Client not found');
         client.value = clientData;
-        holdings.value = holdingsData;
-        interactions.value = interactionsData;
-        interactionTypes.value = typesData; // Store fetched types
 
-        console.log(`[ClientDetailView] Fetched Client:`, client.value);
-        console.log(`[ClientDetailView] Fetched Holdings: ${holdings.value.length}`);
-        console.log(`[ClientDetailView] Fetched Interactions: ${interactions.value.length}`);
-        console.log(`[ClientDetailView] Fetched Interaction Types: ${interactionTypes.value.length}`);
+        // Load client accounts
+        const accounts = await investmentService.getClientAccounts(clientId.value);
+        console.log('[ClientDetailView] Fetched client accounts:', accounts);
+        
+        if (accounts.length > 0) {
+          console.log('[ClientDetailView] Loading detailed account data for accounts:', accounts.map(a => ({ id: a.id, type: a.type })));
+          const accountsWithHoldings = await Promise.all(
+            accounts.map(account => 
+              investmentService.getAccount(account.id)
+            )
+          );
+          
+          console.log('[ClientDetailView] Loaded accounts with holdings:', accountsWithHoldings);
+          client.value.accounts = accountsWithHoldings;
+          holdings.value = accountsWithHoldings.reduce((allHoldings, account) => {
+            return allHoldings.concat(account.holdings || []);
+          }, []);
+          console.log('[ClientDetailView] Total holdings:', holdings.value.length);
+        }
 
-        holdingsLoading.value = false;
-        interactionsLoading.value = false;
-        typesLoading.value = false; // Types loaded
+        interactions.value = await clientService.getClientInteractions(clientId.value);
+        insurancePolicies.value = policies;
+
+        console.log('[ClientDetailView] Fetched Client:', client.value);
+        console.log('[ClientDetailView] Total Holdings across accounts:', holdings.value.length);
+        console.log('[ClientDetailView] Fetched Interactions:', interactions.value.length);
+        console.log('[ClientDetailView] Fetched Insurance Policies:', insurancePolicies.value.length);
 
         if (holdings.value.length > 0) {
           nextTick(() => setupCategoryChart());
         }
 
       } catch (error) {
-        console.error(`[ClientDetailView] Error fetching data for client ${clientId.value}:`, error);
-        client.value = null; // Indicate client not found or error
-        // TODO: Add user-friendly error handling
+        console.error('[ClientDetailView] Error fetching data for client', clientId.value, ':', error);
+        client.value = null;
       } finally {
-        isLoading.value = false; // Main loading finished
+        isLoading.value = false;
+        holdingsLoading.value = false;
+        interactionsLoading.value = false;
       }
     };
 
     const setupCategoryChart = () => {
       if (!categoryChart.value || !holdings.value.length) return;
 
-      // Clean up any existing chart instance
       const existingChart = Chart.getChart(categoryChart.value);
       if (existingChart) {
         existingChart.destroy();
       }
 
-      // Calculate category distribution
       const categoryData = holdings.value.reduce((acc, holding) => {
         const category = holding.fund.category;
         if (!acc[category]) acc[category] = 0;
@@ -207,7 +417,6 @@ export default {
         return acc;
       }, {});
 
-      // Sort categories by value for better visualization
       const sortedCategories = Object.entries(categoryData)
         .sort(([, a], [, b]) => b - a)
         .reduce((acc, [key, value]) => {
@@ -215,7 +424,6 @@ export default {
           return acc;
         }, {});
 
-      // Prepare chart data
       const labels = Object.keys(sortedCategories);
       const data = Object.values(sortedCategories);
       const colors = [
@@ -262,31 +470,41 @@ export default {
       });
     };
 
-    // Make sure we call setupCategoryChart when holdings change
     watch(() => holdings.value, () => {
       if (holdings.value.length > 0) {
         nextTick(setupCategoryChart);
       }
     });
 
-    // Computed map for easy lookup of interaction type names by ID
-    const interactionTypeMap = computed(() => {
-        return interactionTypes.value.reduce((map, type) => {
-            map[type.id] = type;
-            return map;
-        }, {});
-    });
+    const calculateAccountValue = (account) => {
+      if (typeof account.totalValue === 'number') return account.totalValue;
+      if (account.holdings?.length) {
+        return account.holdings.reduce((sum, h) => {
+          const value = h.currentValue != null ? h.currentValue : (h.unitsHeld * h.fund.price || 0);
+          return sum + value;
+        }, 0);
+      }
+      return 0;
+    };
 
-    // Computed property for total portfolio value
-    const totalPortfolioValue = computed(() => {
-        return holdings.value.reduce((sum, holding) => sum + (holding.currentValue || 0), 0);
-    });
+    const totalPortfolioValue = computed(() =>
+      client.value?.accounts?.reduce((sum, account) => sum + calculateAccountValue(account), 0) || 0
+    );
 
-    // --- Utility Functions (Copied from ClientsView, consider moving to a utils file) ---
+    const calculateGainLossPercent = (holding) => {
+      if (!holding.purchasePrice || !holding.currentValue) return 0;
+      const initialValue = holding.purchasePrice * holding.unitsHeld;
+      return ((holding.currentValue - initialValue) / initialValue) * 100;
+    };
+
     const formatDate = (dateString) => {
       if (!dateString) return 'N/A';
       try {
-        return new Date(dateString).toLocaleDateString();
+        return new Date(dateString).toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        });
       } catch (e) {
         return 'Invalid Date';
       }
@@ -312,24 +530,38 @@ export default {
             default: return 'bg-gray-100 text-gray-800';
         }
     };
-    // --- End Utility Functions ---
 
-    // Watch for changes in the prop 'id' in case the user navigates 
-    // between client detail pages without leaving the component instance
+    const getCategoryBadgeClass = (category) => {
+        switch (category?.toLowerCase()) {
+            case 'equity income': return 'bg-emerald-100 text-emerald-800';
+            case 'global equity': return 'bg-blue-100 text-blue-800';
+            case 'fixed income': return 'bg-amber-100 text-amber-800';
+            case 'japanese equity': return 'bg-indigo-100 text-indigo-800';
+            case 'european equity': return 'bg-violet-100 text-violet-800';
+            default: return 'bg-gray-100 text-gray-800';
+        }
+    };
+
+    const toggleAccountDetails = (accountId) => {
+      expandedAccount.value = expandedAccount.value === accountId ? null : accountId;
+    };
+
+    const togglePolicyDetails = (policyId) => {
+      expandedPolicy.value = expandedPolicy.value === policyId ? null : policyId;
+    };
+
     watch(() => props.id, (newId) => {
         if (newId) {
             fetchClientData();
         }
-    }, { immediate: true }); // Fetch data immediately when component mounts
-
-    // If not using watch immediate:true, call fetchClientData in onMounted
-    // onMounted(fetchClientData); 
+    }, { immediate: true });
 
     return {
       client,
+      insurancePolicies,
       holdings,
       interactions,
-      interactionTypeMap, // Return the map for template use
+      interactionTypeMap,
       isLoading,
       holdingsLoading,
       interactionsLoading,
@@ -337,8 +569,16 @@ export default {
       formatDate,
       formatCurrency,
       getRiskProfileBadgeClass,
-      id: props.id, // Expose prop for the template if needed (e.g., for error message)
-      categoryChart
+      getCategoryBadgeClass,
+      calculateGainLossPercent,
+      id: props.id,
+      categoryChart,
+      INSURANCE_TYPES,
+      expandedAccount,
+      expandedPolicy,
+      toggleAccountDetails,
+      togglePolicyDetails,
+      calculateAccountValue
     };
   }
 }

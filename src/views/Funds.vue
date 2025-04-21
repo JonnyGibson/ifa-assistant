@@ -7,22 +7,31 @@
       <div class="mb-4 flex justify-between items-center">
         <h2 class="text-2xl font-semibold">Funds</h2>
         <div class="flex items-center gap-4">
-          <div v-if="isUpdating" class="flex items-center gap-2">
-            <div class="h-2 w-48 bg-gray-200 rounded">
-              <div 
-                class="h-full bg-blue-500 rounded transition-all duration-300" 
-                :style="{ width: updateProgress + '%' }">
-              </div>
-            </div>
-            <span class="text-sm text-gray-600">{{ updateStatus }}</span>
+          <div v-if="isLoading" class="flex items-center gap-2">
+            <span class="text-sm text-gray-600">Loading...</span>
           </div>
           <button 
             @click="updateFunds" 
-            :disabled="isUpdating"
-            class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded">
+            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
             Update Funds
           </button>
         </div>
+      </div>
+      <div class="mb-4 flex gap-4">
+        <input 
+          v-model="searchQuery" 
+          type="text" 
+          placeholder="Search funds..." 
+          class="border border-gray-300 rounded px-4 py-2 w-full" 
+        />
+        <select 
+          v-model="selectedCategory" 
+          class="border border-gray-300 rounded px-4 py-2">
+          <option value="">All Categories</option>
+          <option v-for="category in categories" :key="category" :value="category">
+            {{ category }}
+          </option>
+        </select>
       </div>
       <FundsTable 
         :funds="funds" 
@@ -33,78 +42,100 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { fundService } from '../services/database';
 import FundsTable from '../components/FundsTable.vue';
-import { dataService } from '../services/db';
+import PerformanceBadge from '../components/PerformanceBadge.vue';
 
 export default {
   name: 'FundsView',
   components: {
-    FundsTable
+    FundsTable,
+    PerformanceBadge
   },
   setup() {
     const funds = ref([]);
     const portfolioCounts = ref({});
-    const isUpdating = ref(false);
-    const updateProgress = ref(0);
+    const isLoading = ref(true);
+    const searchQuery = ref('');
+    const selectedCategory = ref('');
+    const sortField = ref('name');
+    const sortDirection = ref('asc');
     const updateStatus = ref('');
 
-    const fetchFunds = async () => {
-      console.log('[FundsView] Fetching all funds...');
+    const categories = computed(() => {
+      const uniqueCategories = new Set();
+      funds.value.forEach(fund => {
+        if (fund.category) uniqueCategories.add(fund.category);
+      });
+      return Array.from(uniqueCategories).sort();
+    });
+
+    const filteredFunds = computed(() => {
+      return funds.value
+        .filter(fund => {
+          const matchesSearch = !searchQuery.value || 
+            fund.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+            fund.isin.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+            fund.sedol.toLowerCase().includes(searchQuery.value.toLowerCase());
+          
+          const matchesCategory = !selectedCategory.value || 
+            fund.category === selectedCategory.value;
+
+          return matchesSearch && matchesCategory;
+        })
+        .sort((a, b) => {
+          const modifier = sortDirection.value === 'asc' ? 1 : -1;
+          const aVal = a[sortField.value];
+          const bVal = b[sortField.value];
+
+          if (typeof aVal === 'string') {
+            return modifier * aVal.localeCompare(bVal);
+          }
+          return modifier * (aVal - bVal);
+        });
+    });
+
+    const loadFunds = async () => {
+      isLoading.value = true;
       try {
-        const result = await dataService.getAllFunds();
-        console.log('[FundsView] Fetched data:', result);
+        const result = await fundService.getAllFunds();
         funds.value = result.funds;
         portfolioCounts.value = result.portfolioCounts;
-        console.log('[FundsView] Processed funds:', funds.value.length);
       } catch (error) {
-        console.error('[FundsView] Error fetching funds:', error);
+        console.error('Error loading funds:', error);
+      } finally {
+        isLoading.value = false;
       }
     };
 
     const updateFunds = async () => {
       try {
-        isUpdating.value = true;
-        updateProgress.value = 0;
-        updateStatus.value = 'Starting update...';
-
-        await dataService.updateFundCategories((progress) => {
-          if (progress.status === 'completed') {
-            updateProgress.value = 100;
-            updateStatus.value = progress.message;
-            setTimeout(() => {
-              isUpdating.value = false;
-              fetchFunds(); // Refresh the funds list
-            }, 1000);
-          } else if (progress.status === 'error') {
-            updateStatus.value = progress.message;
-            setTimeout(() => {
-              isUpdating.value = false;
-            }, 2000);
-          } else {
-            updateProgress.value = progress.total ? (progress.current / progress.total * 100) : 0;
-            updateStatus.value = progress.message;
-          }
+        updateStatus.value = 'Updating funds...';
+        await fundService.updateFundCategories(status => {
+          updateStatus.value = status.message;
         });
+        await loadFunds();
       } catch (error) {
-        console.error('[FundsView] Error updating funds:', error);
-        updateStatus.value = 'Error updating funds';
-        setTimeout(() => {
-          isUpdating.value = false;
-        }, 2000);
+        console.error('Error updating funds:', error);
+        updateStatus.value = 'Error: ' + error.message;
       }
     };
 
     onMounted(() => {
-      fetchFunds();
+      loadFunds();
     });
 
     return {
-      funds,
+      funds: filteredFunds,
       portfolioCounts,
-      isUpdating,
-      updateProgress,
+      isLoading,
+      searchQuery,
+      selectedCategory,
+      sortField,
+      sortDirection,
       updateStatus,
+      categories,
       updateFunds
     };
   }

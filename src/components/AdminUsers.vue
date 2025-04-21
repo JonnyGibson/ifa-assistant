@@ -22,11 +22,6 @@
               <td class="px-6 py-4 whitespace-nowrap">{{ user.firstName }} {{ user.lastName }}</td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <button 
-                  @click="resetPassword(user)"
-                  class="text-indigo-600 hover:text-indigo-900 mr-3">
-                  Reset Password
-                </button>
-                <button 
                   @click="deleteUser(user)"
                   class="text-red-600 hover:text-red-900">
                   Delete
@@ -39,7 +34,7 @@
     </div>
 
     <!-- Add New User -->
-    <div class="bg-white shadow rounded-lg p-6">
+    <div v-if="showAddUserForm" class="bg-white shadow rounded-lg p-6">
       <h3 class="text-xl font-semibold mb-4">Add New User</h3>
       <form @submit.prevent="addUser" class="space-y-4">
         <div class="grid grid-cols-2 gap-4">
@@ -99,12 +94,14 @@
         </div>
       </form>
     </div>
+    <div v-if="errorMessage" class="text-red-500 mt-4">{{ errorMessage }}</div>
+    <div v-if="successMessage" class="text-green-500 mt-4">{{ successMessage }}</div>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
-import { db, authService } from '../services/db';
+import { userService } from '../services/database';
 
 export default {
   name: 'AdminUsers',
@@ -113,61 +110,72 @@ export default {
     const newUser = ref({
       username: '',
       email: '',
+      password: '',
       firstName: '',
       lastName: '',
-      password: ''
+      isAdmin: false
     });
+    const showAddUserForm = ref(false);
+    const errorMessage = ref('');
+    const successMessage = ref('');
 
     const loadUsers = async () => {
-      users.value = await db.users
-        .toArray()
-        .then(users => users.map(({ password, ...user }) => user));
+      try {
+        users.value = await userService.getAllUsers();
+      } catch (error) {
+        console.error('Error loading users:', error);
+        errorMessage.value = 'Failed to load users';
+      }
     };
 
     const addUser = async () => {
       try {
-        await authService.register(newUser.value);
+        await userService.addUser(newUser.value);
+        successMessage.value = 'User added successfully';
+        showAddUserForm.value = false;
         newUser.value = {
           username: '',
           email: '',
+          password: '',
           firstName: '',
           lastName: '',
-          password: ''
+          isAdmin: false
         };
         await loadUsers();
       } catch (error) {
-        alert(error.message);
-      }
-    };
-
-    const resetPassword = async (user) => {
-      const newPassword = prompt('Enter new password for ' + user.username);
-      if (newPassword) {
-        await db.users
-          .where('id')
-          .equals(user.id)
-          .modify(user => { user.password = newPassword; });
-        alert('Password updated successfully');
+        console.error('Error adding user:', error);
+        errorMessage.value = error.message || 'Failed to add user';
       }
     };
 
     const deleteUser = async (user) => {
-      if (confirm('Are you sure you want to delete ' + user.username + '?')) {
-        await db.users.delete(user.id);
-        await db.sessions.where('userId').equals(user.id).delete();
+      if (!confirm(`Are you sure you want to delete user ${user.username}?`)) {
+        return;
+      }
+
+      try {
+        await userService.deleteUser(user.id);
         await loadUsers();
+        successMessage.value = 'User deleted successfully';
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        errorMessage.value = 'Failed to delete user';
       }
     };
 
-    onMounted(loadUsers);
+    onMounted(() => {
+      loadUsers();
+    });
 
     return {
       users,
       newUser,
+      showAddUserForm,
+      errorMessage,
+      successMessage,
       addUser,
-      resetPassword,
       deleteUser
     };
   }
 };
-</script> 
+</script>

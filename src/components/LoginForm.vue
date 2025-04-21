@@ -20,19 +20,13 @@
             <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
             <div class="mt-1">
               <InputText 
-            
                 id="email"
-                v-model="formData.email"
+                v-model="email"
                 type="email"
                 autocomplete="email"
                 placeholder="Email address"
                 class="w-full p-inputtext-sm"
-                :class="{ 'p-invalid': v$.email.$error }"
-                aria-describedby="email-error"
               />
-              <small v-if="v$.email.$error" id="email-error" class="text-red-600">
-                {{ v$.email.$errors[0].$message }}
-              </small>
             </div>
           </div>
           
@@ -41,17 +35,12 @@
             <div class="mt-1">
               <Password
                 id="password"
-                v-model="formData.password"
+                v-model="password"
                 :feedback="false"
                 :toggleMask="true"
                 placeholder="Password"
                 class="w-full p-inputtext-sm"
-                :class="{ 'p-invalid': v$.password.$error }"
-                aria-describedby="password-error"
               />
-              <small v-if="v$.password.$error" id="password-error" class="text-red-600">
-                {{ v$.password.$errors[0].$message }}
-              </small>
             </div>
           </div>
         </div>
@@ -66,30 +55,41 @@
             severity="success"
           />
         </div>
+        <div v-if="error" class="text-red-600 text-sm mt-2">
+          {{ error }}
+        </div>
       </form>
 
       <div class="flex flex-col items-center space-y-4 text-sm text-gray-600">
         <p>Contact your administrator if you need access</p>
-        <button 
-          @click="resetDatabase" 
-          class="text-emerald-600 hover:text-emerald-700 underline"
-          :disabled="resetting"
-        >
-          {{ resetting ? 'Resetting database...' : 'Reset database to seed data' }}
-        </button>
+        <div class="flex flex-col items-center gap-2">
+          <Button
+            type="button"
+            :label="refreshing ? 'Refreshing Data...' : 'Reset Database'"
+            :icon="refreshing ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
+            :disabled="refreshing"
+            severity="secondary"
+            @click="refreshData"
+            class="p-button-sm"
+          />
+          <div v-if="refreshMessage" :class="[
+            'text-sm',
+            refreshError ? 'text-red-600' : 'text-emerald-600'
+          ]">
+            {{ refreshMessage }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue'
-import { useVuelidate } from '@vuelidate/core'
-import { required, email } from '@vuelidate/validators'
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import Password from 'primevue/password'
-import { db } from '../services/db'
+import { ref } from 'vue';
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import Password from 'primevue/password';
+import { authService, db } from '../services/database';
 
 export default {
   name: 'LoginForm',
@@ -100,67 +100,66 @@ export default {
   },
   emits: ['login'],
   setup(props, { emit }) {
-    const formData = ref({
-      email: 'admin@webserve.it',
-      password: 'password'
-    })
-    
-    const loading = ref(false)
-    const resetting = ref(false)
-
-    const rules = computed(() => ({
-      email: { required, email },
-      password: { required }
-    }))
-
-    const v$ = useVuelidate(rules, formData)
+    const email = ref('');
+    const password = ref('');
+    const error = ref('');
+    const loading = ref(false);
+    const refreshing = ref(false);
+    const refreshMessage = ref('');
+    const refreshError = ref(false);
 
     const handleSubmit = async () => {
-      loading.value = true
-      try {
-        const isFormCorrect = await v$.value.$validate()
-        
-        if (!isFormCorrect) {
-          return
-        }
+      if (!email.value || !password.value) {
+        error.value = 'Please enter both email and password.';
+        return;
+      }
 
-        emit('login', {
-          email: formData.value.email,
-          password: formData.value.password
-        })
-      } catch (error) {
-        console.error('Login error:', error)
-      } finally {
-        loading.value = false
-      }
-    }
+      loading.value = true;
+      error.value = '';
 
-    const resetDatabase = async () => {
-      if (!confirm('Are you sure you want to reset the database to its initial state? This will remove all changes.')) {
-        return
-      }
-      resetting.value = true
       try {
-        await db.reset()
-        alert('Database reset successfully. You can now log in with admin@webserve.it / password')
-      } catch (error) {
-        console.error('Error resetting database:', error)
-        alert('Failed to reset database: ' + error.message)
+        const result = await authService.login(email.value, password.value);
+        localStorage.setItem('auth_token', result.token);
+        emit('login', result.user);
+      } catch (err) {
+        console.error('Login error:', err);
+        error.value = err.message || 'Login failed. Please check your credentials.';
       } finally {
-        resetting.value = false
+        loading.value = false;
       }
-    }
+    };
+
+    const refreshData = async () => {
+      refreshing.value = true;
+      refreshMessage.value = '';
+      refreshError.value = false;
+      
+      try {
+        await db.initialize(true); // Force reinitialize
+        refreshMessage.value = 'Database reset successfully! You can now log in.';
+        refreshError.value = false;
+      } catch (err) {
+        console.error('Database refresh error:', err);
+        refreshMessage.value = 'Failed to reset database. Please try again.';
+        refreshError.value = true;
+      } finally {
+        refreshing.value = false;
+      }
+    };
 
     return {
-      formData,
+      email,
+      password,
+      error,
       loading,
-      resetting,
-      v$,
+      refreshing,
+      refreshMessage,
+      refreshError,
       handleSubmit,
-      resetDatabase
-    }
+      refreshData
+    };
   }
-}
+};
 </script>
 
 <style scoped>

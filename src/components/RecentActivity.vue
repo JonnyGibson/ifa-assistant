@@ -11,15 +11,15 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
-            <tr v-if="!interactions.length" class="hover:bg-gray-50">
+            <tr v-if="!activities.length" class="hover:bg-gray-50">
               <td colspan="2" class="px-4 py-4 text-center text-gray-500">No recent contacts found</td>
             </tr>
-            <tr v-for="interaction in interactions" :key="interaction.id" class="hover:bg-gray-50">
+            <tr v-for="activity in activities" :key="activity.id" class="hover:bg-gray-50">
               <td class="px-4 py-4 whitespace-nowrap">
-                <div class="font-medium text-gray-900">{{ interaction.clientName }}</div>
-                <div class="text-xs text-gray-500 mt-1">{{ formatDate(interaction.date) }}</div>
+                <div class="font-medium text-gray-900">{{ activity.clientName }}</div>
+                <div class="text-xs text-gray-500 mt-1">{{ formatDate(activity.date) }}</div>
               </td>
-              <td class="px-4 py-4 text-sm text-gray-600">{{ interaction.summaryNotes }}</td>
+              <td class="px-4 py-4 text-sm text-gray-600">{{ activity.summaryNotes }}</td>
             </tr>
           </tbody>
         </table>
@@ -29,71 +29,51 @@
 </template>
 
 <script>
-import { ref, onMounted, inject, computed, watch } from 'vue'
-import { dataService } from '../services/db'
+import { ref, onMounted, inject, watch } from 'vue'
+import { interactionService } from '../services/database'
 
 export default {
   name: 'RecentActivity',
   setup() {
-    const interactions = ref([]);
-    const isLoading = ref(true);
-    const currentUser = inject('currentUser', ref(null));
-    const userId = computed(() => currentUser.value?.id);
+    const currentUser = inject('currentUser', ref(null))
+    const activities = ref([])
+    const isLoading = ref(true)
 
-    const fetchRecentInteractions = async () => {
-      if (!userId.value) return;
+    const loadActivities = async () => {
+      if (!currentUser.value?.id) return
+      
+      isLoading.value = true
       try {
-        const [allInteractions, clients] = await Promise.all([
-          dataService.getAllInteractions(userId.value),
-          dataService.getClients(userId.value)
-        ]);
-
-        const clientMap = new Map(clients.map(c => [c.id, `${c.firstName} ${c.lastName}`]));
-
-        interactions.value = allInteractions
-          .map(interaction => ({
-            ...interaction,
-            clientName: clientMap.get(interaction.clientId) || 'Unknown Client'
-          }))
-          .sort((a, b) => new Date(b.date) - new Date(a.date))
-          .slice(0, 20);
+        activities.value = await interactionService.getRecentInteractions(currentUser.value.id)
       } catch (error) {
-        console.error('Error fetching recent interactions:', error);
+        console.error('Error loading recent activities:', error)
       } finally {
-        isLoading.value = false;
+        isLoading.value = false
       }
-    };
+    }
+
+    watch(() => currentUser.value?.id, (newId) => {
+      if (newId) {
+        loadActivities()
+      }
+    }, { immediate: true })
 
     const formatDate = (date) => {
-      if (!date) return 'N/A';
-      const d = new Date(date);
-      if (isNaN(d.getTime())) return 'Invalid Date';
-      
-      return d.toLocaleDateString('en-GB', { 
+      if (!date) return ''
+      return new Date(date).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
         year: 'numeric',
-        month: '2-digit',
-        day: '2-digit'
-      }).split('/').reverse().join('-');
-    };
-
-    onMounted(() => {
-      if (userId.value) {
-        fetchRecentInteractions();
-      } else {
-        const unwatch = watch(userId, (newId) => {
-          if (newId) {
-            fetchRecentInteractions();
-            unwatch();
-          }
-        });
-      }
-    });
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    }
 
     return {
-      interactions,
+      activities,
       isLoading,
       formatDate
-    };
+    }
   }
 }
 </script>

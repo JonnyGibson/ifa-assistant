@@ -90,7 +90,7 @@
                 </button>
                 <button 
                   v-if="!user.isAdmin || users.filter(u => u.isAdmin).length > 1"
-                  @click="deleteUser(user)"
+                  @click="confirmDeleteUser(user)"
                   class="text-red-600 hover:text-red-900"
                 >
                   Delete
@@ -184,15 +184,16 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { db, authService } from '../services/db';
+import { userService, authService } from '../services/database';
 
 export default {
   name: 'Settings',
   setup() {
     const users = ref([]);
+    const lastReset = ref(null);
+    const isLoading = ref(true);
     const showAddUserForm = ref(false);
     const editingUser = ref(null);
-    const lastReset = ref(null);
     const userForm = ref({
       username: '',
       email: '',
@@ -203,9 +204,11 @@ export default {
     });
 
     const loadUsers = async () => {
-      users.value = await db.users
-        .toArray()
-        .then(users => users.map(({ password, ...user }) => user));
+      try {
+        users.value = await userService.getAllUsers();
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
     };
 
     const resetForm = () => {
@@ -229,14 +232,8 @@ export default {
     const saveUser = async () => {
       try {
         if (editingUser.value) {
-          // Update existing user
-          const { password, ...updateData } = userForm.value;
-          await db.users
-            .where('id')
-            .equals(editingUser.value.id)
-            .modify(updateData);
+          await userService.updateUser(editingUser.value.id, userForm.value);
         } else {
-          // Add new user
           await authService.register(userForm.value);
         }
         showAddUserForm.value = false;
@@ -250,85 +247,63 @@ export default {
     const resetPassword = async (user) => {
       const newPassword = prompt('Enter new password for ' + user.username);
       if (newPassword) {
-        await db.users
-          .where('id')
-          .equals(user.id)
-          .modify(user => { user.password = newPassword; });
+        await userService.updateUser(user.id, { password: newPassword });
         alert('Password updated successfully');
       }
     };
 
-    const deleteUser = async (user) => {
-      if (!confirm('Are you sure you want to delete ' + user.username + '?')) {
-        return;
+    const confirmDeleteUser = async (user) => {
+      if (confirm(`Are you sure you want to delete user ${user.username}? This will remove all their sessions.`)) {
+        await userService.deleteUser(user.id);
+        await loadUsers();
       }
-
-      // Prevent deleting the last admin
-      if (user.isAdmin) {
-        const adminCount = users.value.filter(u => u.isAdmin).length;
-        if (adminCount <= 1) {
-          alert('Cannot delete the last admin user');
-          return;
-        }
-      }
-
-      await db.users.delete(user.id);
-      await db.sessions.where('userId').equals(user.id).delete();
-      await loadUsers();
     };
 
     const confirmResetDatabase = async () => {
       if (confirm('Are you sure you want to reset the database to its initial state? This will remove all changes and restore the default data.')) {
-        await db.reset();
-        lastReset.value = new Date().toISOString();
-        await loadUsers();
+        try {
+          await userService.resetDatabase();
+          lastReset.value = new Date().toISOString();
+          await loadUsers();
+        } catch (error) {
+          console.error('Error resetting database:', error);
+          alert('Failed to reset database');
+        }
       }
     };
 
     const confirmClearData = async () => {
       if (confirm('Are you sure you want to clear all data? This will remove everything except the admin user.')) {
-        await db.transaction('rw', 
-          db.users, 
-          db.categories, 
-          db.tasks, 
-          db.sessions, 
-          async () => {
-            // Keep admin users
-            const adminUsers = await db.users.where('isAdmin').equals(true).toArray();
-            await db.sessions.clear();
-            await db.tasks.clear();
-            await db.categories.clear();
-            await db.users.clear();
-            // Restore admin users
-            await db.users.bulkAdd(adminUsers);
-          });
-        lastReset.value = new Date().toISOString();
-        await loadUsers();
+        try {
+          await userService.clearData();
+          lastReset.value = new Date().toISOString();
+          await loadUsers();
+        } catch (error) {
+          console.error('Error clearing data:', error);
+          alert('Failed to clear data');
+        }
       }
     };
 
-    onMounted(async () => {
-      await loadUsers();
-      // Try to load last reset time from settings
-      const resetSetting = await db.settings.get('lastReset');
-      if (resetSetting) {
-        lastReset.value = resetSetting.value;
-      }
+    onMounted(() => {
+      loadUsers();
     });
 
     return {
       users,
+      lastReset,
+      isLoading,
       showAddUserForm,
       editingUser,
       userForm,
-      lastReset,
+      loadUsers,
       editUser,
       saveUser,
       resetPassword,
-      deleteUser,
+      confirmDeleteUser,
       confirmResetDatabase,
       confirmClearData
     };
   }
 };
-</script> 
+</script>

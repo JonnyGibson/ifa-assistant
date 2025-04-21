@@ -2,17 +2,29 @@
   <div class="min-h-screen bg-gray-50">
     <div v-if="isLoading" class="flex items-center justify-center min-h-screen">
       <ProgressSpinner />
+      <div class="ml-4 text-gray-600">Loading application...</div>
+    </div>
+    <div v-else-if="dbError" class="flex flex-col items-center justify-center min-h-screen">
+      <i class="pi pi-exclamation-triangle text-yellow-500 text-5xl mb-4"></i>
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">Connection Error</h2>
+      <p class="text-gray-600 mb-6">{{ dbError }}</p>
+      <Button 
+        @click="window.location.reload()" 
+        label="Retry" 
+        icon="pi pi-refresh" 
+        class="p-button-primary"
+      />
     </div>
     <template v-else>
-      <LoginForm v-if="!isAuthenticated" @login="handleLogin" />
+      <LoginForm v-if="!currentUser" @login="handleLogin" />
       
       <div class="flex min-h-screen" v-else>
-        <Sidebar :user-email="userEmail" :is-admin="isAdmin" />
+        <Sidebar :user-email="currentUser?.email" :is-admin="currentUser?.isAdmin" />
         <div class="flex-1">
           <!-- Header with dynamic background -->
           <div class="relative">
             <div class="h-48 bg-gradient-to-r from-emerald-800 to-emerald-600 relative overflow-hidden">
-              <div class="absolute inset-0 bg-cover bg-center" :style="{ backgroundImage: `url('/bg${currentBgIndex}.jpg')` }"></div>
+              <div class="absolute inset-0 bg-cover bg-center" :style="{ backgroundImage: `url('/bg1.jpg')` }"></div>
               <div class="absolute inset-0 bg-gradient-to-r from-emerald-800/40 to-emerald-600/40"></div>
               <div class="h-full flex items-center justify-between px-8 relative">
                 <div class="flex items-center space-x-4">
@@ -46,141 +58,86 @@
 </template>
 
 <script>
-import { ref, computed, watch, provide, onMounted } from 'vue'
+import { ref, provide, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { authService } from './services/db'
-import LoginForm from './components/LoginForm.vue'
 import Sidebar from './components/Sidebar.vue'
+import LoginForm from './components/LoginForm.vue'
 import Button from 'primevue/button'
 import ProgressSpinner from 'primevue/progressspinner'
+import { authService, db } from './services/database'
 
 export default {
   name: 'App',
   components: {
-    LoginForm,
     Sidebar,
+    LoginForm,
     Button,
     ProgressSpinner
   },
   setup() {
-    console.log('[App.vue] setup() called');
-    const router = useRouter();
-    const isAuthenticated = ref(false);
-    const isLoading = ref(true);
-    const currentUser = ref(null);
-    const loading = ref(false);
+    const router = useRouter()
+    const currentUser = ref(null)
+    const isLoading = ref(true)
+    const dbError = ref(null)
 
-    // Provide the currentUser ref to child components
-    provide('currentUser', currentUser);
+    console.log('[App] Starting application setup')
 
-    const userEmail = computed(() => currentUser.value?.email || '');
-    const isAdmin = computed(() => currentUser.value?.isAdmin || false);
+    provide('currentUser', currentUser)
 
-    const currentBgIndex = ref(1);
-
-    // Rotate background images on route change
-    watch(() => router.currentRoute.value.path, () => {
-      currentBgIndex.value = ((currentBgIndex.value % 4) + 1);
-    });
-
-    const checkAuth = async () => {
-      console.log('[App.vue] checkAuth() starting...');
-      isLoading.value = true;
-      try {
-        const token = localStorage.getItem('auth_token');
-        if (token) {
-          const user = await authService.getCurrentUser(token);
-          if (user) {
-            currentUser.value = user;
-            isAuthenticated.value = true;
-            console.log('[App.vue] User authenticated from stored token', user);
-          } else {
-            // Invalid or expired token
-            localStorage.removeItem('auth_token');
-            currentUser.value = null;
-            isAuthenticated.value = false;
-            console.log('[App.vue] Invalid token, user logged out');
-          }
-        } else {
-          currentUser.value = null;
-          isAuthenticated.value = false;
-          console.log('[App.vue] No token found, user not authenticated');
-        }
-      } catch (error) {
-        console.error('[App.vue] Error checking auth:', error);
-        currentUser.value = null;
-        isAuthenticated.value = false;
-        localStorage.removeItem('auth_token'); // Clear potentially bad token
-      } finally {
-        isLoading.value = false;
-        console.log('[App.vue] checkAuth() completed. isAuthenticated:', isAuthenticated.value);
-      }
-    };
-
-    const handleLogin = async (loginData) => {
-      console.log('[App.vue] handleLogin() called');
-      loading.value = true;
-      try {
-        const { user, token } = await authService.login(loginData.email, loginData.password);
-        
-        localStorage.setItem('auth_token', token);
-        currentUser.value = user;
-        isAuthenticated.value = true;
-        console.log('[App.vue] Login successful');
-        router.push('/');
-      } catch (error) {
-        console.error('[App.vue] Error logging in:', error);
-        currentUser.value = null;
-        isAuthenticated.value = false;
-        localStorage.removeItem('auth_token');
-        throw error; // Re-throw to let LoginForm handle UI feedback
-      } finally {
-        loading.value = false;
-      }
-    };
+    const handleLogin = async (user) => {
+      console.log('[App] Handling login:', user)
+      currentUser.value = user  // Set user first
+      await router.push('/dashboard')  // Then navigate
+    }
 
     const handleLogout = async () => {
-      console.log('[App.vue] handleLogout() called');
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-        try {
-          await authService.logout(token);
-        } catch (error) {
-          console.error('[App.vue] Error during server logout, proceeding with client logout:', error);
-        }
-        localStorage.removeItem('auth_token');
+      try {
+        console.log('[App] Handling logout')
+        await authService.logout()
+        currentUser.value = null
+        router.push('/')
+      } catch (error) {
+        console.error('[App] Logout failed:', error)
       }
-      currentUser.value = null;
-      isAuthenticated.value = false;
-      console.log('[App.vue] Logout successful');
-      router.push('/login'); // Redirect to login page after logout
-    };
+    }
 
-    // Watch for changes in authentication state to redirect if necessary
-    watch(isAuthenticated, (newValue, oldValue) => {
-      if (oldValue === true && newValue === false) {
-        // User was logged in, now logged out
-        if (router.currentRoute.value.meta.requiresAuth || router.currentRoute.value.meta.requiresAdmin) {
-          router.push('/login');
-        }
+    onMounted(async () => {
+      console.log('[App] Component mounted, checking authentication...')
+      try {
+        // Set a timeout to prevent the app from being stuck in loading state forever
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Authentication check timed out')), 10000)
+        })
+
+        // This will resolve if either the auth check succeeds or times out
+        await Promise.race([
+          (async () => {
+            console.log('[App] Checking for current user...')
+            const user = await authService.getCurrentUser()
+            console.log('[App] Current user:', user)
+            
+            if (user) {
+              currentUser.value = user
+            }
+          })(),
+          timeoutPromise
+        ])
+      } catch (error) {
+        console.error('[App] Error during authentication check:', error)
+        dbError.value = 'Failed to connect to database. Please try refreshing the page.'
+      } finally {
+        console.log('[App] Setting isLoading to false')
+        isLoading.value = false
       }
-    });
-
-    onMounted(() => {
-      console.log('[App.vue] onMounted() called');
-      checkAuth();
-    });
+    })
 
     return {
-      isAuthenticated,
+      currentUser,
       isLoading,
-      userEmail,
-      isAdmin,
+      dbError,
       handleLogin,
-      handleLogout,
-      loading,
-      currentBgIndex
-    };
+      handleLogout
+    }
   }
 }
 </script>
