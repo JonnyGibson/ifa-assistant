@@ -146,41 +146,71 @@ export default {
           return;
         }
 
-        // Get accounts and calculate totals
+        // Get accounts and calculate totals with detailed holdings
         const clientsData = await Promise.all(
           clients.map(async (client) => {
+            // Get all accounts for the client
             const accounts = await investmentService.getClientAccounts(client.id);
-            const portfolioValue = accounts.reduce((sum, acc) => {
-              return sum + (acc.totalValue || 0);
+            
+            // Get detailed account data including holdings
+            const accountsWithHoldings = await Promise.all(
+              accounts.map(account => investmentService.getAccount(account.id))
+            );
+
+            // Calculate total portfolio value from holdings
+            const portfolioValue = accountsWithHoldings.reduce((sum, account) => {
+              if (account.holdings?.length) {
+                const accountValue = account.holdings.reduce((holdingSum, holding) => {
+                  // Calculate holding value from units * price if currentValue is not available
+                  const holdingValue = holding.currentValue || (holding.unitsHeld * holding.fund?.price) || 0;
+                  return holdingSum + holdingValue;
+                }, 0);
+                return sum + accountValue;
+              }
+              return sum + (account.totalValue || 0);
             }, 0);
+
             return {
               ...client,
               portfolioValue,
-              accounts
+              accounts: accountsWithHoldings
             };
           })
         );
 
+        // Calculate filtered clients with active portfolios only
+        const activeClients = clientsData.filter(client => client.portfolioValue > 0);
+
         // Calculate summary statistics
-        const totalAUM = clientsData.reduce((sum, client) => sum + client.portfolioValue, 0);
-        const activePortfolios = clientsData.filter(client => client.accounts.length > 0).length;
+        const totalAUM = activeClients.reduce((sum, client) => sum + client.portfolioValue, 0);
+        const activePortfolios = activeClients.length;
         const averagePortfolioValue = activePortfolios > 0 ? totalAUM / activePortfolios : 0;
 
-        // Calculate category distribution
+        // Calculate category distribution from active portfolios only
         const categoryDistribution = {};
-        clientsData.forEach(client => {
+        activeClients.forEach(client => {
           client.accounts.forEach(account => {
             account.holdings?.forEach(holding => {
               if (holding.fund?.category) {
                 const category = holding.fund.category;
-                categoryDistribution[category] = (categoryDistribution[category] || 0) + (holding.currentValue || 0);
+                const holdingValue = holding.currentValue || (holding.unitsHeld * holding.fund.price) || 0;
+                categoryDistribution[category] = (categoryDistribution[category] || 0) + holdingValue;
               }
             });
           });
         });
 
-        // Get top clients by portfolio value
-        const topClients = [...clientsData]
+        // Sort categories by value and limit to top 6
+        const sortedCategories = Object.entries(categoryDistribution)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 6)
+          .reduce((acc, [key, value]) => {
+            acc[key] = value;
+            return acc;
+          }, {});
+
+        // Get top clients by portfolio value (only include clients with active portfolios)
+        const topClients = [...activeClients]
           .sort((a, b) => b.portfolioValue - a.portfolioValue)
           .slice(0, 5);
 
@@ -190,7 +220,7 @@ export default {
           activePortfolios,
           totalAUM,
           averagePortfolioValue,
-          categoryDistribution,
+          categoryDistribution: sortedCategories,
           topClients
         };
 

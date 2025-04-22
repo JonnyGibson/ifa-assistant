@@ -266,7 +266,15 @@
                   </p>
                   <p class="text-sm">
                     <span class="text-gray-600">Dependents:</span><br/>
-                    <span class="font-medium">{{ client.factFind?.personal?.dependents || 'None' }}</span>
+                    <div v-if="client.factFind?.personal?.dependents?.length" class="mt-1">
+                      <div v-for="(dependent, index) in client.factFind.personal.dependents" 
+                           :key="index" 
+                           class="flex items-center space-x-2 mb-1">
+                        <span class="font-medium">{{ dependent.relationship }}:</span>
+                        <span>{{ dependent.age }} years old</span>
+                      </div>
+                    </div>
+                    <span v-else class="font-medium">None</span>
                   </p>
                   <p class="text-sm">
                     <span class="text-gray-600">Health Status:</span><br/>

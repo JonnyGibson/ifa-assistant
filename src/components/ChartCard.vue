@@ -54,15 +54,40 @@ export default {
               '#8B5CF6', // violet-500
               '#EC4899', // pink-500
               '#6366F1', // indigo-500
-            ]
+            ],
+            borderWidth: 1,
+            borderColor: '#ffffff'
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          cutout: '70%',
           plugins: {
             legend: {
-              position: 'bottom'
+              position: 'right',
+              labels: {
+                usePointStyle: true,
+                padding: 15,
+                font: {
+                  size: 12
+                }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: (context) => {
+                  const value = context.raw;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = ((value / total) * 100).toFixed(1);
+                  return `${context.label}: ${new Intl.NumberFormat('en-GB', {
+                    style: 'currency',
+                    currency: 'GBP',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                  }).format(value)} (${percentage}%)`;
+                }
+              }
             }
           }
         }
