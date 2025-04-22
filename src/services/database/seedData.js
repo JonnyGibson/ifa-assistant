@@ -35,6 +35,155 @@ function generateUKAddress() {
   };
 }
 
+function generateRandomFactFind() {
+  const now = new Date();
+  const twoYearsAgo = new Date(now.setFullYear(now.getFullYear() - 2));
+  const lastUpdated = generateRandomDate(twoYearsAgo, now);
+
+  return {
+    personal: {
+      title: ['Mr', 'Mrs', 'Ms', 'Miss', 'Dr'][Math.floor(Math.random() * 5)],
+      nationalInsurance: `${['A', 'B', 'C', 'E', 'G', 'J', 'L', 'M', 'N', 'P'][Math.floor(Math.random() * 10)]}${Math.floor(Math.random() * 1000000)}${['A', 'B', 'C', 'D'][Math.floor(Math.random() * 4)]}`,
+      maritalStatus: ['Single', 'Married', 'Civil Partnership', 'Divorced', 'Widowed'][Math.floor(Math.random() * 5)],
+      dependents: Array(Math.floor(Math.random() * 4)).fill(null).map(() => ({
+        relationship: ['Child', 'Stepchild', 'Parent', 'Grandchild'][Math.floor(Math.random() * 4)],
+        age: Math.floor(Math.random() * 18)
+      })),
+      healthStatus: ['Excellent', 'Good', 'Fair', 'Poor'][Math.floor(Math.random() * 4)],
+      smoker: Math.random() < 0.2,
+      nationality: 'British',
+      taxResidency: 'UK',
+      lastUpdated
+    },
+    employment: {
+      status: ['Employed', 'Self-Employed', 'Semi-Retired', 'Retired', 'Business Owner'][Math.floor(Math.random() * 5)],
+      occupation: ['Teacher', 'Doctor', 'Engineer', 'Business Owner', 'Accountant', 'Lawyer', 'Manager'][Math.floor(Math.random() * 7)],
+      employer: ['NHS', 'Self-Employed', 'ABC Corp', 'XYZ Ltd', 'Local Council'][Math.floor(Math.random() * 5)],
+      annualIncome: Math.floor(Math.random() * 150000) + 30000,
+      otherIncome: Math.random() < 0.3 ? [{
+        source: ['Rental Income', 'Dividends', 'Part-time Work'][Math.floor(Math.random() * 3)],
+        amount: Math.floor(Math.random() * 20000) + 5000
+      }] : [],
+      employmentBenefits: ['Health Insurance', 'Life Insurance', 'Pension', 'Company Car'].filter(() => Math.random() < 0.3),
+      yearsInRole: Math.floor(Math.random() * 20) + 1,
+      retirementAge: Math.floor(Math.random() * 10) + 65,
+      lastUpdated
+    },
+    financial: {
+      monthlyIncome: {
+        salary: Math.floor(Math.random() * 150000 + 30000) / 12,
+        benefits: Math.floor(Math.random() * 10000) / 12,
+        investments: Math.floor(Math.random() * 20000) / 12,
+        other: Math.floor(Math.random() * 5000) / 12
+      },
+      monthlyExpenses: {
+        housing: Math.floor(Math.random() * 2000) + 500,
+        utilities: Math.floor(Math.random() * 300) + 100,
+        transport: Math.floor(Math.random() * 500) + 100,
+        loans: Math.floor(Math.random() * 500),
+        lifestyle: Math.floor(Math.random() * 1000) + 300
+      },
+      assets: {
+        property: Math.random() < 0.7 ? [{
+          type: 'Primary Residence',
+          value: Math.floor(Math.random() * 500000) + 200000,
+          mortgage: Math.floor(Math.random() * 300000)
+        }] : [],
+        savings: Math.random() < 0.8 ? [{
+          type: 'Cash ISA',
+          value: Math.floor(Math.random() * 50000)
+        }] : [],
+        investments: [],
+        pensions: Math.random() < 0.6 ? [{
+          provider: ['Standard Life', 'Prudential', 'Aviva'][Math.floor(Math.random() * 3)],
+          value: Math.floor(Math.random() * 200000) + 50000
+        }] : [],
+        other: []
+      },
+      liabilities: {
+        mortgages: Math.random() < 0.7 ? [{
+          lender: ['Nationwide', 'Halifax', 'Barclays'][Math.floor(Math.random() * 3)],
+          amount: Math.floor(Math.random() * 300000) + 100000,
+          monthlyPayment: Math.floor(Math.random() * 1500) + 500
+        }] : [],
+        loans: Math.random() < 0.3 ? [{
+          type: 'Personal Loan',
+          amount: Math.floor(Math.random() * 20000) + 5000
+        }] : [],
+        creditCards: Math.random() < 0.5 ? [{
+          provider: ['Visa', 'Mastercard', 'Amex'][Math.floor(Math.random() * 3)],
+          balance: Math.floor(Math.random() * 5000)
+        }] : [],
+        other: []
+      },
+      lastUpdated
+    },
+    objectives: {
+      shortTerm: [
+        'Build emergency fund',
+        'Clear credit card debt',
+        'Save for home improvements',
+        'Start investing regularly'
+      ].filter(() => Math.random() < 0.5),
+      mediumTerm: [
+        'Save for children\'s education',
+        'Buy a larger home',
+        'Start a business',
+        'Invest in property'
+      ].filter(() => Math.random() < 0.5),
+      longTerm: [
+        'Comfortable retirement',
+        'Leave inheritance for children',
+        'Achieve financial independence',
+        'Buy holiday home'
+      ].filter(() => Math.random() < 0.5),
+      retirementPlans: {
+        targetAge: Math.floor(Math.random() * 10) + 60,
+        targetIncome: Math.floor(Math.random() * 30000) + 20000,
+        existingProvision: []
+      },
+      riskTolerance: {
+        profile: RISK_PROFILES[Math.floor(Math.random() * RISK_PROFILES.length)],
+        score: Math.floor(Math.random() * 100),
+        lastAssessed: generateRandomDate(twoYearsAgo, now),
+        notes: 'Client understands and accepts the risks associated with their chosen investment strategy.'
+      },
+      investmentPreferences: {
+        ethical: Math.random() < 0.3,
+        excludedSectors: Math.random() < 0.3 ? ['Tobacco', 'Arms', 'Gambling'].filter(() => Math.random() < 0.5) : [],
+        preferredSectors: ['Technology', 'Healthcare', 'Renewable Energy', 'Infrastructure'].filter(() => Math.random() < 0.5),
+        notes: ''
+      },
+      lastUpdated
+    },
+    protection: {
+      existingPolicies: [],
+      needs: {
+        lifeInsurance: {
+          required: Math.random() < 0.6,
+          coverAmount: Math.floor(Math.random() * 500000) + 100000,
+          notes: ''
+        },
+        criticalIllness: {
+          required: Math.random() < 0.4,
+          coverAmount: Math.floor(Math.random() * 300000) + 50000,
+          notes: ''
+        },
+        incomeProtection: {
+          required: Math.random() < 0.3,
+          coverAmount: Math.floor(Math.random() * 2000) + 1000,
+          notes: ''
+        },
+        privateHealthCare: {
+          required: Math.random() < 0.3,
+          notes: ''
+        }
+      },
+      lastUpdated
+    }
+  };
+}
+
 function generateRandomClient() {
   const firstNames = ['John', 'Sarah', 'Michael', 'Emma', 'David', 'Lisa', 'James', 'Emily'];
   const lastNames = ['Smith', 'Jones', 'Williams', 'Brown', 'Taylor', 'Davies', 'Wilson', 'Evans'];
@@ -51,7 +200,7 @@ function generateRandomClient() {
   // Generate a random client since date in the last 10 years
   const createdAt = generateRandomDate(new Date(new Date().setFullYear(new Date().getFullYear() - 10)), new Date());
 
-  return {
+  const client = {
     firstName,
     lastName,
     email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@example.com`,
@@ -59,8 +208,11 @@ function generateRandomClient() {
     dateOfBirth: dob.toISOString().split('T')[0],
     address: generateUKAddress(),
     phone,
-    createdAt: createdAt.toISOString()
+    createdAt: createdAt.toISOString(),
+    factFind: generateRandomFactFind()
   };
+
+  return client;
 }
 
 function generateAccountProducts() {
