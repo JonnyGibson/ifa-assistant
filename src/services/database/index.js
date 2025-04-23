@@ -204,90 +204,87 @@ class IFADatabase extends Dexie {
 
         // Step 3: Generate and add sample clients
         console.log('[DB] Generating sample client data...');
-        const seedData = generateSeedData(50);
+        const seedResult = generateSeedData(50);
+        const clientData = seedResult.clients;
+        const interactionData = seedResult.interactions;
         console.log('[DB] Sample data generated');
 
+        let clientIds;
         // Step 4: Add clients in a separate transaction
         await this.transaction('rw', this.clients, async () => {
           console.log('[DB] Adding sample clients...');
-          const clientIds = await this.clients.bulkAdd(
-            seedData.map(data => data.client),
+          clientIds = await this.clients.bulkAdd(
+            clientData.map(data => data.client),
             { allKeys: true }
           );
           console.log(`[DB] Added ${clientIds.length} clients`);
-          return clientIds;
-        }).then(async (clientIds) => {
-          // Step 5: Process each client's data in separate transactions
-          for (let i = 0; i < clientIds.length; i++) {
-            const clientId = clientIds[i];
-            const clientData = seedData[i];
-            
-            console.log(`[DB] Processing client ${i+1}/${clientIds.length}`);
-            
-            // Add accounts and holdings
-            await this.transaction('rw', 
-              [this.accounts, this.holdings, this.funds], 
-              async () => {
-                const allFunds = await this.funds.toArray();
-                
-                for (const product of clientData.products) {
-                  const accountId = await this.accounts.add({
-                    clientId,
-                    type: product.type,
-                    provider: product.provider,
-                    accountNumber: `ACC${Math.floor(Math.random() * 1e6)}`,
-                    dateOpened: new Date(Date.now() - Math.random() * 5 * 365 * 24 * 3600 * 1000),
-                    status: 'active'
-                  });
+        });
 
-                  const holdingCount = Math.floor(Math.random() * 
-                    (product.maxFunds - product.minFunds + 1)) + product.minFunds;
-                  
-                  const shuffledFunds = [...allFunds].sort(() => 0.5 - Math.random());
-                  for (let j = 0; j < holdingCount; j++) {
-                    const fund = shuffledFunds[j];
-                    await this.holdings.add({
-                      accountId,
-                      fundId: fund.id,
-                      unitsHeld: Math.floor(Math.random() * 91) + 10, // 10-100 units
-                      purchaseDate: new Date(Date.now() - Math.random() * 3 * 365 * 24 * 3600 * 1000),
-                      purchasePrice: fund.price || 1
-                    });
-                  }
+        // Step 5: Process each client's data in separate transactions
+        for (let i = 0; i < clientIds.length; i++) {
+          const clientId = clientIds[i];
+          const currentClientData = clientData[i];
+          
+          console.log(`[DB] Processing client ${i+1}/${clientIds.length}`);
+          
+          // Add accounts and holdings
+          await this.transaction('rw', 
+            [this.accounts, this.holdings, this.funds], 
+            async () => {
+              const allFunds = await this.funds.toArray();
+              
+              for (const product of currentClientData.products) {
+                const accountId = await this.accounts.add({
+                  clientId,
+                  type: product.type,
+                  provider: product.provider,
+                  accountNumber: `ACC${Math.floor(Math.random() * 1e6)}`,
+                  dateOpened: new Date(Date.now() - Math.random() * 5 * 365 * 24 * 3600 * 1000),
+                  status: 'active'
+                });
+
+                const holdingCount = Math.floor(Math.random() * 
+                  (product.maxFunds - product.minFunds + 1)) + product.minFunds;
+                
+                const shuffledFunds = [...allFunds].sort(() => 0.5 - Math.random());
+                for (let j = 0; j < holdingCount; j++) {
+                  const fund = shuffledFunds[j];
+                  await this.holdings.add({
+                    accountId,
+                    fundId: fund.id,
+                    unitsHeld: Math.floor(Math.random() * 91) + 10, // 10-100 units
+                    purchaseDate: new Date(Date.now() - Math.random() * 3 * 365 * 24 * 3600 * 1000),
+                    purchasePrice: fund.price || 1
+                  });
                 }
               }
-            );
+            }
+          );
 
-            // Add insurance policies
-            await this.transaction('rw', this.insurancePolicies, async () => {
-              for (const policy of clientData.insurancePolicies) {
-                const startDate = new Date(Date.now() - Math.random() * 2 * 365 * 24 * 3600 * 1000);
-                const renewalDate = new Date(startDate);
-                renewalDate.setFullYear(renewalDate.getFullYear() + 1);
+          // Add insurance policies
+          await this.transaction('rw', this.insurancePolicies, async () => {
+            for (const policy of currentClientData.insurancePolicies) {
+              const startDate = new Date(Date.now() - Math.random() * 2 * 365 * 24 * 3600 * 1000);
+              const renewalDate = new Date(startDate);
+              renewalDate.setFullYear(renewalDate.getFullYear() + 1);
 
-                await this.insurancePolicies.add({
-                  clientId,
-                  type: policy.type,
-                  provider: policy.provider,
-                  policyNumber: `POL${Math.floor(Math.random() * 1e6)}`,
-                  startDate,
-                  renewalDate,
-                  coverAmount: policy.coverAmount,
-                  monthlyPremium: policy.monthlyPremium
-                });
-              }
-            });
-
-            // Add interactions
-            await this.transaction('rw', this.interactions, async () => {
-              await this.interactions.add({
+              await this.insurancePolicies.add({
                 clientId,
-                date: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 3600 * 1000),
-                interactionTypeId: Math.floor(Math.random() * 8) + 1,
-                notes: 'Regular client review and portfolio discussion'
+                type: policy.type,
+                provider: policy.provider,
+                policyNumber: `POL${Math.floor(Math.random() * 1e6)}`,
+                startDate,
+                renewalDate,
+                coverAmount: policy.coverAmount,
+                monthlyPremium: policy.monthlyPremium
               });
-            });
-          }
+            }
+          });
+        }
+
+        // Add all interactions
+        await this.transaction('rw', this.interactions, async () => {
+          await this.interactions.bulkAdd(interactionData);
         });
 
         console.log('[DB] Database initialization completed successfully');

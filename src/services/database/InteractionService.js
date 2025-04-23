@@ -22,18 +22,24 @@ export class InteractionService {
   }
 
   async getRecentInteractions(limit = 10) {
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
     const interactions = await this._interactionsTable
+      .where('date')
+      .aboveOrEqual(oneYearAgo)
       .reverse()
-      .limit(limit)
       .sortBy('date');
 
     const types = await this._interactionTypesTable.toArray();
     const typeMap = new Map(types.map(type => [type.id, type]));
 
-    return interactions.map(interaction => ({
-      ...interaction,
-      type: typeMap.get(interaction.interactionTypeId)
-    }));
+    return interactions
+      .map(interaction => ({
+        ...interaction,
+        type: typeMap.get(interaction.interactionTypeId)
+      }))
+      .slice(0, limit); // Apply limit after filtering
   }
 
   async addInteraction(interactionData) {

@@ -5,6 +5,7 @@ be considering when making change, especially when fixing errors, doubt your sel
 - Use **modern HTML5**, ensuring clean, well-structured, and semantic markup.
 - Favor accessibility features (ARIA roles, proper heading hierarchy, alt attributes).
 - Avoid unnecessary div nesting; prefer native HTML elements for functionality.
+- theres no need to be polite or concilatory, i want you to br professional, not friendly
 
 ## JavaScript Practices
 - Favor **vanilla JavaScript (ECMAScript 2024)** for core functionality.
@@ -46,5 +47,4 @@ be considering when making change, especially when fixing errors, doubt your sel
 - **To detect visual overlays:** If simple checks suggest an element is interactive but user reports indicate it's blocked (e.g., clicks are intercepted), use Playwright's evaluate capability (e.g., `mcp_playwright_playwright_evaluate`) to run `document.elementFromPoint(x, y)` at the element's coordinates. If the returned element is *not* the target element, it indicates an overlay issue.
 - Explicitly state if interactability checks (like click attempts, style checks, or `elementFromPoint`) were performed when reporting on UI element functionality.
 
----
-This updated `.cursorrules` ensures the AI adheres to your vision: modern development, favoring vanilla JavaScript, keeping files small, and maintaining efficiency. 🚀 Let me know if you'd like any further refinements!
+consider the docs/README.md file to understand current expected functionality

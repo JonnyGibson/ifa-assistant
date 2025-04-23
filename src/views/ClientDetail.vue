@@ -55,6 +55,12 @@
             </span>
           </h3>
           
+          <!-- Category Distribution Chart -->
+          <div v-if="holdings.length > 0" class="mt-4 mb-6">
+            <h4 class="text-sm font-medium text-gray-600 mb-2">Category Distribution</h4>
+            <canvas ref="categoryChart" class="w-full h-64"></canvas>
+          </div>
+          
           <!-- Investment Accounts Summary -->
           <div v-if="client.accounts?.length > 0" class="mb-6">
             <h4 class="text-sm font-medium text-gray-500 mb-3">Investment Accounts</h4>

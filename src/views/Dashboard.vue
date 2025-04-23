@@ -47,8 +47,8 @@
         />
       </div>
 
-      <!-- Portfolio Overview & Activity Section -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Top Section: Portfolio Distribution & Top Clients -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <!-- Fund Category Distribution -->
         <ChartCard
           title="Fund Category Distribution"
@@ -56,59 +56,74 @@
           :total="stats.totalAUM"
         />
 
-        <!-- Upcoming Appointments -->
-        <UpcomingAppointments />
-      </div>
-
-      <!-- Top Clients Section -->
-      <div class="bg-white rounded-lg shadow-soft p-6 transition-all duration-300 hover:shadow-hover">
-        <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Clients by Portfolio Value</h3>
-        <div v-if="stats.topClients.length > 0" class="space-y-4">
-          <div v-for="client in stats.topClients" :key="client.id" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div class="flex items-center space-x-3">
-              <p class="font-medium text-gray-900">{{ client.firstName }} {{ client.lastName }}</p>
-              <span 
-                :class="[
-                  'px-2 py-0.5 text-xs leading-5 font-medium rounded-full',
-                  {
-                    'risk-averse': client.riskProfile === 'Averse',
-                    'risk-minimal': client.riskProfile === 'Minimal',
-                    'risk-cautious': client.riskProfile === 'Cautious',
-                    'risk-open': client.riskProfile === 'Open',
-                    'risk-eager': client.riskProfile === 'Eager'
-                  }
-                ]"
-              >{{ client.riskProfile }}</span>
+        <!-- Top Clients by Portfolio Value -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Clients by Portfolio Value</h3>
+          <div class="space-y-3">
+            <div v-for="client in stats.topClients" :key="client.id" 
+                class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+              <div class="flex items-center space-x-3">
+                <div>
+                  <p class="font-medium text-gray-900">{{ client.firstName }} {{ client.lastName }}</p>
+                  <p class="text-sm text-gray-500">Last contact: {{ formatDate(lastInteractionDate(client.id)) }}</p>
+                </div>
+                <span 
+                  :class="[
+                    'px-2 py-0.5 text-xs leading-5 font-medium rounded-full',
+                    {
+                      'risk-averse': client.riskProfile === 'Averse',
+                      'risk-minimal': client.riskProfile === 'Minimal',
+                      'risk-cautious': client.riskProfile === 'Cautious',
+                      'risk-open': client.riskProfile === 'Open',
+                      'risk-eager': client.riskProfile === 'Eager'
+                    }
+                  ]"
+                >{{ client.riskProfile }}</span>
+              </div>
+              <p class="text-lg font-semibold text-emerald-600">{{ formatCurrency(client.portfolioValue) }}</p>
             </div>
-            <p class="text-lg font-semibold text-emerald-600">{{ formatCurrency(client.portfolioValue) }}</p>
           </div>
         </div>
-        <div v-else class="text-center text-gray-500 py-4">
-          No clients found
-        </div>
+      </div>
+
+      <!-- Bottom Section: Activity Chart & Appointments -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Client Activity Chart -->
+        <ClientActivityChart :data="recentInteractions" />
+        
+        <!-- Upcoming Appointments -->
+        <UpcomingAppointments />
+
+        <!-- Top Active Clients -->
+        <TopActiveClients />
       </div>
     </template>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, inject } from 'vue';
-import { clientService, investmentService } from '../services/database';
+import { ref, onMounted, inject, computed } from 'vue';
+import { clientService, investmentService, interactionService } from '../services/database';
 import StatsCard from '../components/StatsCard.vue';
 import ChartCard from '../components/ChartCard.vue';
 import UpcomingAppointments from '../components/UpcomingAppointments.vue';
+import ClientActivityChart from '../components/ClientActivityChart.vue';
+import TopActiveClients from '../components/TopActiveClients.vue';
 
 export default {
   name: 'Dashboard',
   components: {
     StatsCard,
     ChartCard,
-    UpcomingAppointments
+    UpcomingAppointments,
+    ClientActivityChart,
+    TopActiveClients
   },
   setup() {
     const isLoading = ref(true);
     const error = ref('');
     const currentUser = inject('currentUser');
+    const recentInteractions = ref([]);
 
     const stats = ref({
       totalClients: 0,
@@ -130,21 +145,13 @@ export default {
       error.value = '';
       
       try {
-        // Get all clients
-        const clients = await clientService.getAllClients();
+        // Get all clients and their interactions
+        const [clients, allInteractions] = await Promise.all([
+          clientService.getAllClients(),
+          interactionService.getRecentInteractions(500) // Get more interactions for the activity chart
+        ]);
         
-        // If no clients, set empty state and return
-        if (!clients || clients.length === 0) {
-          stats.value = {
-            totalClients: 0,
-            activePortfolios: 0,
-            totalAUM: 0,
-            averagePortfolioValue: 0,
-            categoryDistribution: {},
-            topClients: []
-          };
-          return;
-        }
+        recentInteractions.value = allInteractions;
 
         // Get accounts and calculate totals with detailed holdings
         const clientsData = await Promise.all(
@@ -241,6 +248,21 @@ export default {
       }).format(value || 0);
     };
 
+    const formatDate = (date) => {
+      if (!date) return 'Never';
+      return new Date(date).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+    };
+
+    const lastInteractionDate = (clientId) => {
+      const clientInteractions = recentInteractions.value.filter(i => i.clientId === clientId);
+      if (clientInteractions.length === 0) return null;
+      return Math.max(...clientInteractions.map(i => new Date(i.date)));
+    };
+
     onMounted(() => {
       loadDashboardData();
     });
@@ -249,7 +271,10 @@ export default {
       isLoading,
       error,
       stats,
-      formatCurrency
+      recentInteractions,
+      formatCurrency,
+      formatDate,
+      lastInteractionDate
     };
   }
 };
