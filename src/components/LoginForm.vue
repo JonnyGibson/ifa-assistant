@@ -51,17 +51,23 @@
             :loading="loading"
             label="Sign in"
             icon="pi pi-sign-in"
-            class="w-full"
-            severity="success"
+            severity="secondary"
+            raised
+            class="w-full px-6 py-3 bg-emerald-600 border border-emerald-500 hover:bg-emerald-700 transition-colors duration-200 text-white font-medium rounded-lg"
           />
         </div>
+
         <div v-if="error" class="text-red-600 text-sm mt-2">
           {{ error }}
         </div>
       </form>
 
       <div class="flex flex-col items-center space-y-4 text-sm text-gray-600">
-        <p>Contact your administrator if you need access</p>
+        <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 text-center">
+          <p class="text-blue-800 font-medium mb-1">Demo Login:</p>
+          <p class="text-blue-600">Email: admin@webserve.it</p>
+          <p class="text-blue-600">Password: admin123</p>
+        </div>
         <div class="flex flex-col items-center gap-2">
           <Button
             type="button"
@@ -69,8 +75,9 @@
             :icon="refreshing ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"
             :disabled="refreshing"
             severity="secondary"
+            raised
+            class="px-6 py-3 bg-emerald-600 border border-emerald-500 hover:bg-emerald-700 transition-colors duration-200 text-white font-medium rounded-lg"
             @click="refreshData"
-            class="p-button-sm"
           />
           <div v-if="refreshMessage" :class="[
             'text-sm',
@@ -172,6 +179,24 @@ export default {
 }
 
 :deep(.p-button) {
-  padding: 0.75rem 1.5rem;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+}
+
+:deep(.p-button .p-button-icon) {
+  font-size: 1rem !important;
+  margin: 0 !important;
+  order: -1 !important;
+}
+
+:deep(.p-button .p-button-label) {
+  font-weight: 500 !important;
+}
+
+:deep(.p-button:disabled) {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 </style>

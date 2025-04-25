@@ -93,10 +93,9 @@ ifa-assistant/
 
 ### Test Users (Development)
 
-Default test users seeded into IndexedDB:
-- **Admin:** username: `admin` / password: `admin123`
-- **User:** username: `testuser` / password: `test123`
-- *Additional randomly generated users are also created.* (Check `src/services/db.js` for details)
+Default test user seeded into IndexedDB during initial setup:
+- **Admin:** email: `admin@webserve.it` / password: `admin123`
+- *(Note: Login uses the email address. Only the admin user is created by default during the seeding process. Other users can be added via the Settings page when logged in as admin.)*
 
 ### Database Management
 - Data is stored locally in your browser's IndexedDB.
@@ -146,7 +145,7 @@ The project uses MCP (Model Control Protocol) server for automated testing and U
 ### Common MCP Test Scenarios
 
 1. User Authentication
-   - Login/logout flows using seeded users (`admin`, `testuser`)
+   - Login/logout flows using seeded users (`admin`)
    - Invalid credentials handling
    - Session token handling in `localStorage`
 
@@ -176,4 +175,4 @@ The project uses MCP (Model Control Protocol) server for automated testing and U
    - Form validation
    - Error message display
    - Required field handling
-``` 
+```
