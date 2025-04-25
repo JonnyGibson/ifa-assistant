@@ -352,7 +352,15 @@ const typeIconMap = {
   email: 'fas fa-envelope',
   note: 'fas fa-sticky-note',
   review: 'fas fa-search',
-  document: 'fas fa-file-alt',
+  document: 'fas fa-file-alt'
+};
+
+function getTypeIcon(type) {
+  return typeIconMap[type] || 'fas fa-circle';
+}
+
+function selectEntry(entry) {
+  selectedEntry.value = entry;
   isPanelOpen.value = true;
 }
 
