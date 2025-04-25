@@ -4,7 +4,7 @@
       'bg-gradient-to-b from-gray-800 to-gray-900 text-white flex flex-col',
       'fixed md:static inset-y-0 left-0 z-10 transform transition-transform duration-300',
       isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
-      'w-64'
+      'w-72 lg:w-64'  // Wider on tablet, normal on desktop
     ]"
   >
     <div class="p-4 border-b border-gray-700">
@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <nav class="mt-4 flex-grow px-2 space-y-1">
+    <nav class="mt-4 flex-grow px-3 space-y-2">  <!-- Increased padding and spacing -->
       <router-link 
         :to="{ name: 'Dashboard' }" 
         class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-emerald-700 hover:text-white transition-colors"

@@ -351,12 +351,17 @@ export async function generateAndSeedData(db, numClients = 50) {
         dateOpened: new Date().toISOString(),
         status: 'active'
       });
-      // Create holdings for this account
+      // Create holdings for this account with reduced units
       for (const fund of selectedFunds) {
+        // Generate original units between 10-1010
+        const originalUnits = Math.floor(Math.random() * 1000) + 10;
+        // Reduce by factor of 3, but ensure minimum of 1 unit
+        const reducedUnits = Math.max(1, Math.floor(originalUnits / 3));
+        
         await db.holdings.add({
           accountId,
           fundId: fund.id,
-          unitsHeld: Math.floor(Math.random() * 1000) + 10,
+          unitsHeld: reducedUnits,
           purchasePrice: fund.price || Math.floor(Math.random() * 100) + 1,
           purchaseDate: new Date().toISOString()
         });

@@ -18,7 +18,7 @@
 
     <template v-else>
       <!-- Stats Overview Section -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 -mt-14 relative z-10">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 -mt-14 relative z-10">
         <StatsCard
           title="Total Clients"
           :value="stats.totalClients"
@@ -27,6 +27,7 @@
           icon-text-color="text-blue-600"
           value-color="text-blue-600"
           addLink="/clients"
+          class="md:col-span-1"
         />
         <StatsCard
           title="Active Portfolios"
@@ -56,18 +57,19 @@
       </div>
 
       <!-- Top Section: Portfolio Distribution & Top Clients -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
         <!-- Fund Category Distribution -->
         <ChartCard
           title="Fund Category Distribution"
           :data="stats.categoryDistribution"
           :total="stats.totalAUM"
+          class="min-h-[400px] md:min-h-[450px]"
         />
 
         <!-- Top Clients by Portfolio Value -->
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-lg shadow-md p-4 md:p-6">
           <h3 class="text-lg font-semibold text-gray-800 mb-4">Top Clients by Portfolio Value</h3>
-          <div class="space-y-3">
+          <div class="space-y-3 overflow-y-auto max-h-[350px] md:max-h-[400px] scrollbar-thin">
             <div v-for="client in stats.topClients" :key="client.id" 
                 class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
               <div class="flex items-center space-x-3">
@@ -95,12 +97,17 @@
       </div>
 
       <!-- Bottom Section: Activity Chart & Active Clients -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <!-- Client Activity Chart -->
-        <ClientActivityChart :data="recentInteractions" />
+        <ClientActivityChart 
+          :data="recentInteractions"
+          class="bg-white rounded-lg shadow-md p-4 md:p-6 min-h-[400px] md:min-h-[450px]"
+        />
         
         <!-- Top Active Clients -->
-        <TopActiveClients />
+        <TopActiveClients 
+          class="bg-white rounded-lg shadow-md p-4 md:p-6 min-h-[400px] md:min-h-[450px]"
+        />
       </div>
     </template>
   </div>

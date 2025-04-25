@@ -47,23 +47,23 @@
         <div class="flex-1 flex flex-col min-h-screen">
           <!-- Header with dynamic background -->
           <div class="relative">
-            <div class="h-48 bg-gradient-to-r from-emerald-800 to-emerald-600 relative overflow-hidden">
+            <div class="h-36 md:h-48 bg-gradient-to-r from-emerald-800 to-emerald-600 relative overflow-hidden">
               <div class="absolute inset-0 bg-cover bg-center" :style="{ backgroundImage: `url('/bg1.jpg')` }"></div>
               <div class="absolute inset-0 bg-gradient-to-r from-emerald-800/40 to-emerald-600/40"></div>
-              <div class="h-full flex items-center justify-end px-8 relative">
+              <div class="h-full flex items-center justify-end px-4 md:px-8 relative">
                 <Button 
                   @click="handleLogout" 
                   severity="secondary" 
                   raised
                   icon="pi pi-sign-out" 
                   label="Sign Out" 
-                  class="px-6 py-2 bg-white/20 border border-white/30 hover:bg-white/30 transition-colors duration-200 text-white font-medium rounded-lg"
+                  class="px-4 md:px-6 py-2 bg-white/20 border border-white/30 hover:bg-white/30 transition-colors duration-200 text-white font-medium rounded-lg"
                 />
               </div>
             </div>
           </div>
           <!-- Main content -->
-          <main class="flex-1 px-4 md:px-8 -mt-12 mb-8 relative">
+          <main class="flex-1 px-4 md:px-6 lg:px-8 -mt-12 mb-8 relative max-w-[1920px] mx-auto w-full">
             <router-view></router-view>
           </main>
         </div>

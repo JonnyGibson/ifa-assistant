@@ -17,11 +17,11 @@
             >
               <div class="flex items-center gap-2">
                 <h2 class="font-semibold text-lg text-gray-900">Filters</h2>
-                <div class="flex gap-1 items-center text-sm text-gray-600">
-                  <span v-if="selectedTypes.length < interactionTypes.length" class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full">
+                <div class="flex gap-1.5 items-center text-sm text-gray-600">
+                  <span v-if="selectedTypes.length < interactionTypes.length" class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-full text-xs">
                     {{ selectedTypes.length }} types
                   </span>
-                  <span v-if="selectedUsers.length < users.length" class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full">
+                  <span v-if="selectedUsers.length < users.length" class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs">
                     {{ selectedUsers.length }} users
                   </span>
                 </div>
@@ -31,33 +31,36 @@
 
             <!-- Filter Content -->
             <div v-show="isFiltersOpen" class="p-4 border-b border-gray-200 bg-gray-50">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <!-- Interaction Types Filter -->
                 <div>
                   <div class="flex justify-between items-center mb-2">
                     <h3 class="font-medium text-gray-700">Interaction Types</h3>
                     <button 
-                      @click="toggleAllTypes"
+                      @click.stop="toggleAllTypes"
                       class="text-sm text-emerald-600 hover:text-emerald-800"
                     >
                       {{ allTypesSelected ? 'Deselect All' : 'Select All' }}
                     </button>
                   </div>
-                  <div class="bg-white rounded-lg p-3 shadow-sm grid grid-cols-2 md:grid-cols-3 gap-2">
-                    <label v-for="type in interactionTypes" 
-                           :key="type.id" 
-                           class="flex items-center gap-2 hover:bg-gray-50 p-1.5 rounded cursor-pointer"
-                    >
-                      <input type="checkbox"
-                             v-model="selectedTypes"
-                             :value="type.id"
-                             class="rounded border-gray-300 text-emerald-600 shadow-sm focus:border-emerald-500 focus:ring focus:ring-emerald-500 focus:ring-opacity-50"
-                      />
-                      <div class="flex items-center gap-1.5 min-w-0">
-                        <i :class="getTypeIcon(type.key) + ' text-emerald-500 flex-shrink-0'" aria-hidden="true"></i>
-                        <span class="text-sm font-medium text-gray-700 truncate">{{ type.name }}</span>
-                      </div>
-                    </label>
+                  <div class="bg-white rounded-lg p-2 shadow-sm">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-1">
+                      <label v-for="type in interactionTypes" 
+                             :key="type.id" 
+                             class="flex items-center gap-2 hover:bg-gray-50 px-2 py-1.5 rounded cursor-pointer"
+                      >
+                        <input type="checkbox"
+                               v-model="selectedTypes"
+                               :value="type.id"
+                               @click.stop
+                               class="rounded border-gray-300 text-emerald-600 shadow-sm focus:border-emerald-500 focus:ring focus:ring-emerald-500 focus:ring-opacity-50"
+                        />
+                        <div class="flex items-center gap-1.5 min-w-0">
+                          <i :class="getTypeIcon(type.key) + ' text-emerald-500 w-4'" aria-hidden="true"></i>
+                          <span class="text-sm text-gray-700 truncate">{{ type.name }}</span>
+                        </div>
+                      </label>
+                    </div>
                   </div>
                 </div>
 
@@ -66,24 +69,26 @@
                   <div class="flex justify-between items-center mb-2">
                     <h3 class="font-medium text-gray-700">IFA Users</h3>
                     <button 
-                      @click="toggleAllUsers"
+                      @click.stop="toggleAllUsers"
                       class="text-sm text-emerald-600 hover:text-emerald-800"
                     >
                       {{ allUsersSelected ? 'Deselect All' : 'Select All' }}
                     </button>
                   </div>
-                  <div class="bg-white rounded-lg p-3 shadow-sm space-y-2 max-h-64 overflow-y-auto">
+                  <div class="bg-white rounded-lg p-3 shadow-sm space-y-1 max-h-[180px] overflow-y-auto">
                     <label v-for="user in users" 
                            :key="user.id" 
-                           class="flex items-center gap-2 hover:bg-gray-50 p-2 rounded cursor-pointer">
+                           class="flex items-center gap-2 hover:bg-gray-50 p-1.5 rounded cursor-pointer"
+                    >
                       <input type="checkbox"
                              v-model="selectedUsers"
                              :value="user.id"
+                             @click.stop
                              class="rounded border-gray-300 text-emerald-600 shadow-sm focus:border-emerald-500 focus:ring focus:ring-emerald-500 focus:ring-opacity-50"
                       />
-                      <div>
-                        <div class="text-sm font-medium text-gray-700">{{ user.firstName }} {{ user.lastName }}</div>
-                        <div class="text-xs text-gray-500">{{ user.email }}</div>
+                      <div class="min-w-0 flex-1">
+                        <div class="text-sm font-medium text-gray-700 truncate">{{ user.firstName }} {{ user.lastName }}</div>
+                        <div class="text-xs text-gray-500 truncate">{{ user.email }}</div>
                       </div>
                     </label>
                   </div>
@@ -96,10 +101,10 @@
               <table class="min-w-full divide-y divide-gray-200">
                 <thead>
                   <tr>
-                    <th class="px-4 sm:px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Date</th>
+                    <th class="px-4 sm:px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap w-[160px]">Date</th>
                     <th class="px-4 sm:px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                    <th class="px-4 sm:px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                    <th class="hidden sm:table-cell px-4 sm:px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                    <th class="px-4 sm:px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[180px]">Type</th>
+                    <th class="hidden sm:table-cell px-4 sm:px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[180px]">User</th>
                     <th class="hidden sm:table-cell px-4 sm:px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
                   </tr>
                 </thead>
@@ -114,12 +119,16 @@
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ entry.clientName }}</td>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
                       <div class="flex items-center gap-2">
-                        <i :class="getTypeIcon(entry.typeKey) + ' text-emerald-500'" aria-hidden="true"></i>
-                        <span>{{ entry.typeName }}</span>
+                        <i :class="getTypeIcon(entry.typeKey) + ' text-emerald-500 w-4'" aria-hidden="true"></i>
+                        <span class="truncate">{{ entry.typeName }}</span>
                       </div>
                     </td>
-                    <td class="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ entry.userName }}</td>
-                    <td class="hidden sm:table-cell px-4 sm:px-6 py-4 text-sm text-gray-500 max-w-lg">{{ truncateText(entry.notes) }}</td>
+                    <td class="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <span class="truncate">{{ entry.userName }}</span>
+                    </td>
+                    <td class="hidden sm:table-cell px-4 sm:px-6 py-4 text-sm text-gray-500">
+                      <span class="line-clamp-2">{{ entry.notes }}</span>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -176,9 +185,9 @@
         <!-- Detail Panel -->
         <div 
           :class="[
-            'bg-white shadow-lg rounded-lg lg:w-96 transition-all duration-300 ease-in-out overflow-hidden',
+            'bg-white shadow-lg rounded-lg transition-all duration-300 ease-in-out overflow-hidden',
             'fixed inset-y-0 right-0 lg:static lg:inset-auto',
-            isPanelOpen ? 'translate-x-0 w-full sm:w-96' : 'translate-x-full lg:translate-x-0',
+            isPanelOpen ? 'translate-x-0 w-full sm:w-96 lg:w-80' : 'translate-x-full lg:translate-x-0',
             !selectedEntry && !isPanelOpen ? 'lg:hidden' : ''
           ]"
         >
@@ -344,15 +353,6 @@ const typeIconMap = {
   note: 'fas fa-sticky-note',
   review: 'fas fa-search',
   document: 'fas fa-file-alt',
-  task: 'fas fa-tasks',
-};
-
-function getTypeIcon(typeKey) {
-  return typeIconMap[typeKey] || 'fas fa-comment-dots';
-}
-
-function selectEntry(entry) {
-  selectedEntry.value = entry;
   isPanelOpen.value = true;
 }
 
