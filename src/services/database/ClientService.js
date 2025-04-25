@@ -27,25 +27,55 @@ export class ClientService {
     return clients.map(client => new Client(client));
   }
 
+  _serializeValue(value) {
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+    if (Array.isArray(value)) {
+      return value.map(v => this._serializeValue(v));
+    }
+    if (value && typeof value === 'object') {
+      const serialized = {};
+      for (const [key, val] of Object.entries(value)) {
+        serialized[key] = this._serializeValue(val);
+      }
+      return serialized;
+    }
+    return value;
+  }
+
   async createClient(clientData) {
     if (!clientData.firstName || !clientData.lastName || !clientData.email) {
       throw new Error('Missing required client fields');
     }
 
-    const id = await this._clientsTable.add({
-      ...clientData,
-      createdAt: new Date(),
-      lastReviewDate: null
-    });
+    try {
+      // Serialize all data recursively to ensure it's IndexedDB-safe
+      const serializedData = this._serializeValue({
+        ...clientData,
+        createdAt: new Date(),
+        lastReviewDate: null
+      });
 
-    return this.getClient(id);
+      console.log('[ClientService] Creating new client:', serializedData);
+      const id = await this._clientsTable.add(serializedData);
+      console.log('[ClientService] Client created with ID:', id);
+      
+      return this.getClient(id);
+    } catch (error) {
+      console.error('[ClientService] Error creating client:', error);
+      throw new Error(`Failed to create client: ${error.message}`);
+    }
   }
 
   async updateClient(id, updates) {
-    await this._clientsTable.update(id, {
+    // Serialize all update data recursively
+    const serializedUpdates = this._serializeValue({
       ...updates,
       updatedAt: new Date()
     });
+
+    await this._clientsTable.update(id, serializedUpdates);
     return this.getClient(id);
   }
 

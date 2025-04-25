@@ -27,38 +27,84 @@
       <div class="flex">
         <!-- Table Container -->
         <div :class="{'flex-1': isPanelOpen, 'w-full': !isPanelOpen}">
-          <table class="min-w-full bg-white rounded-lg shadow border text-sm">
-            <thead class="bg-gray-50 border-b">
-              <tr>
-                <th scope="col" class="text-left px-4 py-2 font-semibold text-gray-700 w-40">Date</th>
-                <th scope="col" class="text-left px-4 py-2 font-semibold text-gray-700 w-48">Client</th>
-                <th scope="col" class="text-left px-4 py-2 font-semibold text-gray-700 w-40">Type</th>
-                <th scope="col" class="text-left px-4 py-2 font-semibold text-gray-700">Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr 
-                v-for="entry in paginatedEntries" 
-                :key="entry.id"
-                @click="selectEntry(entry)"
-                class="even:bg-gray-50 hover:bg-emerald-50 focus-within:bg-emerald-100 transition cursor-pointer"
+          <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead>
+                <tr>
+                  <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0">Date</th>
+                  <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0">Client</th>
+                  <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0">Type</th>
+                  <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0">User</th>
+                  <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0">Notes</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr 
+                  v-for="entry in paginatedEntries" 
+                  :key="entry.id"
+                  @click="selectEntry(entry)"
+                  class="hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                >
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ formatDate(entry.date) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ entry.clientName }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <div class="flex items-center gap-2">
+                      <i :class="getTypeIcon(entry.typeKey) + ' text-emerald-500'" aria-hidden="true"></i>
+                      <span>{{ entry.typeName }}</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ entry.userName }}</td>
+                  <td class="px-6 py-4 text-sm text-gray-500 max-w-lg">{{ truncateText(entry.notes) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="flex justify-between items-center p-4 bg-white border-t border-gray-200">
+            <div>
+              <p class="text-sm text-gray-700">
+                Showing
+                <span class="font-medium">{{ ((page - 1) * pageSize) + 1 }}</span>
+                to
+                <span class="font-medium">{{ Math.min(page * pageSize, filteredEntries.length) }}</span>
+                of
+                <span class="font-medium">{{ filteredEntries.length }}</span>
+                results
+              </p>
+            </div>
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+              <button
+                @click="prevPage"
+                :disabled="page === 1"
+                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <td class="px-4 py-2 whitespace-nowrap">{{ formatDate(entry.date) }}</td>
-                <td class="px-4 py-2 whitespace-nowrap">
-                  <span class="text-gray-900">{{ entry.clientName }}</span>
-                </td>
-                <td class="px-4 py-2 whitespace-nowrap flex items-center gap-2">
-                  <i :class="getTypeIcon(entry.typeKey) + ' text-emerald-500 text-base'" aria-hidden="true"></i>
-                  <span>{{ entry.typeName || 'Unknown' }}</span>
-                </td>
-                <td class="px-4 py-2">
-                  <div class="max-w-prose break-words">
-                    {{ truncateText(entry.notes) }}
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                <span class="sr-only">Previous</span>
+                <i class="fas fa-chevron-left h-5 w-5"></i>
+              </button>
+              <button
+                v-for="pageNum in totalPages"
+                :key="pageNum"
+                @click="page = pageNum"
+                :class="[
+                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                  page === pageNum
+                    ? 'z-10 bg-emerald-50 border-emerald-500 text-emerald-600'
+                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                ]"
+              >
+                {{ pageNum }}
+              </button>
+              <button
+                @click="nextPage"
+                :disabled="page === totalPages"
+                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span class="sr-only">Next</span>
+                <i class="fas fa-chevron-right h-5 w-5"></i>
+              </button>
+            </nav>
+          </div>
         </div>
 
         <!-- Detail Panel -->
@@ -81,34 +127,40 @@
 
             <!-- Panel Content -->
             <div v-if="selectedEntry" class="p-6">
-              <div class="space-y-6">
+              <div class="space-y-4">
                 <!-- Client Info -->
-                <div>
+                <div class="flex items-center gap-2">
                   <h3 class="text-sm font-medium text-gray-500">Client</h3>
                   <router-link 
                     :to="{ name: 'ClientDetail', params: { id: selectedEntry.clientId }}"
-                    class="mt-1 block text-emerald-600 hover:text-emerald-800"
+                    class="text-emerald-600 hover:text-emerald-800"
                   >
                     {{ selectedEntry.clientName }}
                   </router-link>
                 </div>
 
                 <!-- Date & Time -->
-                <div>
+                <div class="flex items-center gap-2">
                   <h3 class="text-sm font-medium text-gray-500">Date & Time</h3>
-                  <p class="mt-1 text-gray-900">{{ formatDate(selectedEntry.date) }}</p>
+                  <p class="text-gray-900">{{ formatDate(selectedEntry.date) }}</p>
                 </div>
 
                 <!-- Interaction Type -->
-                <div>
+                <div class="flex items-center gap-2">
                   <h3 class="text-sm font-medium text-gray-500">Type</h3>
-                  <div class="mt-1 flex items-center gap-2">
+                  <div class="flex items-center gap-2">
                     <i :class="getTypeIcon(selectedEntry.typeKey) + ' text-emerald-500 text-lg'" aria-hidden="true"></i>
                     <span class="text-gray-900">{{ selectedEntry.typeName }}</span>
                   </div>
                 </div>
 
-                <!-- Notes -->
+                <!-- User Info -->
+                <div class="flex items-center gap-2">
+                  <h3 class="text-sm font-medium text-gray-500">User</h3>
+                  <p class="text-gray-900">{{ selectedEntry.userName }}</p>
+                </div>
+
+                <!-- Notes - Kept as is -->
                 <div>
                   <h3 class="text-sm font-medium text-gray-500">Notes</h3>
                   <p class="mt-1 text-gray-900 whitespace-pre-wrap">{{ selectedEntry.notes }}</p>
@@ -118,19 +170,13 @@
           </div>
         </div>
       </div>
-
-      <nav class="flex items-center justify-between mt-4" aria-label="Pagination">
-        <button @click="prevPage" :disabled="page === 1" aria-label="Previous page" class="px-3 py-1 border rounded disabled:opacity-50">Prev</button>
-        <span class="text-xs text-gray-500">Page {{ page }} of {{ totalPages }}</span>
-        <button @click="nextPage" :disabled="page === totalPages" aria-label="Next page" class="px-3 py-1 border rounded disabled:opacity-50">Next</button>
-      </nav>
     </section>
   </main>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { clientService, interactionService } from '../services/database';
+import { clientService, interactionService, userService } from '../services/database';
 
 const entries = ref([]);
 const interactionTypes = ref([]);
@@ -194,29 +240,33 @@ function closePanel() {
 }
 
 async function loadEntries() {
-  const [allInteractions, allClients, allTypes] = await Promise.all([
+  const [allInteractions, allClients, allTypes, allUsers] = await Promise.all([
     interactionService._interactionsTable.toArray(),
     clientService._clientsTable.toArray(),
-    interactionService._interactionTypesTable.toArray()
+    interactionService._interactionTypesTable.toArray(),
+    userService.getAllUsers()
   ]);
-  
+
   interactionTypes.value = allTypes;
-  // Initialize selectedTypes with all type IDs
   selectedTypes.value = allTypes.map(t => t.id);
   
   const clientMap = Object.fromEntries(allClients.map(c => [c.id, c]));
   const typeMap = Object.fromEntries(allTypes.map(t => [t.id, t]));
+  const userMap = Object.fromEntries(allUsers.map(u => [u.id, u]));
   
   entries.value = allInteractions
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .map(i => {
       const client = clientMap[i.clientId];
       const type = typeMap[i.interactionTypeId];
+      const user = userMap[i.userId];
       return {
         ...i,
         clientName: client ? `${client.firstName} ${client.lastName}` : undefined,
         typeName: type?.name,
-        typeKey: type?.key || (type?.name ? type.name.toLowerCase().replace(/\s/g, '') : undefined)
+        typeKey: type?.key || (type?.name ? type.name.toLowerCase().replace(/\s/g, '') : undefined),
+        userName: user ? `${user.firstName} ${user.lastName}` : 'Unknown',
+        userEmail: user?.email || 'Unknown'
       };
     });
 }

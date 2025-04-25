@@ -8,8 +8,12 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Basic Info -->
         <div>
-          <h2 class="text-2xl font-bold text-gray-900">{{ client.firstName }} {{ client.lastName }}</h2>
-          <p class="text-sm text-gray-600 mt-1">Client since {{ formatDate(client.createdAt) }}</p>
+          <div class="flex justify-between items-start">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-900">{{ client.firstName }} {{ client.lastName }}</h2>
+              <p class="text-sm text-gray-600 mt-1">Client since {{ formatDate(client.createdAt) }}</p>
+            </div>
+          </div>
           <div class="mt-4 space-y-2">
             <p class="text-sm flex items-center"><i class="fas fa-envelope text-gray-400 w-5 mr-2"></i>{{ client.email }}</p>
             <p class="text-sm flex items-center"><i class="fas fa-phone text-gray-400 w-5 mr-2"></i>{{ client.phone }}</p>
@@ -32,8 +36,16 @@
         
         <!-- Risk Profile -->
         <div>
-          <h3 class="text-sm font-medium text-gray-500 mb-2 flex items-center">
-            <i class="fas fa-chart-line text-gray-400 w-5 mr-2"></i>Risk Profile
+          <h3 class="text-sm font-medium text-gray-500 mb-2 flex items-center justify-between">
+            <div class="flex items-center">
+              <i class="fas fa-chart-line text-gray-400 w-5 mr-2"></i>Risk Profile
+            </div>
+            <button 
+              @click="confirmDeleteClient" 
+              class="text-red-600 hover:text-red-800 transition-colors ml-4"
+              title="Delete Client">
+              <i class="fas fa-trash"></i>
+            </button>
           </h3>
           <div class="pl-7">
             <span :class="['px-3 py-1.5 text-sm rounded-full inline-block', getRiskProfileBadgeClass(client.riskProfile)]">
@@ -187,7 +199,7 @@
         </div>
       </div>
       
-      <!-- Interaction History Card (replacing Quick Actions) -->
+      <!-- Interaction History Card -->
       <div>
         <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 h-full transition-all duration-300 hover:shadow-hover">
           <div class="flex justify-between items-center mb-4">
@@ -196,26 +208,50 @@
           <div v-if="interactionsLoading" class="flex justify-center py-8">
             <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-emerald-500"></div>
           </div>
-          <div v-else-if="interactions.length > 0" class="space-y-3">
-            <div v-for="interaction in interactions.slice(0, 5)" :key="interaction.id" 
-                 class="bg-white rounded-lg p-3 shadow-sm">
-              <div class="flex justify-between items-start">
-                <div>
-                  <span class="text-sm font-medium text-gray-800">
-                    {{ interactionTypeMap[interaction.interactionTypeId]?.name || 'Unknown Type' }}
-                  </span>
-                  <p class="text-xs text-gray-500 mt-1">{{ formatDate(interaction.date) }}</p>
-                </div>
-                <span :class="[
-                  'px-2 py-1 text-xs rounded-full',
-                  interaction.status === 'completed' ? 'bg-green-100 text-green-800' :
-                  interaction.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
-                ]">
-                  {{ interaction.status }}
-                </span>
-              </div>
-              <p class="text-sm text-gray-600 mt-2 line-clamp-2">{{ interaction.notes }}</p>
+          <div v-else-if="interactions.length > 0" class="overflow-hidden rounded-lg border border-gray-200">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr v-for="interaction in interactions.slice(0, 5)" :key="interaction.id" 
+                    class="hover:bg-gray-50 transition-colors duration-150">
+                  <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-gray-900">{{ interactionTypeMap[interaction.interactionTypeId]?.name || 'Unknown Type' }}</span>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <span class="text-sm text-gray-900">{{ interaction.userName }}</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ formatDate(interaction.date) }}
+                  </td>
+                  <td class="px-6 py-4">
+                    <span :class="[
+                      'px-2 py-1 text-xs rounded-full',
+                      interaction.status === 'completed' ? 'bg-green-100 text-green-800' :
+                      interaction.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
+                      'bg-gray-100 text-gray-800'
+                    ]">
+                      {{ interaction.status }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="p-4 bg-gray-50 border-t border-gray-200">
+              <p class="text-sm text-gray-600">
+                Showing last 5 interactions.
+                <router-link :to="{ name: 'Activity', query: { clientId: client.id }}" class="text-emerald-600 hover:text-emerald-800 font-medium">
+                  View all
+                </router-link>
+              </p>
             </div>
           </div>
           <div v-else class="text-center py-8">
@@ -231,9 +267,16 @@
       <div class="p-6">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-xl font-semibold text-gray-800">Fact Find</h2>
-          <div class="flex items-center">
-            <i class="fas fa-clock text-gray-400 mr-2"></i>
-            <span class="text-sm text-gray-500">Last updated: {{ formatDate(client.factFind?.lastUpdated) }}</span>
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center">
+              <i class="fas fa-clock text-gray-400 mr-2"></i>
+              <span class="text-sm text-gray-500">Last updated: {{ formatDate(client.factFind?.lastUpdated) }}</span>
+            </div>
+            <button 
+              class="text-emerald-600 hover:text-emerald-700 transition-colors"
+              title="Edit Fact Find (Coming Soon)">
+              <i class="fas fa-edit"></i>
+            </button>
           </div>
         </div>
 
@@ -436,13 +479,47 @@
       Back to Client List
     </router-link>
   </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full m-4">
+      <div class="mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Delete Client</h3>
+        <p class="mt-2 text-sm text-gray-500">
+          Are you sure you want to delete {{ client.firstName }} {{ client.lastName }}? This will permanently remove:
+        </p>
+        <ul class="mt-2 text-sm text-gray-600 list-disc pl-5">
+          <li>Client profile and contact information</li>
+          <li>Investment accounts and holdings</li>
+          <li>Insurance policies</li>
+          <li>Interaction history</li>
+          <li>Fact find data</li>
+        </ul>
+        <p class="mt-2 text-sm text-red-600">This action cannot be undone.</p>
+      </div>
+      <div class="flex justify-end space-x-4">
+        <button
+          @click="showDeleteModal = false"
+          class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+        >
+          Cancel
+        </button>
+        <button
+          @click="deleteClient"
+          class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        >
+          Delete Client
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import { ref, onMounted, computed, watch, nextTick } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { Chart, ArcElement, Tooltip, Legend, PieController } from 'chart.js';
-import { clientService, investmentService, interactionService, insuranceService } from '../services/database';
+import { clientService, investmentService, interactionService, insuranceService, userService } from '../services/database';
 import { INSURANCE_TYPES } from '../services/models/productTypes';
 
 Chart.register(ArcElement, Tooltip, Legend, PieController);
@@ -457,6 +534,7 @@ export default {
   },
   setup(props) {
     const route = useRoute();
+    const router = useRouter();
     const client = ref(null);
     const insurancePolicies = ref([]);
     const holdings = ref([]);
@@ -469,6 +547,7 @@ export default {
     const categoryChartInstance = ref(null); // Track Chart.js instance
     const expandedAccount = ref(null);
     const expandedPolicy = ref(null);
+    const showDeleteModal = ref(false);
 
     const clientId = computed(() => Number(props.id));
 
@@ -514,9 +593,17 @@ export default {
           console.log('[ClientDetailView] Total holdings:', holdings.value.length);
         }
 
-        interactions.value = await interactionService.getClientInteractions(clientId.value);
-        console.log('[ClientDetailView] Fetched Interactions:', interactions.value);
+        // Load interactions and fetch corresponding users
+        const rawInteractions = await interactionService.getClientInteractions(clientId.value);
+        const userIds = [...new Set(rawInteractions.map(i => i.userId))];
+        const users = await Promise.all(userIds.map(id => userService.getAllUsers()));
+        const userMap = Object.fromEntries(users.flat().map(u => [u.id, u]));
         
+        interactions.value = rawInteractions.map(interaction => ({
+          ...interaction,
+          userName: userMap[interaction.userId] ? `${userMap[interaction.userId].firstName} ${userMap[interaction.userId].lastName}` : 'Unknown User'
+        }));
+
         insurancePolicies.value = policies;
 
         console.log('[ClientDetailView] Fetched Client:', client.value);
@@ -709,6 +796,23 @@ export default {
       expandedPolicy.value = expandedPolicy.value === policyId ? null : policyId;
     };
 
+    const confirmDeleteClient = () => {
+      showDeleteModal.value = true;
+    };
+
+    const deleteClient = () => {
+      clientService.deleteClient(clientId.value)
+        .then(() => {
+          showDeleteModal.value = false;
+          router.push({ name: 'Clients' });
+        })
+        .catch((error) => {
+          console.error('Error deleting client:', error);
+          alert('Failed to delete client. Please try again later.');
+          showDeleteModal.value = false;
+        });
+    };
+
     watch(() => props.id, (newId) => {
         if (newId) {
             fetchClientData();
@@ -738,7 +842,10 @@ export default {
       expandedPolicy,
       toggleAccountDetails,
       togglePolicyDetails,
-      calculateAccountValue
+      calculateAccountValue,
+      showDeleteModal,
+      deleteClient,
+      confirmDeleteClient
     };
   }
 }

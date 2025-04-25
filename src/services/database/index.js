@@ -58,7 +58,7 @@ class IFADatabase extends Dexie {
       accounts: '++id, clientId, type, provider, accountNumber, dateOpened, status',
       holdings: '++id, accountId, fundId, unitsHeld, purchaseDate, purchasePrice, [accountId+fundId]',
       insurancePolicies: '++id, clientId, type, provider, policyNumber, startDate, renewalDate',
-      interactions: '++id, clientId, date, interactionTypeId',
+      interactions: '++id, clientId, date, userId, userEmail, interactionTypeId',
       sessions: '++id, token, userId',
       interactionTypes: '++id, &name, category',
       documents: '++id, clientId, type, filename, uploadDate, metadata'
@@ -174,12 +174,25 @@ class IFADatabase extends Dexie {
               username: 'admin',
               email: 'admin@webserve.it',
               password: 'admin123',
-              firstName: 'Admin',
-              lastName: 'User',
+              firstName: 'John',
+              lastName: 'IFA',
               isAdmin: true,
               createdAt: new Date()
             });
             console.log('[DB] Admin user created');
+
+            // Add default regular user
+            console.log('[DB] Creating default regular user...');
+            await this.users.add({
+              username: 'advisor',
+              email: 'advisor@webserve.it',
+              password: 'advisor123',
+              firstName: 'Jill',
+              lastName: 'IFA',
+              isAdmin: false,
+              createdAt: new Date()
+            });
+            console.log('[DB] Regular user created');
           }
         }
       );

@@ -1,243 +1,263 @@
-<!-- src/components/FundsTable.vue -->
 <template>
-  <div class="card">
-    <DataTable
-      :value="fundsWithPortfolioCounts"
-      :expandedRows="expandedRows"
-      @row-expand="onRowExpand"
-      @row-collapse="onRowCollapse"
-      dataKey="isin"
-      class="p-datatable-sm"
-      :paginator="true"
-      :rows="20"
-      :rowsPerPageOptions="[10, 20, 50]"
-      paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-      :filters="filters"
-      filterDisplay="menu"
-      v-model:filters="filters"
-      sortField="name"
-      :sortOrder="1"
-    >
-      <Column expander style="width: 40px" />
-      <Column field="name" header="Fund Name" :sortable="true" style="min-width: 300px">
-        <template #body="slotProps">
-          <div class="flex flex-column">
-            <span class="font-medium">{{ slotProps.data.name }}</span>
-          </div>
-        </template>
-      </Column>
-      <Column field="price" header="NAV" :sortable="false" style="width: 150px">
-        <template #body="slotProps">
-          <div class="flex flex-col space-y-1">
-            <div class="font-medium text-base">{{ slotProps.data.price.toFixed(2) }}</div>
-            <div class="text-xs text-emerald-600">{{ formatDate(slotProps.data.lastUpdated).split(',')[0].split(' ').slice(0, 2).join(' ') }}</div>
-          </div>
-        </template>
-      </Column>
-      <Column field="category" header="Category" :sortable="true" style="width: 200px">
-        <template #body="slotProps">
-          <Tag :value="slotProps.data.category" :severity="getCategorySeverity(slotProps.data.category)" />
-        </template>
-      </Column>
-      <Column field="portfolioCount" header="Portfolios" style="width: 120px" :sortable="true">
-        <template #body="slotProps">
-          <div class="flex align-items-center justify-content-end gap-2">
-            <i class="pi pi-users text-gray-500" />
-            <span>{{ slotProps.data.portfolioCount }}</span>
-          </div>
-        </template>
-      </Column>
-      
-      <template #expansion="slotProps">
-        <div class="p-4 bg-gray-50">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 class="text-lg font-semibold mb-4">Performance Metrics</h3>
-              <div class="grid grid-cols-3 gap-4">
-                <div class="bg-white p-3 rounded-lg shadow-sm">
-                  <p class="text-sm text-gray-600 mb-2">3M Return</p>
-                  <PerformanceBadge :value="parseFloat(slotProps.data.performance?.threeMonthChange)" />
-                </div>
-                <div class="bg-white p-3 rounded-lg shadow-sm">
-                  <p class="text-sm text-gray-600 mb-2">1Y Return</p>
-                  <PerformanceBadge :value="parseFloat(slotProps.data.performance?.oneYearChange)" />
-                </div>
-                <div class="bg-white p-3 rounded-lg shadow-sm">
-                  <p class="text-sm text-gray-600 mb-2">3Y Return</p>
-                  <PerformanceBadge :value="parseFloat(slotProps.data.performance?.threeYearChange)" />
+  <div class="bg-white rounded-lg shadow overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fund Name</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NAV</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Portfolios</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr v-for="fund in fundsWithPortfolioCounts" :key="fund.isin" class="hover:bg-gray-50 transition-colors duration-150">
+          <td class="px-6 py-4">
+            <div class="flex flex-col">
+              <span class="font-medium text-gray-900">{{ fund.name }}</span>
+              <span class="text-sm text-gray-500">ISIN: {{ fund.isin }}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex flex-col">
+              <span class="font-medium text-gray-900">{{ formatCurrency(fund.price) }}</span>
+              <span class="text-xs text-emerald-600">{{ formatDate(fund.lastUpdated) }}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <span :class="[
+              'px-2 py-1 text-xs rounded-full',
+              getCategoryBadgeClass(fund.category)
+            ]">
+              {{ fund.category }}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-users text-gray-500"></i>
+              <span class="text-gray-900">{{ fund.portfolioCount }}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <button 
+              @click="toggleDetails(fund)"
+              class="text-emerald-600 hover:text-emerald-800"
+            >
+              {{ expandedFund === fund ? 'Hide' : 'View' }} Details
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="flex justify-between items-center p-4 bg-white border-t border-gray-200">
+      <div>
+        <p class="text-sm text-gray-700">
+          Showing
+          <span class="font-medium">{{ ((currentPage - 1) * pageSize) + 1 }}</span>
+          to
+          <span class="font-medium">{{ Math.min(currentPage * pageSize, totalFunds) }}</span>
+          of
+          <span class="font-medium">{{ totalFunds }}</span>
+          results
+        </p>
+      </div>
+      <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+        <button
+          @click="prevPage"
+          :disabled="currentPage === 1"
+          class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span class="sr-only">Previous</span>
+          <i class="fas fa-chevron-left h-5 w-5"></i>
+        </button>
+        <button
+          v-for="page in totalPages"
+          :key="page"
+          @click="goToPage(page)"
+          :class="[
+            'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+            currentPage === page
+              ? 'z-10 bg-emerald-50 border-emerald-500 text-emerald-600'
+              : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+          ]"
+        >
+          {{ page }}
+        </button>
+        <button
+          @click="nextPage"
+          :disabled="currentPage === totalPages"
+          class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span class="sr-only">Next</span>
+          <i class="fas fa-chevron-right h-5 w-5"></i>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Fund Details Modal -->
+    <div v-if="expandedFund" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                  {{ expandedFund.name }}
+                </h3>
+                <div class="mt-4 space-y-4">
+                  <div>
+                    <p class="text-sm text-gray-500">Performance</p>
+                    <div class="grid grid-cols-3 gap-4 mt-2">
+                      <div class="bg-white p-3 rounded-lg shadow-sm">
+                        <p class="text-sm text-gray-600 mb-1">3M Return</p>
+                        <PerformanceBadge :value="parseFloat(expandedFund.performance?.threeMonthChange)" />
+                      </div>
+                      <div class="bg-white p-3 rounded-lg shadow-sm">
+                        <p class="text-sm text-gray-600 mb-1">1Y Return</p>
+                        <PerformanceBadge :value="parseFloat(expandedFund.performance?.oneYearChange)" />
+                      </div>
+                      <div class="bg-white p-3 rounded-lg shadow-sm">
+                        <p class="text-sm text-gray-600 mb-1">3Y Return</p>
+                        <PerformanceBadge :value="parseFloat(expandedFund.performance?.threeYearChange)" />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-500">Details</p>
+                    <div class="mt-2 space-y-2">
+                      <p class="text-sm"><span class="font-medium">ISIN:</span> {{ expandedFund.isin }}</p>
+                      <p class="text-sm"><span class="font-medium">Category:</span> {{ expandedFund.category }}</p>
+                      <p class="text-sm"><span class="font-medium">Current Price:</span> {{ formatCurrency(expandedFund.price) }}</p>
+                      <p class="text-sm"><span class="font-medium">Last Updated:</span> {{ formatDate(expandedFund.lastUpdated) }}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div>
-              <h3 class="text-lg font-semibold mb-4">Asset Allocation</h3>
-              <div class="grid grid-cols-3 gap-4">
-                <template v-if="slotProps.data.allocation?.nonUKStock">
-                  <div class="bg-white p-3 rounded-lg shadow-sm">
-                    <p class="text-sm text-gray-600 mb-2">Non-UK Stock</p>
-                    <span class="font-medium">{{ formatPercentage(slotProps.data.allocation.nonUKStock) }}</span>
-                  </div>
-                </template>
-                <template v-if="slotProps.data.allocation?.ukStock">
-                  <div class="bg-white p-3 rounded-lg shadow-sm">
-                    <p class="text-sm text-gray-600 mb-2">UK Stock</p>
-                    <span class="font-medium">{{ formatPercentage(slotProps.data.allocation.ukStock) }}</span>
-                  </div>
-                </template>
-                <template v-if="slotProps.data.allocation?.nonUKBond">
-                  <div class="bg-white p-3 rounded-lg shadow-sm">
-                    <p class="text-sm text-gray-600 mb-2">Non-UK Bonds</p>
-                    <span class="font-medium">{{ formatPercentage(slotProps.data.allocation.nonUKBond) }}</span>
-                  </div>
-                </template>
-                <template v-if="slotProps.data.allocation?.ukBond">
-                  <div class="bg-white p-3 rounded-lg shadow-sm">
-                    <p class="text-sm text-gray-600 mb-2">UK Bonds</p>
-                    <span class="font-medium">{{ formatPercentage(slotProps.data.allocation.ukBond) }}</span>
-                  </div>
-                </template>
-                <template v-if="slotProps.data.allocation?.cash">
-                  <div class="bg-white p-3 rounded-lg shadow-sm">
-                    <p class="text-sm text-gray-600 mb-2">Cash</p>
-                    <span class="font-medium">{{ formatPercentage(slotProps.data.allocation.cash) }}</span>
-                  </div>
-                </template>
-                <template v-if="slotProps.data.allocation?.other">
-                  <div class="bg-white p-3 rounded-lg shadow-sm">
-                    <p class="text-sm text-gray-600 mb-2">Other</p>
-                    <span class="font-medium">{{ formatPercentage(slotProps.data.allocation.other) }}</span>
-                  </div>
-                </template>
-                <div v-if="!hasAnyAllocation(slotProps.data.allocation)" class="col-span-3 text-gray-500 text-center py-2">
-                  No allocation data available
-                </div>
-              </div>
-            </div>
           </div>
-          <div class="mt-4 pt-4 border-t border-gray-200">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-              <div class="flex items-center gap-3">
-                <a 
-                  :href="slotProps.data.links?.ft" 
-                  target="_blank" 
-                  class="text-blue-600 hover:text-blue-800 inline-flex items-center gap-1"
-                >
-                  <i class="pi pi-external-link"></i>
-                  <span>View on Financial Times</span>
-                </a>
-                <span class="text-sm text-gray-500">ISIN: {{ slotProps.data.isin }}</span>
-              </div>
-              <div class="text-sm text-gray-500">
-                Last Updated: {{ formatDate(slotProps.data.lastUpdated) }}
-              </div>
-            </div>
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              @click="closeDetails"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-emerald-600 text-base font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              Close
+            </button>
           </div>
         </div>
-      </template>
-    </DataTable>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { ref, computed } from 'vue';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Tag from 'primevue/tag';
 import PerformanceBadge from './PerformanceBadge.vue';
-
-const formatPercentage = (value) => {
-  if (value === undefined || value === null) return 'N/A';
-  return value >= 0 ? `+${value.toFixed(2)}%` : `${value.toFixed(2)}%`;
-};
-
-const formatDate = (dateString) => {
-  if (!dateString) return 'N/A';
-  return new Date(dateString).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-};
-
-const hasAnyAllocation = (allocation) => {
-  return allocation?.ukBond || allocation?.nonUKBond || allocation?.cash || allocation?.ukStock || allocation?.nonUKStock || allocation?.other;
-};
 
 export default {
   name: 'FundsTable',
   components: {
-    DataTable,
-    Column,
-    Tag,
     PerformanceBadge
   },
   props: {
     funds: {
       type: Array,
       required: true
-    },
-    portfolioCounts: {
-      type: Object,
-      required: true
     }
   },
   setup(props) {
-    const expandedRows = ref({});
-    const filters = ref({});
+    const currentPage = ref(1);
+    const pageSize = 10;
+    const expandedFund = ref(null);
 
+    const totalFunds = computed(() => props.funds.length);
+    const totalPages = computed(() => Math.ceil(totalFunds.value / pageSize));
+    
     const fundsWithPortfolioCounts = computed(() => {
-      return props.funds.map(fund => ({
-        ...fund,
-        portfolioCount: props.portfolioCounts[fund.isin] || 0
-      }));
+      const start = (currentPage.value - 1) * pageSize;
+      return props.funds
+        .slice(start, start + pageSize)
+        .map(fund => ({
+          ...fund,
+          portfolioCount: Math.floor(Math.random() * 50) + 1 // Mock data for demo
+        }));
     });
 
-    const getCategorySeverity = (category) => {
-      const categoryColors = {
-        'Equity Income': 'success',    // Green
-        'Global Equity': 'primary',    // Blue
-        'Fixed Income': 'warning',     // Orange
-        'Equity': 'info',             // Light Blue
-        'Japanese Equity': 'danger',   // Red
-        'European Equity': 'help',     // Purple
-        'Unclassified': 'secondary'   // Gray
+    const formatDate = (date) => {
+      if (!date) return '';
+      return new Date(date).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+    };
+
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('en-GB', {
+        style: 'currency',
+        currency: 'GBP'
+      }).format(value);
+    };
+
+    const getCategoryBadgeClass = (category) => {
+      const classes = {
+        'equity income': 'bg-emerald-100 text-emerald-800',
+        'global equity': 'bg-blue-100 text-blue-800',
+        'fixed income': 'bg-amber-100 text-amber-800',
+        'japanese equity': 'bg-indigo-100 text-indigo-800',
+        'european equity': 'bg-violet-100 text-violet-800'
       };
-      return categoryColors[category] || 'secondary';
+      return classes[category.toLowerCase()] || 'bg-gray-100 text-gray-800';
     };
 
-    const onRowExpand = (event) => {
-      expandedRows.value[event.data.isin] = true;
+    const prevPage = () => {
+      if (currentPage.value > 1) currentPage.value--;
     };
 
-    const onRowCollapse = (event) => {
-      delete expandedRows.value[event.data.isin];
+    const nextPage = () => {
+      if (currentPage.value < totalPages.value) currentPage.value++;
+    };
+
+    const goToPage = (page) => {
+      currentPage.value = page;
+    };
+
+    const toggleDetails = (fund) => {
+      expandedFund.value = expandedFund.value === fund ? null : fund;
+    };
+
+    const closeDetails = () => {
+      expandedFund.value = null;
     };
 
     return {
-      expandedRows,
-      filters,
       fundsWithPortfolioCounts,
-      onRowExpand,
-      onRowCollapse,
-      formatPercentage,
+      currentPage,
+      pageSize,
+      totalFunds,
+      totalPages,
+      expandedFund,
       formatDate,
-      getCategorySeverity,
-      hasAnyAllocation
+      formatCurrency,
+      getCategoryBadgeClass,
+      prevPage,
+      nextPage,
+      goToPage,
+      toggleDetails,
+      closeDetails
     };
   }
 };
 </script>
 
-<style>
-.p-datatable .p-datatable-tbody > tr > td {
-  padding: 0.75rem 1rem;
+<style scoped>
+.performance-positive {
+  color: rgb(22 163 74); /* text-green-600 */
 }
-
-.p-datatable .p-datatable-thead > tr > th {
-  background-color: #f8fafc;
-  border-bottom: 2px solid #e2e8f0;
-  font-weight: 600;
-  color: #475569;
+.performance-negative {
+  color: rgb(220 38 38); /* text-red-600 */
 }
 </style>

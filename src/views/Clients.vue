@@ -3,8 +3,17 @@
     <!-- Page Header with Search -->
     <div class="mb-8">
       <div class="sm:flex sm:items-center sm:justify-between">
-        <div class="relative z-10 bg-white bg-opacity-90 inline-block px-6 py-3 rounded-lg shadow-sm">
-          <h1 class="text-3xl font-bold text-emerald-600 mb-0">Clients</h1>
+        <div class="flex items-center gap-4">
+          <div class="relative z-10 bg-white bg-opacity-90 inline-block px-6 py-3 rounded-lg shadow-sm">
+            <h1 class="text-3xl font-bold text-emerald-600 mb-0">Clients</h1>
+          </div>
+          <button
+            @click="showAddClientModal = true"
+            class="relative z-20 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 flex items-center gap-2"
+          >
+            <i class="fas fa-user-plus"></i>
+            New Client
+          </button>
         </div>
         <div class="mt-4 sm:mt-0 w-64">
           <div class="relative">
@@ -172,6 +181,92 @@
         </div>
       </div>
     </div>
+
+    <!-- Add Client Modal -->
+    <div v-if="showAddClientModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg p-8 max-w-md w-full">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold text-gray-900">{{ editingClient ? 'Edit Client' : 'Add New Client' }}</h2>
+          <button @click="showAddClientModal = false" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <form @submit.prevent="saveClient">
+          <div class="space-y-4">
+            <!-- Name Fields -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">First Name</label>
+                <input type="text" v-model="newClient.firstName" required
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Last Name</label>
+                <input type="text" v-model="newClient.lastName" required
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                />
+              </div>
+            </div>
+
+            <!-- Contact Details -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Email</label>
+              <input type="email" v-model="newClient.email" required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Phone</label>
+              <input type="tel" v-model="newClient.phone" required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+              />
+            </div>
+
+            <!-- Date of Birth -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Date of Birth</label>
+              <input type="date" v-model="newClient.dateOfBirth" required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+              />
+            </div>
+
+            <!-- Address -->
+            <div class="space-y-3">
+              <label class="block text-sm font-medium text-gray-700">Address</label>
+              <input type="text" v-model="newClient.address.street" placeholder="Street Address" required
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+              />
+              <div class="grid grid-cols-2 gap-4">
+                <input type="text" v-model="newClient.address.city" placeholder="City" required
+                  class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                />
+                <input type="text" v-model="newClient.address.postcode" placeholder="Postcode" required
+                  class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                />
+              </div>
+              <input type="text" v-model="newClient.address.country" placeholder="Country" required
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+              />
+            </div>
+          </div>
+
+          <div class="mt-6 flex justify-end space-x-3">
+            <button type="button" @click="showAddClientModal = false"
+              class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+            >
+              Cancel
+            </button>
+            <button type="submit"
+              class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 border border-transparent rounded-md shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+            >
+              {{ editingClient ? 'Save Changes' : 'Add Client' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -195,6 +290,60 @@ export default {
     const productCounts = ref({});
     const currentPage = ref(1);
     const itemsPerPage = 10;
+
+    const newClient = ref({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      dateOfBirth: '',
+      address: {
+        street: '',
+        city: '',
+        postcode: '',
+        country: ''
+      },
+      factFind: {
+        personal: {
+          title: '',
+          nationality: '',
+          maritalStatus: '',
+          dependents: []
+        },
+        employment: {
+          occupation: '',
+          employer: '',
+          income: null,
+          employmentStatus: '',
+          retirementAge: null
+        },
+        financial: {
+          monthlyIncome: {
+            salary: 0,
+            benefits: 0,
+            investments: 0,
+            other: 0
+          },
+          monthlyExpenses: {
+            housing: 0,
+            utilities: 0,
+            transport: 0,
+            other: 0
+          }
+        },
+        objectives: {
+          shortTerm: [],
+          mediumTerm: [],
+          longTerm: [],
+          riskTolerance: {
+            profile: '',
+            score: null,
+            lastAssessed: null,
+            notes: ''
+          }
+        }
+      }
+    });
 
     const formatCurrency = (value) => {
         if (!value) return '£0';
@@ -349,23 +498,79 @@ export default {
       showAddClientModal.value = true;
     };
 
-    const saveClient = async (clientData) => {
+    const saveClient = async () => {
       try {
-        if (editingClient.value) {
-          await clientService.updateClient(editingClient.value.id, clientData);
-        } else {
-          await clientService.createClient({
-            ...clientData,
-            assignedIFAUserId: currentUser.value.id
-          });
-        }
+        const clientData = {
+          ...newClient.value,
+          createdAt: new Date().toISOString(),
+          riskProfile: 'Not Set',
+          lastReviewDate: null
+        };
         
+        const savedClient = await clientService.createClient(clientData);
         showAddClientModal.value = false;
-        editingClient.value = null;
         await loadClients();
+        
+        // Reset the form
+        newClient.value = {
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          dateOfBirth: '',
+          address: {
+            street: '',
+            city: '',
+            postcode: '',
+            country: ''
+          },
+          factFind: {
+            personal: {
+              title: '',
+              nationality: '',
+              maritalStatus: '',
+              dependents: []
+            },
+            employment: {
+              occupation: '',
+              employer: '',
+              income: null,
+              employmentStatus: '',
+              retirementAge: null
+            },
+            financial: {
+              monthlyIncome: {
+                salary: 0,
+                benefits: 0,
+                investments: 0,
+                other: 0
+              },
+              monthlyExpenses: {
+                housing: 0,
+                utilities: 0,
+                transport: 0,
+                other: 0
+              }
+            },
+            objectives: {
+              shortTerm: [],
+              mediumTerm: [],
+              longTerm: [],
+              riskTolerance: {
+                profile: '',
+                score: null,
+                lastAssessed: null,
+                notes: ''
+              }
+            }
+          }
+        };
+        
+        // Navigate to the new client's detail page
+        router.push({ name: 'ClientDetail', params: { id: savedClient.id } });
       } catch (error) {
         console.error('Error saving client:', error);
-        alert('Failed to save client');
+        alert('Failed to save client. Please try again.');
       }
     };
 
@@ -419,7 +624,8 @@ export default {
       totalPages,
       canGoPrevious,
       canGoNext,
-      goToPage
+      goToPage,
+      newClient
     };
   }
 };

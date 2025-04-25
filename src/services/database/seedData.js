@@ -310,6 +310,20 @@ export async function generateAndSeedData(db, numClients = 50) {
   const allFunds = await db.funds.toArray();
   if (!allFunds.length) throw new Error('No funds available in database. Seed funds before clients.');
 
+  // Get admin and regular user data
+  const adminUser = await db.users.where('email').equals('admin@webserve.it').first();
+  const regularUser = await db.users.where('email').equals('advisor@webserve.it').first();
+  
+  if (!adminUser || !regularUser) {
+    throw new Error('Both admin and regular users must exist before seeding data');
+  }
+
+  // Create array of users with their emails for interaction assignment
+  const users = [
+    { id: adminUser.id, email: adminUser.email },
+    { id: regularUser.id, email: regularUser.email }
+  ];
+
   // 2. Generate and insert clients, capturing their real DB ids
   const clientData = Array(numClients).fill(null).map(() => ({
     client: generateRandomClient(),
@@ -357,7 +371,7 @@ export async function generateAndSeedData(db, numClients = 50) {
     }
   }
 
-  // 5. Generate 2-6 interactions per client, spread over the past year
+  // 5. Generate 2-6 interactions per client, spread over the past year and alternating between users
   const now = new Date();
   const allInteractions = [];
   for (const clientId of clientIds) {
@@ -368,10 +382,14 @@ export async function generateAndSeedData(db, numClients = 50) {
       const daysAgo = Math.floor(Math.random() * 365);
       const date = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
       const typeId = Math.floor(Math.random() * 9) + 1;
+      // Alternate between admin and regular user
+      const user = users[i % 2];
       
       allInteractions.push({
         clientId,
         date,
+        userId: user.id,
+        userEmail: user.email,
         interactionTypeId: typeId,
         notes: generateInteractionNote(typeId, clientFirstName)
       });
