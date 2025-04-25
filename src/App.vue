@@ -18,37 +18,52 @@
     <template v-else>
       <LoginForm v-if="!currentUser" @login="handleLogin" />
       
-      <div class="flex min-h-screen" v-else>
-        <Sidebar :user-email="currentUser?.email" :is-admin="currentUser?.isAdmin" />
-        <div class="flex-1">
+      <div v-else class="flex min-h-screen relative">
+        <!-- Mobile Menu Button -->
+        <button 
+          @click="toggleSidebar"
+          class="md:hidden fixed top-4 left-4 z-30 p-2 rounded-md bg-white shadow-md"
+          aria-label="Toggle menu"
+        >
+          <i :class="['fas', isSidebarOpen ? 'fa-times' : 'fa-bars']"></i>
+        </button>
+
+        <!-- Sidebar -->
+        <Sidebar 
+          :user-email="currentUser?.email" 
+          :is-admin="currentUser?.isAdmin"
+          :is-open="isSidebarOpen"
+          @close="closeSidebar"
+        />
+        
+        <!-- Overlay for mobile -->
+        <div 
+          v-if="isSidebarOpen" 
+          class="md:hidden fixed inset-0 bg-black bg-opacity-50 z-20"
+          @click="closeSidebar"
+        ></div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col min-h-screen">
           <!-- Header with dynamic background -->
           <div class="relative">
             <div class="h-48 bg-gradient-to-r from-emerald-800 to-emerald-600 relative overflow-hidden">
               <div class="absolute inset-0 bg-cover bg-center" :style="{ backgroundImage: `url('/bg1.jpg')` }"></div>
               <div class="absolute inset-0 bg-gradient-to-r from-emerald-800/40 to-emerald-600/40"></div>
-              <div class="h-full flex items-center justify-between px-8 relative">
-                <div class="flex items-center space-x-4">
-                  <h1 class="text-2xl font-rubik">
-                    <span class="text-white font-bold">IFA</span>
-                    <span class="text-white/60 mx-2">|</span>
-                    <span class="text-white font-bold">Assistant</span>
-                  </h1>
-                </div>
-                <div>
-                  <Button 
-                    @click="handleLogout" 
-                    severity="secondary" 
-                    raised
-                    icon="pi pi-sign-out" 
-                    label="Sign Out" 
-                    class="px-6 py-2 bg-white/20 border border-white/30 hover:bg-white/30 transition-colors duration-200 text-white font-medium rounded-lg"
-                  />
-                </div>
+              <div class="h-full flex items-center justify-end px-8 relative">
+                <Button 
+                  @click="handleLogout" 
+                  severity="secondary" 
+                  raised
+                  icon="pi pi-sign-out" 
+                  label="Sign Out" 
+                  class="px-6 py-2 bg-white/20 border border-white/30 hover:bg-white/30 transition-colors duration-200 text-white font-medium rounded-lg"
+                />
               </div>
             </div>
           </div>
           <!-- Main content -->
-          <main class="px-8 -mt-12">
+          <main class="flex-1 px-4 md:px-8 -mt-12 mb-8 relative">
             <router-view></router-view>
           </main>
         </div>
@@ -58,13 +73,13 @@
 </template>
 
 <script>
-import { ref, provide, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import Sidebar from './components/Sidebar.vue'
-import LoginForm from './components/LoginForm.vue'
-import Button from 'primevue/button'
-import ProgressSpinner from 'primevue/progressspinner'
-import { authService, db } from './services/database'
+import { ref, computed, provide, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import Sidebar from './components/Sidebar.vue';
+import LoginForm from './components/LoginForm.vue';
+import Button from 'primevue/button';
+import ProgressSpinner from 'primevue/progressspinner';
+import { authService, db } from './services/database';
 
 export default {
   name: 'App',
@@ -75,71 +90,81 @@ export default {
     ProgressSpinner
   },
   setup() {
-    const router = useRouter()
-    const currentUser = ref(null)
-    const isLoading = ref(true)
-    const dbError = ref(null)
+    const router = useRouter();
+    const currentUser = ref(null);
+    const isLoading = ref(true);
+    const dbError = ref(null);
+    const isSidebarOpen = ref(false);
 
-    console.log('[App] Starting application setup')
+    console.log('[App] Starting application setup');
 
-    provide('currentUser', currentUser)
+    provide('currentUser', currentUser);
 
     const handleLogin = async (user) => {
-      console.log('[App] Handling login:', user)
-      currentUser.value = user  // Set user first
-      await router.push('/dashboard')  // Then navigate
-    }
+      console.log('[App] Handling login:', user);
+      currentUser.value = user;
+      await router.push('/dashboard');
+    };
 
     const handleLogout = async () => {
       try {
-        console.log('[App] Handling logout')
-        await authService.logout()
-        currentUser.value = null
-        router.push('/')
+        console.log('[App] Handling logout');
+        await authService.logout();
+        currentUser.value = null;
+        router.push('/');
       } catch (error) {
-        console.error('[App] Logout failed:', error)
+        console.error('[App] Logout failed:', error);
       }
-    }
+    };
+
+    const toggleSidebar = () => {
+      isSidebarOpen.value = !isSidebarOpen.value;
+    };
+
+    const closeSidebar = () => {
+      isSidebarOpen.value = false;
+    };
 
     onMounted(async () => {
-      console.log('[App] Component mounted, checking authentication...')
+      console.log('[App] Component mounted, checking authentication...');
       try {
-        // Set a timeout to prevent the app from being stuck in loading state forever
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Authentication check timed out')), 10000)
-        })
+          setTimeout(() => reject(new Error('Authentication check timed out')), 10000);
+        });
 
-        // This will resolve if either the auth check succeeds or times out
         await Promise.race([
           (async () => {
-            console.log('[App] Checking for current user...')
-            const user = await authService.getCurrentUser()
-            console.log('[App] Current user:', user)
+            console.log('[App] Checking for current user...');
+            const user = await authService.getCurrentUser();
+            console.log('[App] Current user:', user);
             
             if (user) {
-              currentUser.value = user
+              currentUser.value = user;
             }
           })(),
           timeoutPromise
-        ])
+        ]);
       } catch (error) {
-        console.error('[App] Error during authentication check:', error)
-        dbError.value = 'Failed to connect to database. Please try refreshing the page.'
+        console.error('[App] Error during authentication check:', error);
+        dbError.value = 'Failed to connect to database. Please try refreshing the page.';
       } finally {
-        console.log('[App] Setting isLoading to false')
-        isLoading.value = false
+        console.log('[App] Setting isLoading to false');
+        isLoading.value = false;
       }
-    })
+    });
 
     return {
       currentUser,
       isLoading,
       dbError,
       handleLogin,
-      handleLogout
-    }
+      handleLogout,
+      isSidebarOpen,
+      toggleSidebar,
+      closeSidebar
+    };
   }
-}
+};
 </script>
 
 <style>

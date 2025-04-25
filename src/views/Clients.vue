@@ -2,20 +2,20 @@
   <div class="px-4 sm:px-6 lg:px-8 py-8">
     <!-- Page Header with Search -->
     <div class="mb-8">
-      <div class="sm:flex sm:items-center sm:justify-between">
-        <div class="flex items-center gap-4">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div class="relative z-10 bg-white bg-opacity-90 inline-block px-6 py-3 rounded-lg shadow-sm">
             <h1 class="text-3xl font-bold text-emerald-600 mb-0">Clients</h1>
           </div>
           <button
             @click="showAddClientModal = true"
-            class="relative z-20 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 flex items-center gap-2"
+            class="relative z-20 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 flex items-center gap-2 w-full sm:w-auto justify-center"
           >
             <i class="fas fa-user-plus"></i>
             New Client
           </button>
         </div>
-        <div class="mt-4 sm:mt-0 w-64">
+        <div class="w-full sm:w-64">
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i class="fas fa-search text-gray-400"></i>
@@ -40,232 +40,214 @@
       </div>
 
       <!-- Client Table -->
-      <div v-else>
-        <div class="table-container bg-white shadow border border-gray-200 overflow-hidden sm:rounded-lg">
-          <table class="client-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Contact</th>
-                <th>Risk Appetite</th>
-                <th>Products</th>
-                <th>Last Contact</th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-if="clients.length === 0">
-                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                  No clients found.
-                </td>
-              </tr>
-              <tr v-for="client in clients" 
-                  :key="client.id" 
-                  class="client-row cursor-pointer"
-                  @click="navigateToClient(client.id)"
-              >
-                <td>
-                  <div class="client-name">
+      <div v-else class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr>
+              <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+              <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+              <th class="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Risk Appetite</th>
+              <th class="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Products</th>
+              <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Contact</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr v-if="clients.length === 0">
+              <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                No clients found.
+              </td>
+            </tr>
+            <tr v-for="client in clients" 
+                :key="client.id" 
+                class="group hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                @click="navigateToClient(client.id)"
+            >
+              <td class="px-4 sm:px-6 py-4">
+                <div class="flex flex-col">
+                  <div class="font-medium text-gray-900">
                     {{ client.firstName }} {{ client.lastName }}
                   </div>
-                  <div class="client-dob">DOB: {{ formatDate(client.dateOfBirth) }}</div>
-                </td>
-                <td>
-                  <div class="client-email">{{ client.email }}</div>
-                  <div class="client-phone">{{ client.phone }}</div>
-                </td>
-                <td>
-                  <span
-                    :class="getRiskProfileBadgeClass(client.riskProfile)"
-                    class="px-2 py-1 text-xs rounded-full"
-                  >
-                    {{ client.riskProfile || 'Not Set' }}
+                  <div class="text-sm text-gray-500">DOB: {{ formatDate(client.dateOfBirth) }}</div>
+                </div>
+              </td>
+              <td class="px-4 sm:px-6 py-4">
+                <div class="text-sm">
+                  <div class="text-emerald-600 hover:text-emerald-800">{{ client.email }}</div>
+                  <div class="text-gray-500">{{ client.phone }}</div>
+                </div>
+              </td>
+              <td class="hidden sm:table-cell px-4 sm:px-6 py-4">
+                <span
+                  :class="getRiskProfileBadgeClass(client.riskProfile)"
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                >
+                  {{ client.riskProfile || 'Not Set' }}
+                </span>
+              </td>
+              <td class="hidden sm:table-cell px-4 sm:px-6 py-4">
+                <div class="flex flex-wrap gap-1">
+                  <span v-if="productCounts[client.id]?.sipp" class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                    SIPP
                   </span>
-                </td>
-                <td class="px-6 py-4">
-                  <div class="flex flex-wrap gap-1">
-                    <span v-if="productCounts[client.id]?.sipp" class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                      SIPP
-                    </span>
-                    <span v-if="productCounts[client.id]?.isa" class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                      ISA
-                    </span>
-                    <span v-if="productCounts[client.id]?.lisa" class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs">
-                      LISA
-                    </span>
-                    <span v-if="productCounts[client.id]?.gia" class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs">
-                      GIA
-                    </span>
-                    <span v-if="productCounts[client.id]?.savings" class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">
-                      Savings
-                    </span>
-                    <span v-if="productCounts[client.id]?.insurance" class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
-                      Insurance
-                    </span>
-                  </div>
-                </td>
-                <td>
+                  <span v-if="productCounts[client.id]?.isa" class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                    ISA
+                  </span>
+                  <span v-if="productCounts[client.id]?.lisa" class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs">
+                    LISA
+                  </span>
+                  <span v-if="productCounts[client.id]?.gia" class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs">
+                    GIA
+                  </span>
+                  <span v-if="productCounts[client.id]?.savings" class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">
+                    Savings
+                  </span>
+                  <span v-if="productCounts[client.id]?.insurance" class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
+                    Insurance
+                  </span>
+                </div>
+              </td>
+              <td class="px-4 sm:px-6 py-4">
+                <div class="text-sm">
                   {{ formatRelativeTime(lastInteractionDate(client.id)) }}
                   <div class="text-xs text-gray-500">
                     {{ recentInteractionCount(client.id) }} interactions in the last year
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
         <!-- Pagination Controls -->
-        <div class="flex justify-between items-center p-4 bg-white border-t border-gray-200">
-          <div class="flex-1 flex justify-between sm:hidden">
+        <div class="flex flex-col sm:flex-row justify-between items-center p-4 bg-white border-t border-gray-200">
+          <div class="mb-4 sm:mb-0">
+            <p class="text-sm text-gray-700">
+              Showing
+              <span class="font-medium">{{ ((currentPage - 1) * 10) + 1 }}</span>
+              to
+              <span class="font-medium">{{ Math.min(currentPage * 10, filteredClients.length) }}</span>
+              of
+              <span class="font-medium">{{ filteredClients.length }}</span>
+              results
+            </p>
+          </div>
+          <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
             <button
               @click="goToPage(currentPage - 1)"
               :disabled="!canGoPrevious"
-              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Previous
+              <span class="sr-only">Previous</span>
+              <i class="fas fa-chevron-left h-5 w-5"></i>
+            </button>
+            <button
+              v-for="page in totalPages"
+              :key="page"
+              @click="goToPage(page)"
+              :class="[
+                'relative hidden sm:inline-flex items-center px-4 py-2 border text-sm font-medium',
+                currentPage === page
+                  ? 'z-10 bg-emerald-50 border-emerald-500 text-emerald-600'
+                  : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+              ]"
+            >
+              {{ page }}
             </button>
             <button
               @click="goToPage(currentPage + 1)"
               :disabled="!canGoNext"
-              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Next
+              <span class="sr-only">Next</span>
+              <i class="fas fa-chevron-right h-5 w-5"></i>
             </button>
-          </div>
-          <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p class="text-sm text-gray-700">
-                Showing
-                <span class="font-medium">{{ ((currentPage - 1) * 10) + 1 }}</span>
-                to
-                <span class="font-medium">{{ Math.min(currentPage * 10, filteredClients.length) }}</span>
-                of
-                <span class="font-medium">{{ filteredClients.length }}</span>
-                results
-              </p>
-            </div>
-            <div>
-              <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                <button
-                  @click="goToPage(currentPage - 1)"
-                  :disabled="!canGoPrevious"
-                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span class="sr-only">Previous</span>
-                  <i class="fas fa-chevron-left h-5 w-5"></i>
-                </button>
-                <button
-                  v-for="page in totalPages"
-                  :key="page"
-                  @click="goToPage(page)"
-                  :class="[
-                    'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
-                    currentPage === page
-                      ? 'z-10 bg-emerald-50 border-emerald-500 text-emerald-600'
-                      : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                  ]"
-                >
-                  {{ page }}
-                </button>
-                <button
-                  @click="goToPage(currentPage + 1)"
-                  :disabled="!canGoNext"
-                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <span class="sr-only">Next</span>
-                  <i class="fas fa-chevron-right h-5 w-5"></i>
-                </button>
-              </nav>
-            </div>
-          </div>
+          </nav>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Add Client Modal -->
-    <div v-if="showAddClientModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg p-8 max-w-md w-full">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">{{ editingClient ? 'Edit Client' : 'Add New Client' }}</h2>
-          <button @click="showAddClientModal = false" class="text-gray-500 hover:text-gray-700">
-            <i class="fas fa-times"></i>
+  <!-- Add/Edit Client Modal -->
+  <div v-if="showAddClientModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900">{{ editingClient ? 'Edit Client' : 'Add New Client' }}</h2>
+        <button @click="showAddClientModal = false" class="text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <form @submit.prevent="saveClient" class="space-y-6">
+        <!-- Name Fields -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">First Name</label>
+            <input type="text" v-model="newClient.firstName" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Last Name</label>
+            <input type="text" v-model="newClient.lastName" required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+            />
+          </div>
+        </div>
+
+        <!-- Contact Details -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Email</label>
+          <input type="email" v-model="newClient.email" required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Phone</label>
+          <input type="tel" v-model="newClient.phone" required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+          />
+        </div>
+
+        <!-- Date of Birth -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Date of Birth</label>
+          <input type="date" v-model="newClient.dateOfBirth" required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+          />
+        </div>
+
+        <!-- Address -->
+        <div class="space-y-3">
+          <label class="block text-sm font-medium text-gray-700">Address</label>
+          <input type="text" v-model="newClient.address.street" placeholder="Street Address" required
+            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+          />
+          <div class="grid grid-cols-2 gap-4">
+            <input type="text" v-model="newClient.address.city" placeholder="City" required
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+            />
+            <input type="text" v-model="newClient.address.postcode" placeholder="Postcode" required
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+            />
+          </div>
+          <input type="text" v-model="newClient.address.country" placeholder="Country" required
+            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+          />
+        </div>
+
+        <div class="flex justify-end space-x-3">
+          <button type="button" @click="showAddClientModal = false"
+            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+          >
+            Cancel
+          </button>
+          <button type="submit"
+            class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 border border-transparent rounded-md shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+          >
+            {{ editingClient ? 'Save Changes' : 'Add Client' }}
           </button>
         </div>
-        
-        <form @submit.prevent="saveClient">
-          <div class="space-y-4">
-            <!-- Name Fields -->
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700">First Name</label>
-                <input type="text" v-model="newClient.firstName" required
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
-                />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700">Last Name</label>
-                <input type="text" v-model="newClient.lastName" required
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
-                />
-              </div>
-            </div>
-
-            <!-- Contact Details -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Email</label>
-              <input type="email" v-model="newClient.email" required
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Phone</label>
-              <input type="tel" v-model="newClient.phone" required
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
-              />
-            </div>
-
-            <!-- Date of Birth -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Date of Birth</label>
-              <input type="date" v-model="newClient.dateOfBirth" required
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
-              />
-            </div>
-
-            <!-- Address -->
-            <div class="space-y-3">
-              <label class="block text-sm font-medium text-gray-700">Address</label>
-              <input type="text" v-model="newClient.address.street" placeholder="Street Address" required
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
-              />
-              <div class="grid grid-cols-2 gap-4">
-                <input type="text" v-model="newClient.address.city" placeholder="City" required
-                  class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
-                />
-                <input type="text" v-model="newClient.address.postcode" placeholder="Postcode" required
-                  class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
-                />
-              </div>
-              <input type="text" v-model="newClient.address.country" placeholder="Country" required
-                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
-              />
-            </div>
-          </div>
-
-          <div class="mt-6 flex justify-end space-x-3">
-            <button type="button" @click="showAddClientModal = false"
-              class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
-            >
-              Cancel
-            </button>
-            <button type="submit"
-              class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 border border-transparent rounded-md shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
-            >
-              {{ editingClient ? 'Save Changes' : 'Add Client' }}
-            </button>
-          </div>
-        </form>
-      </div>
+      </form>
     </div>
   </div>
 </template>
@@ -641,7 +623,7 @@ export default {
 }
 
 .client-table th {
-  @apply px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0 first:rounded-tl-lg last:rounded-tr-lg;
+  @apply px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky top-0;
 }
 
 .client-table td {
@@ -694,5 +676,19 @@ export default {
 
 .view-details {
   @apply text-emerald-600 hover:text-emerald-900 font-medium;
+}
+
+@media (max-width: 640px) {
+  .table-container {
+    margin: 0 -1rem;
+  }
+  
+  .client-table td {
+    @apply px-4;
+  }
+  
+  .client-table th {
+    @apply px-4;
+  }
 }
 </style>
