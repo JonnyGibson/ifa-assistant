@@ -252,6 +252,59 @@ function generateInsurancePolicies() {
   });
 }
 
+function generateInteractionNote(typeId, clientFirstName) {
+  const templates = {
+    1: [ // Meeting
+      `Annual review meeting with ${clientFirstName}. Discussed portfolio performance and rebalancing needs.`,
+      `Initial consultation with ${clientFirstName} to understand financial goals and risk tolerance.`,
+      `Quarterly review meeting. ${clientFirstName} expressed interest in ESG investments.`
+    ],
+    2: [ // Call
+      `Phone call with ${clientFirstName} to discuss recent market volatility and portfolio strategy.`,
+      `Follow-up call to clarify pension contribution options.`,
+      `${clientFirstName} called to discuss upcoming retirement planning needs.`
+    ],
+    3: [ // Email
+      `Sent portfolio review summary and recommendations to ${clientFirstName}.`,
+      `Email correspondence regarding updated risk assessment questionnaire.`,
+      `Sent investment proposal and fund recommendations for ISA allocation.`
+    ],
+    4: [ // Note
+      `Updated client risk profile following recent assessment.`,
+      `Noted changes in ${clientFirstName}'s retirement planning timeline.`,
+      `Recorded updates to family circumstances and protection needs.`
+    ],
+    5: [ // Review
+      `Completed annual investment portfolio review. Performance in line with expectations.`,
+      `Conducted protection review. Recommended increasing life cover.`,
+      `Pension review completed. Adjustments needed to meet retirement goals.`
+    ],
+    6: [ // Document
+      `Generated annual portfolio performance report for tax year.`,
+      `Prepared updated financial plan document incorporating recent changes.`,
+      `Processed new ISA transfer documentation.`
+    ],
+    7: [ // Task
+      `Set reminder for next quarterly review meeting.`,
+      `Schedule follow-up on pension transfer paperwork.`,
+      `Update fact find with new employment details.`
+    ],
+    8: [ // Other
+      `Updated client preferences for communication methods.`,
+      `Recorded changes to investment strategy preferences.`,
+      `Updated contact details and communication preferences.`
+    ],
+    9: [ // Admin
+      `Updated client records with new address details.`,
+      `Processed account rebalancing instructions.`,
+      `Updated beneficiary information on pension accounts.`
+    ]
+  };
+
+  const options = templates[typeId] || templates[8]; // Default to Other if type not found
+  return options[Math.floor(Math.random() * options.length)];
+}
+
 export async function generateAndSeedData(db, numClients = 50) {
   // 1. Fetch all funds from DB (must be seeded first)
   const allFunds = await db.funds.toArray();
@@ -308,15 +361,19 @@ export async function generateAndSeedData(db, numClients = 50) {
   const now = new Date();
   const allInteractions = [];
   for (const clientId of clientIds) {
+    const client = clientData.find(c => c.client.id === clientId);
+    const clientFirstName = client ? client.client.firstName : 'Client';
     const n = Math.floor(Math.random() * 5) + 2; // 2-6 interactions
     for (let i = 0; i < n; i++) {
       const daysAgo = Math.floor(Math.random() * 365);
       const date = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+      const typeId = Math.floor(Math.random() * 9) + 1;
+      
       allInteractions.push({
         clientId,
         date,
-        interactionTypeId: Math.floor(Math.random() * 9) + 1,
-        notes: 'Seeded interaction'
+        interactionTypeId: typeId,
+        notes: generateInteractionNote(typeId, clientFirstName)
       });
     }
   }
