@@ -58,7 +58,7 @@
           <!-- Category Distribution Chart -->
           <div v-if="holdings.length > 0" class="mt-4 mb-6">
             <h4 class="text-sm font-medium text-gray-600 mb-2">Category Distribution</h4>
-            <canvas ref="categoryChart" class="w-full h-64"></canvas>
+            <canvas ref="categoryChart" width="400" height="256" style="display:block;max-width:100%;height:auto;"></canvas>
           </div>
           
           <!-- Investment Accounts Summary -->
@@ -192,21 +192,17 @@
         <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 h-full transition-all duration-300 hover:shadow-hover">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-semibold text-gray-800">Recent Interactions</h3>
-            <router-link 
-              :to="{ name: 'Appointments', query: { client: client.id }}" 
-              class="text-xs text-emerald-600 hover:text-emerald-700 flex items-center"
-            >
-              View All
-              <i class="fas fa-arrow-right ml-1"></i>
-            </router-link>
           </div>
-          <div v-if="interactions.length > 0" class="space-y-3">
+          <div v-if="interactionsLoading" class="flex justify-center py-8">
+            <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-emerald-500"></div>
+          </div>
+          <div v-else-if="interactions.length > 0" class="space-y-3">
             <div v-for="interaction in interactions.slice(0, 5)" :key="interaction.id" 
                  class="bg-white rounded-lg p-3 shadow-sm">
               <div class="flex justify-between items-start">
                 <div>
                   <span class="text-sm font-medium text-gray-800">
-                    {{ interactionTypeMap[interaction.type]?.name || 'Unknown Type' }}
+                    {{ interactionTypeMap[interaction.interactionTypeId]?.name || 'Unknown Type' }}
                   </span>
                   <p class="text-xs text-gray-500 mt-1">{{ formatDate(interaction.date) }}</p>
                 </div>
@@ -470,6 +466,7 @@ export default {
     const holdingsLoading = ref(true);
     const interactionsLoading = ref(true);
     const categoryChart = ref(null);
+    const categoryChartInstance = ref(null); // Track Chart.js instance
     const expandedAccount = ref(null);
     const expandedPolicy = ref(null);
 
@@ -517,7 +514,9 @@ export default {
           console.log('[ClientDetailView] Total holdings:', holdings.value.length);
         }
 
-        interactions.value = await clientService.getClientInteractions(clientId.value);
+        interactions.value = await interactionService.getClientInteractions(clientId.value);
+        console.log('[ClientDetailView] Fetched Interactions:', interactions.value);
+        
         insurancePolicies.value = policies;
 
         console.log('[ClientDetailView] Fetched Client:', client.value);
@@ -526,7 +525,10 @@ export default {
         console.log('[ClientDetailView] Fetched Insurance Policies:', insurancePolicies.value.length);
 
         if (holdings.value.length > 0) {
-          nextTick(() => setupCategoryChart());
+          nextTick(() => {
+            console.log('[ClientDetailView] Setting up category chart...');
+            setupCategoryChart();
+          });
         }
 
       } catch (error) {
@@ -540,17 +542,33 @@ export default {
     };
 
     const setupCategoryChart = () => {
-      if (!categoryChart.value || !holdings.value.length) return;
+      console.log('[setupCategoryChart] called');
+      if (!categoryChart.value) {
+        console.log('[setupCategoryChart] categoryChart ref is null');
+        return;
+      }
+      if (!holdings.value.length) {
+        console.log('[setupCategoryChart] No holdings, skipping chart');
+        return;
+      }
+      // Log canvas dimensions and parent
+      const canvas = categoryChart.value;
+      console.log('[setupCategoryChart] Canvas:', canvas, 'Parent:', canvas.parentElement, 'Width:', canvas.width, 'Height:', canvas.height);
 
-      const existingChart = Chart.getChart(categoryChart.value);
-      if (existingChart) {
-        existingChart.destroy();
+      // Destroy previous chart instance if it exists
+      if (categoryChartInstance.value) {
+        console.log('[setupCategoryChart] Destroying previous chart instance');
+        categoryChartInstance.value.destroy();
+        categoryChartInstance.value = null;
+      } else {
+        console.log('[setupCategoryChart] No previous chart instance to destroy');
       }
 
       const categoryData = holdings.value.reduce((acc, holding) => {
         const category = holding.fund.category;
         if (!acc[category]) acc[category] = 0;
-        acc[category] += holding.currentValue || 0;
+        const value = holding.currentValue || (holding.unitsHeld * holding.fund.price) || 0;
+        acc[category] += value;
         return acc;
       }, {});
 
@@ -568,7 +586,8 @@ export default {
         '#EC4899', '#F59E0B', '#84CC16', '#14B8A6'
       ];
 
-      new Chart(categoryChart.value, {
+      console.log('[setupCategoryChart] Creating new Chart instance with labels:', labels, 'data:', data);
+      categoryChartInstance.value = new Chart(categoryChart.value, {
         type: 'doughnut',
         data: {
           labels,
@@ -580,16 +599,13 @@ export default {
           }]
         },
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
+          responsive: false, // Disable responsiveness to prevent canvas growth
           plugins: {
             legend: {
               position: 'right',
               labels: {
                 usePointStyle: true,
-                font: {
-                  size: 12
-                }
+                font: { size: 12 }
               }
             },
             tooltip: {
@@ -605,13 +621,19 @@ export default {
           }
         }
       });
+      console.log('[setupCategoryChart] Chart instance created:', categoryChartInstance.value);
     };
 
-    watch(() => holdings.value, () => {
-      if (holdings.value.length > 0) {
-        nextTick(setupCategoryChart);
-      }
-    });
+    watch(
+      [holdings, categoryChart],
+      async () => {
+        if (holdings.value.length > 0 && categoryChart.value) {
+          await nextTick();
+          setupCategoryChart();
+        }
+      },
+      { immediate: true }
+    );
 
     const calculateAccountValue = (account) => {
       if (typeof account.totalValue === 'number') return account.totalValue;
@@ -710,6 +732,7 @@ export default {
       calculateGainLossPercent,
       id: props.id,
       categoryChart,
+      categoryChartInstance,
       INSURANCE_TYPES,
       expandedAccount,
       expandedPolicy,

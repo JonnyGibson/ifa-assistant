@@ -252,142 +252,77 @@ function generateInsurancePolicies() {
   });
 }
 
-// Generate interactions for a given client spread over the past year
-function generateInteractionsForClient(clientId) {
-  const interactions = [];
-  const now = new Date();
-  const oneYearAgo = new Date(now);
-  oneYearAgo.setFullYear(now.getFullYear() - 1);
+export async function generateAndSeedData(db, numClients = 50) {
+  // 1. Fetch all funds from DB (must be seeded first)
+  const allFunds = await db.funds.toArray();
+  if (!allFunds.length) throw new Error('No funds available in database. Seed funds before clients.');
 
-  // Determine if this client will be an active one (20% chance)
-  const isActiveClient = Math.random() < 0.2;
-  
-  // Base number of interactions:
-  // Active clients: 15-25 interactions per year
-  // Regular clients: 4-8 interactions per year
-  const baseInteractions = isActiveClient ? 
-    Math.floor(Math.random() * 11) + 15 : // 15-25 interactions
-    Math.floor(Math.random() * 5) + 4;    // 4-8 interactions
-
-  // Create an array of weeks in the past year
-  const weeks = 52;
-  const weekBuckets = Array(weeks).fill(0);
-  
-  // First, ensure minimum weekly contacts across all clients
-  for (let week = 0; week < weeks; week++) {
-    // 10% chance for each client to have an interaction in any given week
-    if (Math.random() < 0.1) {
-      const weekStart = new Date(now);
-      weekStart.setDate(weekStart.getDate() - (week * 7));
-      const date = new Date(weekStart.getTime() + Math.random() * 7 * 24 * 3600 * 1000);
-      
-      // Determine interaction type - more likely to have reviews for active clients
-      const interactionTypeId = isActiveClient && Math.random() < 0.4 ?
-        Math.floor(Math.random() * 3) + 1 : // Types 1-3 are reviews
-        Math.floor(Math.random() * 4) + 6;   // Types 6-9 are communication/admin
-
-      interactions.push({
-        clientId,
-        date,
-        interactionTypeId,
-        notes: `${isActiveClient ? 'Regular' : 'Standard'} client interaction`
-      });
-      weekBuckets[week]++;
-    }
-  }
-
-  // Then add remaining interactions, trying to fill gaps
-  for (let i = 0; i < baseInteractions; i++) {
-    // Find weeks with fewer interactions
-    const weakWeeks = weekBuckets.map((count, index) => ({ count, index }))
-      .filter(w => w.count < 2)  // Prefer weeks with less than 2 interactions
-      .sort((a, b) => a.count - b.count);
-    
-    let targetWeek;
-    if (weakWeeks.length > 0 && Math.random() < 0.7) {
-      // 70% chance to pick a week with fewer interactions
-      targetWeek = weakWeeks[Math.floor(Math.random() * weakWeeks.length)].index;
-    } else {
-      // Otherwise pick a random week
-      targetWeek = Math.floor(Math.random() * weeks);
-    }
-
-    const weekStart = new Date(now);
-    weekStart.setDate(weekStart.getDate() - (targetWeek * 7));
-    const date = new Date(weekStart.getTime() + Math.random() * 7 * 24 * 3600 * 1000);
-
-    // More likely to be a review for active clients
-    const interactionTypeId = isActiveClient && Math.random() < 0.4 ?
-      Math.floor(Math.random() * 3) + 1 : // Types 1-3 are reviews
-      Math.floor(Math.random() * 4) + 6;   // Types 6-9 are communication/admin
-
-    interactions.push({
-      clientId,
-      date,
-      interactionTypeId,
-      notes: `${isActiveClient ? 'Regular' : 'Standard'} client interaction`
-    });
-    weekBuckets[targetWeek]++;
-  }
-
-  // Sort by date
-  return interactions.sort((a, b) => b.date.getTime() - a.date.getTime());
-}
-
-export function generateSeedData(numClients = 50) {
-  const now = new Date(); // Add this line
-
-  // First generate baseline client data
+  // 2. Generate and insert clients, capturing their real DB ids
   const clientData = Array(numClients).fill(null).map(() => ({
     client: generateRandomClient(),
     products: generateAccountProducts(),
     insurancePolicies: generateInsurancePolicies()
   }));
-
-  // Generate interactions for each client
-  const allInteractions = [];
-  for (let i = 0; i < numClients; i++) {
-    const interactions = generateInteractionsForClient(i + 1); // clientIds start at 1
-    allInteractions.push(...interactions);
-  }
-
-  // Ensure we have at least 5 contacts per week
-  const weekBuckets = new Array(52).fill(0);
-  allInteractions.forEach(interaction => {
-    const weekNumber = Math.floor((now - interaction.date) / (7 * 24 * 3600 * 1000));
-    if (weekNumber >= 0 && weekNumber < 52) {
-      weekBuckets[weekNumber]++;
-    }
-  });
-
-  // Add additional interactions for weeks with less than 5 contacts
-  weekBuckets.forEach((count, weekIndex) => {
-    if (count < 5) {
-      const needed = 5 - count;
-      for (let i = 0; i < needed; i++) {
-        // Pick a random client
-        const clientId = Math.floor(Math.random() * numClients) + 1;
-        
-        // Create interaction for this week
-        const weekStart = new Date(now);
-        weekStart.setDate(weekStart.getDate() - (weekIndex * 7));
-        const date = new Date(weekStart.getTime() + Math.random() * 7 * 24 * 3600 * 1000);
-        
-        allInteractions.push({
-          clientId,
-          date,
-          interactionTypeId: Math.floor(Math.random() * 9) + 1,
-          notes: 'Additional interaction to maintain minimum weekly contact'
+  const clientIds = [];
+  for (const c of clientData) {
+    const clientId = await db.clients.add({ ...c.client });
+    clientIds.push(clientId);
+    // 3. For each client, create 1-3 investment accounts (portfolios)
+    const numAccounts = c.products.length;
+    for (let i = 0; i < numAccounts; i++) {
+      const product = c.products[i];
+      // Pick 2-7 random funds for this account
+      const numFunds = Math.floor(Math.random() * (product.maxFunds - product.minFunds + 1)) + product.minFunds;
+      const shuffledFunds = allFunds.sort(() => 0.5 - Math.random());
+      const selectedFunds = shuffledFunds.slice(0, numFunds);
+      // Create account
+      const accountId = await db.accounts.add({
+        clientId,
+        type: product.type,
+        provider: product.provider,
+        accountNumber: `${product.type}-${Math.floor(Math.random() * 1000000)}`,
+        dateOpened: new Date().toISOString(),
+        status: 'active'
+      });
+      // Create holdings for this account
+      for (const fund of selectedFunds) {
+        await db.holdings.add({
+          accountId,
+          fundId: fund.id,
+          unitsHeld: Math.floor(Math.random() * 1000) + 10,
+          purchasePrice: fund.price || Math.floor(Math.random() * 100) + 1,
+          purchaseDate: new Date().toISOString()
         });
       }
     }
-  });
+    // 4. Insert insurance policies for this client
+    for (const policy of c.insurancePolicies) {
+      await db.insurancePolicies.add({
+        ...policy,
+        clientId
+      });
+    }
+  }
 
-  // Final sort of all interactions by date
-  allInteractions.sort((a, b) => b.date.getTime() - a.date.getTime());
+  // 5. Generate 2-6 interactions per client, spread over the past year
+  const now = new Date();
+  const allInteractions = [];
+  for (const clientId of clientIds) {
+    const n = Math.floor(Math.random() * 5) + 2; // 2-6 interactions
+    for (let i = 0; i < n; i++) {
+      const daysAgo = Math.floor(Math.random() * 365);
+      const date = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+      allInteractions.push({
+        clientId,
+        date,
+        interactionTypeId: Math.floor(Math.random() * 9) + 1,
+        notes: 'Seeded interaction'
+      });
+    }
+  }
 
-  return {
-    clients: clientData,
-    interactions: allInteractions
-  };
+  // 6. Insert interactions
+  for (const interaction of allInteractions) {
+    await db.interactions.add(interaction);
+  }
 }

@@ -16,7 +16,7 @@ be considering when making change, especially when fixing errors, doubt your sel
 
 ## Backend Configuration
 - Use **Node.js** and **npm** for backend logic and package management.
-- Prefer **Supabase** for authentication and data storage. Remember we are using supabase, and not postresql, ensure we target supabase
+
 - Utilize environment variables (`.env`) for sensitive credentials.
 
 ## Deployment Guidelines

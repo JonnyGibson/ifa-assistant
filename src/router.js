@@ -5,10 +5,10 @@ import { authService } from './services/database';
 const Dashboard = () => import('./views/Dashboard.vue');
 const Clients = () => import('./views/Clients.vue');
 const ClientDetail = () => import('./views/ClientDetail.vue');
+const Activity = () => import('./views/Activity.vue');
 const Funds = () => import('./views/Funds.vue');
 const Documents = () => import('./views/Documents.vue');
 const Reports = () => import('./views/Reports.vue');
-const Appointments = () => import('./views/Appointments.vue');
 const Compliance = () => import('./views/Compliance.vue');
 const Settings = () => import('./views/Settings.vue');
 const LoginForm = () => import('./components/LoginForm.vue');
@@ -40,6 +40,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/activity',
+    name: 'Activity',
+    component: Activity,
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/funds',
     name: 'Funds',
     component: Funds,
@@ -55,12 +61,6 @@ const routes = [
     path: '/reports',
     name: 'Reports',
     component: Reports,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/appointments',
-    name: 'Appointments',
-    component: Appointments,
     meta: { requiresAuth: true }
   },
   {

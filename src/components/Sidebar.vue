@@ -30,6 +30,14 @@
         <i class="fas fa-users mr-3 flex-shrink-0 h-5 w-5"></i>
         Clients
       </router-link>
+      <router-link 
+        :to="{ name: 'Activity' }" 
+        class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-emerald-700 hover:text-white transition-colors"
+        active-class="bg-emerald-800 text-white"
+      >
+        <i class="fas fa-list-alt mr-3 flex-shrink-0 h-5 w-5"></i>
+        Activity
+      </router-link>
        <router-link 
         :to="{ name: 'Funds' }" 
         class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-emerald-700 hover:text-white transition-colors"

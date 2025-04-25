@@ -4,6 +4,14 @@
       <p class="text-red-700">{{ error }}</p>
     </div>
 
+    <!-- Adding refresh button -->
+    <div class="flex justify-end">
+      <button @click="refreshDashboard" class="flex items-center gap-2 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 px-4 rounded">
+        <i class="fas fa-sync-alt" :class="{'animate-spin': isLoading}"></i>
+        Refresh Data
+      </button>
+    </div>
+
     <div v-if="isLoading" class="flex justify-center items-center min-h-[400px]">
       <i class="pi pi-spin pi-spinner text-4xl text-emerald-500"></i>
     </div>
@@ -86,14 +94,11 @@
         </div>
       </div>
 
-      <!-- Bottom Section: Activity Chart & Appointments -->
+      <!-- Bottom Section: Activity Chart & Active Clients -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Client Activity Chart -->
         <ClientActivityChart :data="recentInteractions" />
         
-        <!-- Upcoming Appointments -->
-        <UpcomingAppointments />
-
         <!-- Top Active Clients -->
         <TopActiveClients />
       </div>
@@ -106,7 +111,6 @@ import { ref, onMounted, inject, computed } from 'vue';
 import { clientService, investmentService, interactionService } from '../services/database';
 import StatsCard from '../components/StatsCard.vue';
 import ChartCard from '../components/ChartCard.vue';
-import UpcomingAppointments from '../components/UpcomingAppointments.vue';
 import ClientActivityChart from '../components/ClientActivityChart.vue';
 import TopActiveClients from '../components/TopActiveClients.vue';
 
@@ -115,7 +119,6 @@ export default {
   components: {
     StatsCard,
     ChartCard,
-    UpcomingAppointments,
     ClientActivityChart,
     TopActiveClients
   },
@@ -145,6 +148,9 @@ export default {
       error.value = '';
       
       try {
+        // Clear previous data to force refresh
+        recentInteractions.value = [];
+        
         // Get all clients and their interactions
         const [clients, allInteractions] = await Promise.all([
           clientService.getAllClients(),
@@ -239,6 +245,10 @@ export default {
       }
     };
 
+    const refreshDashboard = () => {
+      loadDashboardData();
+    };
+
     const formatCurrency = (value) => {
       return new Intl.NumberFormat('en-GB', {
         style: 'currency',
@@ -259,8 +269,43 @@ export default {
 
     const lastInteractionDate = (clientId) => {
       const clientInteractions = recentInteractions.value.filter(i => i.clientId === clientId);
-      if (clientInteractions.length === 0) return null;
-      return Math.max(...clientInteractions.map(i => new Date(i.date)));
+      if (clientInteractions.length === 0) {
+        return null;
+      }
+      
+      // Sort interactions by date (descending) and take the first one
+      const sortedInteractions = [...clientInteractions].sort((a, b) => {
+        return new Date(b.date) - new Date(a.date);
+      });
+      
+      return sortedInteractions[0].date;
+    };
+
+    const resetAndInitializeDatabase = async () => {
+      try {
+        isLoading.value = true;
+        
+        console.log('Forcing database reset and re-initialization...');
+        // Import db directly for this operation
+        const { db } = await import('../services/database');
+        
+        // Force reset and re-initialization
+        const result = await db.initialize(true);
+        
+        console.log('Database reset result:', result);
+        
+        if (result) {
+          // Reload dashboard data after successful reset
+          await loadDashboardData();
+        } else {
+          error.value = 'Failed to reset database. Please try again.';
+        }
+      } catch (err) {
+        console.error('Error during database reset:', err);
+        error.value = 'Failed to reset database: ' + err.message;
+      } finally {
+        isLoading.value = false;
+      }
     };
 
     onMounted(() => {
@@ -274,7 +319,9 @@ export default {
       recentInteractions,
       formatCurrency,
       formatDate,
-      lastInteractionDate
+      lastInteractionDate,
+      refreshDashboard,
+      resetAndInitializeDatabase
     };
   }
 };

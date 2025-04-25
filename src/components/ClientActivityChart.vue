@@ -38,13 +38,6 @@ export default {
         
         const date = new Date(interaction.date);
         const month = date.getMonth();
-        // Debug log for incoming interaction types
-        console.log('Incoming interaction:', {
-          name: interaction.type.name,
-          category: interaction.type.category,
-          fullType: interaction.type
-        });
-        
         const type = interaction.type.name.toLowerCase();
         
         if (!acc[type]) {
@@ -54,9 +47,6 @@ export default {
         
         return acc;
       }, {});
-
-      // Debug log all unique interaction types found
-      console.log('Unique interaction types:', Object.keys(monthlyDataByType));
 
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       
@@ -108,13 +98,6 @@ export default {
             label: type.charAt(0).toUpperCase() + type.slice(1)
           };
           
-          // Debug log color assignment for each type
-          console.log('Color assignment:', {
-            type,
-            config: typeConfig,
-            backgroundColor: typeConfig.color.replace('rgb', 'rgba').replace(')', ', 0.8)')
-          });
-          
           return {
             label: typeConfig.label,
             data: data,
@@ -128,13 +111,6 @@ export default {
           };
         })
         .sort((a, b) => a.order - b.order);
-
-      // Debug log final datasets
-      console.log('Final datasets:', datasets.map(d => ({
-        label: d.label,
-        backgroundColor: d.backgroundColor,
-        borderColor: d.borderColor
-      })));
 
       chart.value = new Chart(ctx, {
         type: 'bar',
