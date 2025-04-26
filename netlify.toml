@@ -3,7 +3,22 @@
   command = "npm run build"
   functions = "netlify/functions"
 
+[dev]
+  framework = "#custom"
+  targetPort = 3000
+  port = 8888
+  command = "npm run dev:vite"
+  autoLaunch = true
+
+[[headers]]
+  for = "/*"
+    [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Origin, X-Requested-With, Content-Type, Accept"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  force = false

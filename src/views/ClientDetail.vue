@@ -66,7 +66,9 @@
             <div class="flex items-center gap-4">
               <button 
                 @click="updateFundPrices" 
-                class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-emerald-600 bg-emerald-50 rounded-md hover:bg-emerald-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+                :disabled="holdings.length === 0" 
+                class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-emerald-600 bg-emerald-50 rounded-md hover:bg-emerald-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed" 
+                title="Update Fund Prices"
               >
                 <i class="fas fa-sync-alt mr-2"></i>
                 Update Fund Prices
@@ -493,36 +495,74 @@
   </div>
 
   <!-- Fund Price Update Popover -->
-  <div v-if="isUpdatingFunds" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg p-6 max-w-md w-full m-4">
-      <div class="mb-4">
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Updating Fund Prices</h3>
+  <div v-if="isUpdatingFunds" 
+       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-hidden" 
+       style="overscroll-behavior: contain;"
+       @click.self="cancelUpdateFunds">
+    <div class="bg-white rounded-lg w-[50vw] h-[50vh] max-w-3xl flex flex-col">
+      <div class="px-8 py-6 border-b border-gray-200 flex-shrink-0">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-medium text-gray-900">Updating Fund Prices</h3>
+          <span class="text-sm text-gray-500">{{ formatDate(new Date()) }}</span>
+        </div>
+      </div>
+      
+      <div class="flex-1 overflow-y-auto px-8 py-6 hide-scrollbar" style="overscroll-behavior: contain;">
         <div class="space-y-4">
-          <div v-for="fund in updateProgress" :key="fund.isin" class="text-sm">
-            <div class="flex justify-between mb-1">
-              <span class="font-medium">{{ fund.name }}</span>
-              <span class="text-gray-600">{{ formatDate(fund.lastUpdated) }}</span>
+          <div v-for="fund in updateProgress" 
+               :key="fund.isin" 
+               class="text-base bg-gray-50 p-4 rounded-lg">
+            <div class="flex justify-between mb-2">
+              <span class="font-medium text-gray-900">{{ fund.name }}</span>
+              <div class="flex items-center gap-2">
+                <i :class="[
+                  'fas',
+                  fund.status === 'pending' ? 'fa-clock text-gray-400' :
+                  fund.status === 'updating' ? 'fa-sync-alt fa-spin text-blue-500' :
+                  fund.status === 'success' ? 'fa-check text-green-500' :
+                  'fa-exclamation-circle text-red-500'
+                ]"></i>
+              </div>
             </div>
-            <div class="flex items-center gap-2">
-              <span class="text-emerald-600">{{ formatCurrency(fund.price) }}</span>
-              <i :class="[
-                'fas',
-                fund.status === 'pending' ? 'fa-clock text-gray-400' :
-                fund.status === 'updating' ? 'fa-sync-alt fa-spin text-blue-500' :
-                fund.status === 'success' ? 'fa-check text-green-500' :
-                'fa-exclamation-circle text-red-500'
-              ]"></i>
+            <div class="flex items-center justify-between">
+              <div class="flex items-baseline gap-2">
+                <span class="text-gray-500">{{ formatCurrency(fund.previousPrice, 'GBP') }}</span>
+                <i class="fas fa-arrow-right text-gray-400 text-xs"></i>
+                <span :class="[
+                  'font-medium',
+                  fund.status === 'success' ? 
+                    (fund.price > fund.previousPrice ? 'text-green-600' : 
+                     fund.price < fund.previousPrice ? 'text-red-600' : 
+                     'text-gray-900') :
+                  'text-gray-400'
+                ]">
+                  {{ fund.status === 'success' ? formatCurrency(fund.price, fund.currency) : '—' }}
+                </span>
+              </div>
+              <span v-if="fund.status === 'success'" class="text-sm" :class="{
+                'text-green-600': fund.price > fund.previousPrice,
+                'text-red-600': fund.price < fund.previousPrice,
+                'text-gray-500': fund.price === fund.previousPrice
+              }">
+                {{ calculatePriceChange(fund.previousPrice, fund.price) }}
+              </span>
+            </div>
+            <div v-if="fund.status === 'error'" class="mt-1 text-sm text-red-600">
+              {{ fund.error }}
             </div>
           </div>
         </div>
       </div>
-      <div class="flex justify-end">
-        <button
-          @click="cancelUpdateFunds"
-          class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
-        >
-          Close
-        </button>
+
+      <div class="px-8 py-6 border-t border-gray-200 flex-shrink-0">
+        <div class="flex justify-end">
+          <button
+            @click="cancelUpdateFunds"
+            class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -622,7 +662,7 @@ export default {
         if (!clientData) throw new Error('Client not found');
         client.value = clientData;
 
-        // Load client accounts
+        // Load client accounts using InvestmentService
         const accounts = await investmentService.getClientAccounts(clientId.value);
         console.log('[ClientDetailView] Fetched client accounts:', accounts);
         
@@ -849,29 +889,60 @@ export default {
       try {
         console.log('[updateFundPrices] Starting fund price updates...');
         isUpdatingFunds.value = true;
-        const funds = await investmentService.updateFundPrices();
+        updateProgress.value = [];
+
+        console.log('[ClientDetailView] holdings count before update:', holdings.value.length);
+        console.log('[ClientDetailView] holdings ISINs before update:', holdings.value.map(h => h.fund?.isin));
         
-        // Initialize progress tracking
-        updateProgress.value = funds.map(fund => ({
-          ...fund,
-          status: 'updating'
-        }));
+        // Create update progress array with initial pending state for unique funds only
+        const uniqueFunds = holdings.value.reduce((acc, holding) => {
+          if (!acc.some(f => f.isin === holding.fund.isin)) {
+            acc.push({
+              isin: holding.fund.isin,
+              name: holding.fund.name,
+              previousPrice: holding.fund.price,
+              status: 'pending'
+            });
+          }
+          return acc;
+        }, []);
         
-        // Update holdings with new prices
-        await fetchClientData();
+        updateProgress.value = uniqueFunds;
+
+        // Progress callback function
+        const onProgress = (fundUpdate) => {
+          const index = updateProgress.value.findIndex(f => f.isin === fundUpdate.isin);
+          if (index !== -1) {
+            updateProgress.value[index] = { ...fundUpdate };
+          }
+        };
+
+        await investmentService.updateFundPrices(
+          holdings.value.map(h => h.fund?.isin),
+          onProgress
+        );
         
-        // Update progress states
-        updateProgress.value = funds;
-        
-        console.log('[updateFundPrices] Fund prices updated successfully');
+        // Refetch data if any updates were successful
+        if (updateProgress.value.some(f => f.status === 'success')) {
+          await fetchClientData();
+        }
+
+        console.log('[updateFundPrices] Fund prices updated');
       } catch (error) {
         console.error('[updateFundPrices] Error updating fund prices:', error);
-        alert('Failed to update fund prices. Please try again later.');
       }
     };
 
     const cancelUpdateFunds = () => {
       isUpdatingFunds.value = false;
+    };
+
+    const calculatePriceChange = (previousPrice, currentPrice) => {
+      if (!previousPrice || !currentPrice) return '—';
+      const change = currentPrice - previousPrice;
+      const percentageChange = ((change / previousPrice) * 100).toFixed(2);
+      const formattedChange = percentageChange > 0 ? `+${percentageChange}` : percentageChange;
+      return `${formattedChange}%`;
     };
 
     const calculateGainLossPercent = (holding) => {
@@ -989,8 +1060,19 @@ export default {
       updateFundPrices,
       isUpdatingFunds,
       updateProgress,
-      cancelUpdateFunds
+      cancelUpdateFunds,
+      calculatePriceChange
     };
   }
 }
 </script>
+
+<style scoped>
+.hide-scrollbar {
+  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
+</style>

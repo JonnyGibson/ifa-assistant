@@ -6,6 +6,7 @@ import { InteractionService } from './InteractionService';
 import { UserService } from './UserService';
 import { FundService } from './FundService';
 import { AuthService } from '../auth/AuthService';
+import { InvestmentService } from './InvestmentService';
 import { generateAndSeedData } from './seedData';
 
 class IFADatabase extends Dexie {
@@ -67,7 +68,8 @@ class IFADatabase extends Dexie {
     // Initialize services
     console.log('[DB] Creating service instances');
     this.clientService = new ClientService(this);
-    this.investmentService = new InvestmentAccountService(this);
+    this.investmentService = new InvestmentService(this);
+    this.investmentAccountService = new InvestmentAccountService(this);
     this.insuranceService = new InsuranceService(this);
     this.interactionService = new InteractionService(this);
     this.userService = new UserService(this);
@@ -243,6 +245,7 @@ console.log('[DB] Database instance created');
 // Export services
 export const clientService = db.clientService;
 export const investmentService = db.investmentService;
+export const investmentAccountService = db.investmentAccountService;
 export const insuranceService = db.insuranceService;
 export const interactionService = db.interactionService;
 export const userService = db.userService;
