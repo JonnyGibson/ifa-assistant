@@ -13,6 +13,7 @@ node_modules/
 # Build output
 dist/
 build/
+.github/
 
 # IDE and editor files
 .idea/

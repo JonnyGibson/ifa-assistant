@@ -63,12 +63,22 @@
       </form>
 
       <div class="flex flex-col items-center space-y-4 text-sm text-gray-600">
-        <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 text-center">
+        <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 text-center w-full">
           <p class="text-blue-800 font-medium mb-1">Demo Login:</p>
           <p class="text-blue-600">Email: admin@webserve.it</p>
           <p class="text-blue-600">Password: admin123</p>
+          <Button
+            type="button"
+            label="Auto Fill"
+            icon="pi pi-bolt"
+            severity="info"
+            text
+            size="small"
+            class="mt-2"
+            @click="autoFill"
+          />
         </div>
-        <div class="flex flex-col items-center gap-2">
+        <div class="flex flex-col items-center gap-2 w-full">
           <Button
             type="button"
             :label="refreshing ? 'Refreshing Data...' : 'Reset Database'"
@@ -76,7 +86,7 @@
             :disabled="refreshing"
             severity="secondary"
             raised
-            class="px-6 py-3 bg-emerald-600 border border-emerald-500 hover:bg-emerald-700 transition-colors duration-200 text-white font-medium rounded-lg"
+            class="w-full px-6 py-3 bg-emerald-600 border border-emerald-500 hover:bg-emerald-700 transition-colors duration-200 text-white font-medium rounded-lg"
             @click="refreshData"
           />
           <div v-if="refreshMessage" :class="[
@@ -114,6 +124,9 @@ export default {
     const refreshing = ref(false);
     const refreshMessage = ref('');
     const refreshError = ref(false);
+
+    const demoEmail = 'admin@webserve.it';
+    const demoPassword = 'admin123';
 
     const handleSubmit = async () => {
       if (!email.value || !password.value) {
@@ -154,6 +167,12 @@ export default {
       }
     };
 
+    const autoFill = () => {
+      email.value = demoEmail;
+      password.value = demoPassword;
+      error.value = ''; // Clear any previous errors
+    };
+
     return {
       email,
       password,
@@ -163,7 +182,8 @@ export default {
       refreshMessage,
       refreshError,
       handleSubmit,
-      refreshData
+      refreshData,
+      autoFill // Expose the new function
     };
   }
 };

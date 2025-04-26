@@ -1,10 +1,10 @@
 <template>
   <aside 
     :class="[
-      'bg-gradient-to-b from-gray-800 to-gray-900 text-white flex flex-col',
+      'bg-gradient-to-b from-gray-800 to-gray-900 text-white flex flex-col h-full', // Added h-full
       'fixed md:static inset-y-0 left-0 z-10 transform transition-transform duration-300',
       isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
-      'w-72 lg:w-64'  // Wider on tablet, normal on desktop
+      'w-64'  // Consistent width
     ]"
   >
     <div class="p-4 border-b border-gray-700">
@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <nav class="mt-4 flex-grow px-3 space-y-2">  <!-- Increased padding and spacing -->
+    <nav class="mt-4 flex-grow px-3 space-y-2">
       <router-link 
         :to="{ name: 'Dashboard' }" 
         class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-emerald-700 hover:text-white transition-colors"
@@ -80,6 +80,27 @@
         Settings
       </router-link>
     </nav>
+
+    <!-- Footer Actions -->
+    <div class="mt-auto p-4 border-t border-gray-700 space-y-2">
+      <!-- Refresh Data Button -->
+      <button 
+        @click="$emit('refresh')"
+        class="w-full flex items-center justify-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-emerald-700 hover:text-white transition-colors"
+      >
+        <i class="fas fa-sync-alt mr-2"></i>
+        Refresh Data
+      </button>
+
+      <!-- Sign Out Button -->
+      <button 
+        @click="$emit('logout')"
+        class="w-full flex items-center justify-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-red-700 hover:text-white transition-colors"
+      >
+        <i class="fas fa-sign-out-alt mr-2"></i>
+        Sign Out
+      </button>
+    </div>
   </aside>
 </template>
 
@@ -100,6 +121,6 @@ export default {
       default: false
     }
   },
-  emits: ['close']
-}
+  emits: ['close', 'logout', 'refresh']
+};
 </script>

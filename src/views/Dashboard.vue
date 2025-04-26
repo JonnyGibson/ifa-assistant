@@ -4,14 +4,6 @@
       <p class="text-red-700">{{ error }}</p>
     </div>
 
-    <!-- Adding refresh button -->
-    <div class="flex justify-end">
-      <button @click="refreshDashboard" class="flex items-center gap-2 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 px-4 rounded">
-        <i class="fas fa-sync-alt" :class="{'animate-spin': isLoading}"></i>
-        Refresh Data
-      </button>
-    </div>
-
     <div v-if="isLoading" class="flex justify-center items-center min-h-[400px]">
       <i class="pi pi-spin pi-spinner text-4xl text-emerald-500"></i>
     </div>

@@ -109,7 +109,7 @@ The Dashboard (`Dashboard.vue`) serves as the central hub, displaying key metric
 2. System loads client data, portfolio valuations, and recent interactions
 3. User sees:
    - Summary statistics (total clients, AUM, active portfolios)
-   - Portfolio distribution by category
+   - Portfolio distribution by category (using Chart.js)
    - Top clients by portfolio value
    - Recent interactions across all clients
    - Upcoming appointments
@@ -233,7 +233,7 @@ The Appointments page (`Appointments.vue`) allows users to manage client meeting
 **User Flow:**
 1. User navigates to Appointments from sidebar
 2. System loads all scheduled appointments from IndexedDB
-3. Appointments are displayed in a calendar or list view showing:
+3. Appointments are displayed in a calendar view and/or a list view showing:
    - Client name
    - Date and time
    - Appointment type
@@ -268,7 +268,7 @@ The Settings page (`Settings.vue`) provides admin-only functionality for system 
    - Edit existing user details
    - Reset user passwords
    - Delete users
-   - Reset the entire database
+   - Reset the entire database (development/testing feature)
 
 **Adding New Users:**
 1. Admin clicks "Add User" button
@@ -281,9 +281,9 @@ The Settings page (`Settings.vue`) provides admin-only functionality for system 
 3. On submission, new user is created in the system
 
 **Database Management:**
-1. Admin can click "Reset Database" to restore system to initial state
-2. Confirmation dialog prevents accidental resets
-3. After reset, system is reinitialized with seed data
+1. Admin can click "Reset Database" to restore system to initial state (clears all data and re-seeds with test data).
+2. Confirmation dialog prevents accidental resets.
+3. After reset, system is reinitialized with seed data.
 
 ### 5.7. Error Handling & Recovery
 
@@ -361,11 +361,15 @@ Please refer to the `.cursorrules` file for detailed AI development guidelines. 
 
 ## 8. Testing Guidelines
 
-The project uses MCP (Model Control Protocol) for automated testing:
+The project utilizes MCP (Model Control Protocol) for automated testing to ensure application stability and correctness. Key areas covered by tests include:
 
-- Test all authentication flows (login, logout, session handling)
-- Verify client management operations (CRUD)
-- Test navigation paths and authentication guards
-- Validate form submissions and data persistence
-- Check dashboard metric calculations
-- Verify filter and search functionality
+-   **Authentication:** Login, logout, session persistence, token handling, and access control via route guards.
+-   **Client Management:** Create, Read, Update, and Delete (CRUD) operations for client records. Verification of data persistence in IndexedDB.
+-   **Navigation:** Testing all primary navigation paths and ensuring authenticated routes are protected.
+-   **Form Handling:** Validation logic, successful submission, and error handling for all major forms (Login, Add Client, Add Appointment, etc.).
+-   **Data Display:** Verification that dashboard metrics are calculated and displayed correctly based on underlying data.
+-   **Filtering & Searching:** Testing the functionality of search inputs and filters in tables (Clients, Funds).
+-   **Appointments:** CRUD operations for appointments and correct display in calendar/list views.
+-   **Admin Functions:** Testing user management (add, edit, delete users) and database reset functionality.
+
+Tests should verify not only that actions complete programmatically but also that UI elements are interactive from a user's perspective (visible, enabled, clickable) where feasible using MCP capabilities.

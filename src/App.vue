@@ -18,7 +18,7 @@
     <template v-else>
       <LoginForm v-if="!currentUser" @login="handleLogin" />
       
-      <div v-else class="flex min-h-screen relative">
+      <div v-else class="flex h-screen overflow-hidden">
         <!-- Mobile Menu Button -->
         <button 
           @click="toggleSidebar"
@@ -34,6 +34,9 @@
           :is-admin="currentUser?.isAdmin"
           :is-open="isSidebarOpen"
           @close="closeSidebar"
+          @logout="handleLogout"
+          @refresh="refreshData"
+          class="h-full"
         />
         
         <!-- Overlay for mobile -->
@@ -50,16 +53,6 @@
             <div class="h-36 md:h-48 bg-gradient-to-r from-emerald-800 to-emerald-600 relative overflow-hidden">
               <div class="absolute inset-0 bg-cover bg-center" :style="{ backgroundImage: `url('/bg1.jpg')` }"></div>
               <div class="absolute inset-0 bg-gradient-to-r from-emerald-800/40 to-emerald-600/40"></div>
-              <div class="h-full flex items-center justify-end px-4 md:px-8 relative">
-                <Button 
-                  @click="handleLogout" 
-                  severity="secondary" 
-                  raised
-                  icon="pi pi-sign-out" 
-                  label="Sign Out" 
-                  class="px-4 md:px-6 py-2 bg-white/20 border border-white/30 hover:bg-white/30 transition-colors duration-200 text-white font-medium rounded-lg"
-                />
-              </div>
             </div>
           </div>
           <!-- Main content -->
@@ -73,7 +66,7 @@
 </template>
 
 <script>
-import { ref, computed, provide, onMounted } from 'vue';
+import { ref, provide, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Sidebar from './components/Sidebar.vue';
 import LoginForm from './components/LoginForm.vue';
@@ -114,6 +107,19 @@ export default {
         router.push('/');
       } catch (error) {
         console.error('[App] Logout failed:', error);
+      }
+    };
+
+    const refreshData = async () => {
+      try {
+        isLoading.value = true;
+        await db.initialize(true);
+        window.location.reload();
+      } catch (error) {
+        console.error('[App] Data refresh failed:', error);
+        alert('Failed to refresh data. Please try again.');
+      } finally {
+        isLoading.value = false;
       }
     };
 
@@ -159,6 +165,7 @@ export default {
       dbError,
       handleLogin,
       handleLogout,
+      refreshData,
       isSidebarOpen,
       toggleSidebar,
       closeSidebar
