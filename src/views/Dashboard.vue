@@ -10,7 +10,7 @@
 
     <template v-else>
       <!-- Stats Overview Section -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 -mt-14 relative z-10">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 relative z-10">
         <StatsCard
           title="Total Clients"
           :value="stats.totalClients"
