@@ -10,11 +10,6 @@
           <div v-if="isLoading" class="flex items-center gap-2">
             <span class="text-sm text-gray-600">Loading...</span>
           </div>
-          <button 
-            @click="updateFunds" 
-            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-            Update Funds
-          </button>
         </div>
       </div>
       <div class="mb-4 flex gap-4">

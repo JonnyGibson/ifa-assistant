@@ -6,16 +6,18 @@
     "dev": "vite --debug",
     "build": "vite build",
     "preview": "vite preview",
-  
     "start-server": "node scripts/start-server.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
+    "axios": "^1.9.0",
     "chart.js": "^4.4.0",
+    "cheerio": "^1.0.0",
     "dexie": "^3.2.4",
     "express": "^4.18.2",
+    "node-cache": "^5.1.2",
     "primeicons": "^7.0.0",
     "primevue": "^3.53.1",
     "react-icons": "^5.5.0",

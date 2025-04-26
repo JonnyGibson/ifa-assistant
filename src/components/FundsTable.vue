@@ -7,7 +7,6 @@
           <tr>
             <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fund Name</th>
             <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NAV</th>
-            <th class="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
             <th class="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Portfolios</th>
             <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
           </tr>
@@ -17,7 +16,15 @@
             <td class="px-4 sm:px-6 py-4">
               <div class="flex flex-col">
                 <span class="font-medium text-gray-900 line-clamp-2">{{ fund.name }}</span>
-                <span class="text-xs text-gray-500">ISIN: {{ fund.isin }}</span>
+                <div class="flex flex-col text-xs mt-1">
+                  <span class="text-gray-500">ISIN: {{ fund.isin }}</span>
+                  <span :class="[
+                    'mt-1 inline-block w-fit px-2 py-0.5 text-xs rounded-full',
+                    getCategoryBadgeClass(fund.category)
+                  ]">
+                    {{ fund.category }}
+                  </span>
+                </div>
               </div>
             </td>
             <td class="px-4 sm:px-6 py-4">
@@ -25,14 +32,6 @@
                 <span class="font-medium text-gray-900">{{ formatCurrency(fund.price) }}</span>
                 <span class="text-xs text-emerald-600">{{ formatDate(fund.lastUpdated) }}</span>
               </div>
-            </td>
-            <td class="hidden sm:table-cell px-4 sm:px-6 py-4">
-              <span :class="[
-                'px-2 py-1 text-xs rounded-full',
-                getCategoryBadgeClass(fund.category)
-              ]">
-                {{ fund.category }}
-              </span>
             </td>
             <td class="hidden sm:table-cell px-4 sm:px-6 py-4">
               <div class="flex items-center gap-2">

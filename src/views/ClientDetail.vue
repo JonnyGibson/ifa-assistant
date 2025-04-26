@@ -2,9 +2,9 @@
   <div v-if="isLoading" class="flex justify-center items-center py-10">
      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
   </div>
-  <div v-else-if="client" class="p-6 -mt-12 relative z-10">
+  <div v-else-if="client" class="p-6 relative">
     <!-- Client Overview Card -->
-    <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 mb-6 transition-all duration-300 hover:shadow-hover">
+    <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 mb-6 transition-all duration-300 hover:shadow-hover relative z-20">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Basic Info -->
         <div>
@@ -58,19 +58,49 @@
 
     <!-- Portfolio Summary -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <!-- Portfolio Overview -->
       <div class="lg:col-span-2">
         <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 h-full transition-all duration-300 hover:shadow-hover">
           <h3 class="text-lg font-semibold text-gray-800 mb-4 flex justify-between items-center">
             <span>Portfolio Overview</span>
-            <span class="text-lg font-semibold text-emerald-600" aria-label="Total portfolio value">
-              {{ formatCurrency(totalPortfolioValue) }}
-            </span>
+            <div class="flex items-center gap-4">
+              <button 
+                @click="updateFundPrices" 
+                class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-emerald-600 bg-emerald-50 rounded-md hover:bg-emerald-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+              >
+                <i class="fas fa-sync-alt mr-2"></i>
+                Update Fund Prices
+              </button>
+              <span class="text-lg font-semibold text-emerald-600" aria-label="Total portfolio value">
+                {{ formatCurrency(totalPortfolioValue) }}
+              </span>
+            </div>
           </h3>
           
           <!-- Category Distribution Chart -->
-          <div v-if="holdings.length > 0" class="mt-4 mb-6">
-            <h4 class="text-sm font-medium text-gray-600 mb-2">Category Distribution</h4>
-            <canvas ref="categoryChart" width="400" height="256" style="display:block;max-width:100%;height:auto;"></canvas>
+          <div v-if="holdings.length > 0" class="mt-4 mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 class="text-sm font-medium text-gray-600 mb-2">Category Distribution</h4>
+              <canvas ref="categoryChart" width="400" height="256" style="display:block;max-width:100%;height:auto;"></canvas>
+            </div>
+            <div>
+              <h4 class="text-sm font-medium text-gray-600 mb-2">Asset Allocation</h4>
+              <div class="space-y-3">
+                <div v-for="(value, type) in portfolioAssetAllocation" :key="type" class="flex justify-between items-center">
+                  <span class="text-sm font-medium">{{ formatAssetType(type) }}</span>
+                  <div class="flex items-center gap-2">
+                    <div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div 
+                        class="h-full rounded-full" 
+                        :class="getAssetAllocationColor(type)"
+                        :style="{ width: `${value}%` }"
+                      ></div>
+                    </div>
+                    <span class="text-sm text-gray-600">{{ value.toFixed(1) }}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           
           <!-- Investment Accounts Summary -->
@@ -103,8 +133,7 @@
                     <table class="min-w-full text-sm">
                       <thead>
                         <tr class="text-gray-500">
-                          <th class="text-left py-2">Fund Name</th>
-                          <th class="text-left py-2">Category</th>
+                          <th class="text-left py-2">Fund</th>
                           <th class="text-right py-2">Units</th>
                           <th class="text-right py-2">Price</th>
                           <th class="text-right py-2">Value</th>
@@ -113,14 +142,14 @@
                       <tbody class="divide-y divide-gray-100">
                         <tr v-for="holding in account.holdings" :key="holding.id" class="hover:bg-gray-50">
                           <td class="py-2">
-                            <a :href="holding.fund.ftLink" target="_blank" class="hover:text-emerald-600">
-                              {{ holding.fund.name }}
-                            </a>
-                          </td>
-                          <td class="py-2">
-                            <span class="px-2 py-1 rounded-full text-xs" :class="getCategoryBadgeClass(holding.fund.category)">
-                              {{ holding.fund.category }}
-                            </span>
+                            <div class="flex flex-col">
+                              <a :href="holding.fund.ftLink" target="_blank" class="hover:text-emerald-600">
+                                {{ holding.fund.name }}
+                              </a>
+                              <span :class="['text-xs mt-1 inline-block w-fit px-2 py-0.5 rounded-full', getCategoryBadgeClass(holding.fund.category)]">
+                                {{ holding.fund.category }}
+                              </span>
+                            </div>
                           </td>
                           <td class="text-right py-2">{{ Math.round(holding.unitsHeld) }}</td>
                           <td class="text-right py-2">{{ formatCurrency(holding.fund.price) }}</td>
@@ -198,9 +227,9 @@
           </div>
         </div>
       </div>
-      
-      <!-- Interaction History Card -->
-      <div>
+
+      <!-- Recent Interactions Card -->
+      <div class="lg:col-span-1">
         <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 h-full transition-all duration-300 hover:shadow-hover">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-semibold text-gray-800">Recent Interactions</h3>
@@ -213,34 +242,17 @@
               <thead class="bg-gray-50">
                 <tr>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
                 <tr v-for="interaction in interactions.slice(0, 5)" :key="interaction.id" 
                     class="hover:bg-gray-50 transition-colors duration-150">
                   <td class="px-6 py-4">
-                    <div class="flex items-center gap-2">
-                      <span class="text-sm font-medium text-gray-900">{{ interactionTypeMap[interaction.interactionTypeId]?.name || 'Unknown Type' }}</span>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4">
-                    <span class="text-sm text-gray-900">{{ interaction.userName }}</span>
+                    <span class="text-sm font-medium text-gray-900">{{ interactionTypeMap[interaction.interactionTypeId]?.name || 'Unknown Type' }}</span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {{ formatDate(interaction.date) }}
-                  </td>
-                  <td class="px-6 py-4">
-                    <span :class="[
-                      'px-2 py-1 text-xs rounded-full',
-                      interaction.status === 'completed' ? 'bg-green-100 text-green-800' :
-                      interaction.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
-                      'bg-gray-100 text-gray-800'
-                    ]">
-                      {{ interaction.status }}
-                    </span>
                   </td>
                 </tr>
               </tbody>
@@ -480,6 +492,41 @@
     </router-link>
   </div>
 
+  <!-- Fund Price Update Popover -->
+  <div v-if="isUpdatingFunds" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full m-4">
+      <div class="mb-4">
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Updating Fund Prices</h3>
+        <div class="space-y-4">
+          <div v-for="fund in updateProgress" :key="fund.isin" class="text-sm">
+            <div class="flex justify-between mb-1">
+              <span class="font-medium">{{ fund.name }}</span>
+              <span class="text-gray-600">{{ formatDate(fund.lastUpdated) }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-emerald-600">{{ formatCurrency(fund.price) }}</span>
+              <i :class="[
+                'fas',
+                fund.status === 'pending' ? 'fa-clock text-gray-400' :
+                fund.status === 'updating' ? 'fa-sync-alt fa-spin text-blue-500' :
+                fund.status === 'success' ? 'fa-check text-green-500' :
+                'fa-exclamation-circle text-red-500'
+              ]"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end">
+        <button
+          @click="cancelUpdateFunds"
+          class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Delete Confirmation Modal -->
   <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg p-6 max-w-md w-full m-4">
@@ -544,10 +591,12 @@ export default {
     const holdingsLoading = ref(true);
     const interactionsLoading = ref(true);
     const categoryChart = ref(null);
-    const categoryChartInstance = ref(null); // Track Chart.js instance
+    const categoryChartInstance = ref(null);
     const expandedAccount = ref(null);
     const expandedPolicy = ref(null);
     const showDeleteModal = ref(false);
+    const isUpdatingFunds = ref(false);
+    const updateProgress = ref([]);
 
     const clientId = computed(() => Number(props.id));
 
@@ -737,6 +786,94 @@ export default {
       client.value?.accounts?.reduce((sum, account) => sum + calculateAccountValue(account), 0) || 0
     );
 
+    const portfolioAssetAllocation = computed(() => {
+      const totalValue = totalPortfolioValue.value;
+      if (!totalValue) return {};
+      
+      // First pass: accumulate raw values
+      const rawAllocation = holdings.value.reduce((acc, holding) => {
+        const fund = holding.fund;
+        if (!fund) return acc;
+        
+        const value = holding.currentValue || (holding.unitsHeld * fund.price) || 0;
+        if (fund.allocation) {
+          Object.entries(fund.allocation).forEach(([type, percentage]) => {
+            if (type !== 'other') { // Exclude 'other' in first pass
+              if (!acc[type]) acc[type] = 0;
+              acc[type] += (value * (percentage / 100));
+            }
+          });
+        }
+        return acc;
+      }, {});
+
+      // Calculate remaining value for 'other' category
+      const allocatedValue = Object.values(rawAllocation).reduce((sum, val) => sum + val, 0);
+      const otherValue = totalValue - allocatedValue;
+      if (otherValue > 0) {
+        rawAllocation.other = otherValue;
+      }
+
+      // Convert to percentages
+      return Object.entries(rawAllocation).reduce((acc, [type, value]) => {
+        acc[type] = (value / totalValue) * 100;
+        return acc;
+      }, {});
+    });
+
+    const formatAssetType = (type) => {
+      const formatMap = {
+        'nonUKStock': 'Non-UK Stock',
+        'ukStock': 'UK Stock',
+        'nonUKBond': 'Non-UK Bond',
+        'ukBond': 'UK Bond',
+        'cash': 'Cash',
+        'other': 'Other'
+      };
+      return formatMap[type] || type;
+    };
+
+    const getAssetAllocationColor = (type) => {
+      const colorMap = {
+        'nonUKStock': 'bg-blue-500',
+        'ukStock': 'bg-emerald-500',
+        'nonUKBond': 'bg-purple-500',
+        'ukBond': 'bg-indigo-500',
+        'cash': 'bg-gray-500',
+        'other': 'bg-yellow-500'
+      };
+      return colorMap[type] || 'bg-gray-400';
+    };
+
+    const updateFundPrices = async () => {
+      try {
+        console.log('[updateFundPrices] Starting fund price updates...');
+        isUpdatingFunds.value = true;
+        const funds = await investmentService.updateFundPrices();
+        
+        // Initialize progress tracking
+        updateProgress.value = funds.map(fund => ({
+          ...fund,
+          status: 'updating'
+        }));
+        
+        // Update holdings with new prices
+        await fetchClientData();
+        
+        // Update progress states
+        updateProgress.value = funds;
+        
+        console.log('[updateFundPrices] Fund prices updated successfully');
+      } catch (error) {
+        console.error('[updateFundPrices] Error updating fund prices:', error);
+        alert('Failed to update fund prices. Please try again later.');
+      }
+    };
+
+    const cancelUpdateFunds = () => {
+      isUpdatingFunds.value = false;
+    };
+
     const calculateGainLossPercent = (holding) => {
       if (!holding.purchasePrice || !holding.currentValue) return 0;
       const initialValue = holding.purchasePrice * holding.unitsHeld;
@@ -829,6 +966,7 @@ export default {
       holdingsLoading,
       interactionsLoading,
       totalPortfolioValue,
+      portfolioAssetAllocation,
       formatDate,
       formatCurrency,
       getRiskProfileBadgeClass,
@@ -843,9 +981,15 @@ export default {
       toggleAccountDetails,
       togglePolicyDetails,
       calculateAccountValue,
+      formatAssetType,
+      getAssetAllocationColor,
       showDeleteModal,
       deleteClient,
-      confirmDeleteClient
+      confirmDeleteClient,
+      updateFundPrices,
+      isUpdatingFunds,
+      updateProgress,
+      cancelUpdateFunds
     };
   }
 }

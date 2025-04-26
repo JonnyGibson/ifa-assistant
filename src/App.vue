@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 flex flex-col">
     <div v-if="isLoading" class="flex items-center justify-center min-h-screen">
       <ProgressSpinner />
       <div class="ml-4 text-gray-600">Loading application...</div>
@@ -47,18 +47,17 @@
         ></div>
 
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col min-h-screen">
-          <!-- Header with dynamic background -->
-          <div class="relative">
-            <div class="h-36 md:h-48 bg-gradient-to-r from-emerald-800 to-emerald-600 relative overflow-hidden">
-              <div class="absolute inset-0 bg-cover bg-center" :style="{ backgroundImage: `url('/bg1.jpg')` }"></div>
-              <div class="absolute inset-0 bg-gradient-to-r from-emerald-800/40 to-emerald-600/40"></div>
-            </div>
+        <div class="flex-1 flex flex-col">
+          <!-- Header background -->
+          <div class="bg-gradient-to-r from-emerald-800 to-emerald-600 h-36 md:h-48 relative">
+            <div class="absolute inset-0 bg-cover bg-center opacity-50" style="background-image: url(/bg1.jpg)"></div>
           </div>
           <!-- Main content -->
-          <main class="flex-1 px-4 md:px-6 lg:px-8 -mt-12 mb-8 relative max-w-[1920px] mx-auto w-full">
-            <router-view></router-view>
-          </main>
+          <div class="flex-1 overflow-y-auto -mt-12">
+            <main class="px-4 md:px-6 lg:px-8 mb-8 relative max-w-[1920px] mx-auto w-full">
+              <router-view></router-view>
+            </main>
+          </div>
         </div>
       </div>
     </template>
