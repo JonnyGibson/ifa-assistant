@@ -410,14 +410,23 @@ export default {
     };
 
     const filteredClients = computed(() => {
-      if (!searchQuery.value) return clients.value;
+      let results = clients.value;
       
-      const query = searchQuery.value.toLowerCase();
-      return clients.value.filter(client => 
-        client.firstName.toLowerCase().includes(query) ||
-        client.lastName.toLowerCase().includes(query) ||
-        client.email.toLowerCase().includes(query)
-      );
+      if (searchQuery.value) {
+        const query = searchQuery.value.toLowerCase();
+        results = results.filter(client => 
+          client.firstName.toLowerCase().includes(query) ||
+          client.lastName.toLowerCase().includes(query) ||
+          client.email.toLowerCase().includes(query)
+        );
+      }
+      
+      // Sort by most recent interaction date
+      return results.sort((a, b) => {
+        const dateA = clientInteractions.value[a.id]?.lastDate || '1900-01-01';
+        const dateB = clientInteractions.value[b.id]?.lastDate || '1900-01-01';
+        return new Date(dateB) - new Date(dateA);
+      });
     });
 
     const totalPages = computed(() => Math.ceil(filteredClients.value.length / itemsPerPage));
@@ -447,10 +456,12 @@ export default {
       const diffMs = now - past;
       const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
       
-      if (diffDays === 0) return 'today';
-      if (diffDays < 7) return `${diffDays}d ago`;
-      if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
-      return `${Math.floor(diffDays / 30)}m ago`;
+      if (diffDays === 0) return 'Today';
+      if (diffDays === 1) return 'Yesterday';
+      if (diffDays < 7) return 'This week';
+      if (diffDays < 30) return 'This month';
+      const months = Math.floor(diffDays / 30);
+      return `${months} ${months === 1 ? 'month' : 'months'} ago`;
     };
 
     const lastInteractionDate = (clientId) => {

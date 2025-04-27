@@ -61,9 +61,9 @@
       <!-- Portfolio Overview -->
       <div class="lg:col-span-2">
         <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 h-full transition-all duration-300 hover:shadow-hover">
-          <h3 class="text-lg font-semibold text-gray-800 mb-4 flex justify-between items-center">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <span>Portfolio Overview</span>
-            <div class="flex items-center gap-4">
+            <div class="flex flex-wrap items-center gap-4">
               <button 
                 @click="updateFundPrices" 
                 :disabled="holdings.length === 0" 
@@ -80,14 +80,16 @@
           </h3>
           
           <!-- Category Distribution Chart -->
-          <div v-if="holdings.length > 0" class="mt-4 mb-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+          <div v-if="holdings.length > 0" class="mt-4 mb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="min-h-[300px] flex flex-col">
               <h4 class="text-sm font-medium text-gray-600 mb-2">Category Distribution</h4>
-              <canvas ref="categoryChart" width="400" height="256" style="display:block;max-width:100%;height:auto;"></canvas>
+              <div class="relative flex-1">
+                <canvas ref="categoryChart"></canvas>
+              </div>
             </div>
-            <div>
+            <div class="min-h-[300px] flex flex-col">
               <h4 class="text-sm font-medium text-gray-600 mb-2">Asset Allocation</h4>
-              <div class="space-y-3">
+              <div class="space-y-3 flex-1 flex flex-col justify-center">
                 <div v-for="(value, type) in portfolioAssetAllocation" :key="type" class="flex justify-between items-center">
                   <span class="text-sm font-medium">{{ formatAssetType(type) }}</span>
                   <div class="flex items-center gap-2">
@@ -603,7 +605,7 @@
 </template>
 
 <script>
-import { ref, onMounted, computed, watch, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Chart, ArcElement, Tooltip, Legend, PieController } from 'chart.js';
 import { clientService, investmentService, interactionService, insuranceService, userService } from '../services/database';
@@ -727,17 +729,18 @@ export default {
         console.log('[setupCategoryChart] No holdings, skipping chart');
         return;
       }
-      // Log canvas dimensions and parent
-      const canvas = categoryChart.value;
-      console.log('[setupCategoryChart] Canvas:', canvas, 'Parent:', canvas.parentElement, 'Width:', canvas.width, 'Height:', canvas.height);
+
+      const ctx = categoryChart.value.getContext('2d');
+      if (!ctx) {
+        console.log('[setupCategoryChart] Failed to get canvas context');
+        return;
+      }
 
       // Destroy previous chart instance if it exists
       if (categoryChartInstance.value) {
         console.log('[setupCategoryChart] Destroying previous chart instance');
         categoryChartInstance.value.destroy();
         categoryChartInstance.value = null;
-      } else {
-        console.log('[setupCategoryChart] No previous chart instance to destroy');
       }
 
       const categoryData = holdings.value.reduce((acc, holding) => {
@@ -762,8 +765,8 @@ export default {
         '#EC4899', '#F59E0B', '#84CC16', '#14B8A6'
       ];
 
-      console.log('[setupCategoryChart] Creating new Chart instance with labels:', labels, 'data:', data);
-      categoryChartInstance.value = new Chart(categoryChart.value, {
+      // Create chart configuration
+      const config = {
         type: 'doughnut',
         data: {
           labels,
@@ -775,16 +778,28 @@ export default {
           }]
         },
         options: {
-          responsive: false, // Disable responsiveness to prevent canvas growth
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: {
+            padding: {
+              bottom: 10
+            }
+          },
           plugins: {
             legend: {
-              position: 'right',
+              position: 'bottom',
+              align: 'center',
+              display: true,
               labels: {
                 usePointStyle: true,
-                font: { size: 12 }
+                padding: 20,
+                font: { size: 12 },
+                boxWidth: 10,
+                boxHeight: 10
               }
             },
             tooltip: {
+              enabled: true,
               callbacks: {
                 label: (context) => {
                   const value = context.raw;
@@ -796,9 +811,53 @@ export default {
             }
           }
         }
-      });
-      console.log('[setupCategoryChart] Chart instance created:', categoryChartInstance.value);
+      };
+
+      // Create new chart instance
+      try {
+        categoryChartInstance.value = new Chart(ctx, config);
+        console.log('[setupCategoryChart] Chart instance created successfully');
+      } catch (error) {
+        console.error('[setupCategoryChart] Error creating chart:', error);
+        categoryChartInstance.value = null;
+      }
     };
+
+    // Debounced resize handler to prevent too many updates
+    let resizeTimeout;
+    const handleResize = () => {
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+      resizeTimeout = setTimeout(() => {
+        if (categoryChartInstance.value && !categoryChartInstance.value.destroyed) {
+          try {
+            categoryChartInstance.value.resize();
+          } catch (error) {
+            console.error('[handleResize] Error resizing chart:', error);
+            // If resize fails, try to recreate the chart
+            setupCategoryChart();
+          }
+        }
+      }, 250); // Debounce resize events
+    };
+
+    // Set up resize listener
+    onMounted(() => {
+      window.addEventListener('resize', handleResize);
+    });
+
+    // Clean up resize listener and chart
+    onUnmounted(() => {
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+      window.removeEventListener('resize', handleResize);
+      if (categoryChartInstance.value) {
+        categoryChartInstance.value.destroy();
+        categoryChartInstance.value = null;
+      }
+    });
 
     watch(
       [holdings, categoryChart],
