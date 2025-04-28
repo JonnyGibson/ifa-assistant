@@ -1,8 +1,19 @@
 <template>
   <div class="px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Page Title -->
+    <!-- Page Title with Show All button when filtered -->
     <div class="relative z-10 bg-white bg-opacity-90 inline-block px-6 py-3 rounded-lg shadow-sm mb-6">
-      <h1 class="text-3xl font-bold text-emerald-600">Activity Log</h1>
+      <div class="flex items-center justify-between gap-4">
+        <h1 class="text-3xl font-bold text-emerald-600">Activity Log</h1>
+        <div v-if="clientId" class="flex items-center gap-2">
+          <span class="text-sm text-gray-600">Filtered by client</span>
+          <button
+            @click="router.push({ name: 'Activity' })"
+            class="px-3 py-1 text-sm bg-emerald-100 text-emerald-700 rounded-full hover:bg-emerald-200 transition-colors"
+          >
+            Show All Clients
+          </button>
+        </div>
+      </div>
     </div>
 
     <section aria-label="Activity log entries" class="relative">
@@ -262,6 +273,11 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { clientService, interactionService, userService } from '../services/database';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
+const clientId = computed(() => route.query.clientId ? Number(route.query.clientId) : null);
 
 const entries = ref([]);
 const interactionTypes = ref([]);
@@ -307,12 +323,13 @@ const toggleFilters = () => {
   isFiltersOpen.value = !isFiltersOpen.value;
 };
 
-// Filter entries based on selected types and users
+// Filter entries based on selected types, users, and client
 const filteredEntries = computed(() => {
   return entries.value.filter(entry => {
     const typeMatch = selectedTypes.value.length === 0 || selectedTypes.value.includes(entry.interactionTypeId);
     const userMatch = selectedUsers.value.length === 0 || selectedUsers.value.includes(entry.userId);
-    return typeMatch && userMatch;
+    const clientMatch = !clientId.value || entry.clientId === clientId.value;
+    return typeMatch && userMatch && clientMatch;
   });
 });
 

@@ -140,6 +140,7 @@
                           <th class="text-left py-2">Fund</th>
                           <th class="text-right py-2">Units</th>
                           <th class="text-right py-2">Price</th>
+                          <th class="text-right py-2">Currency</th>
                           <th class="text-right py-2">Value</th>
                         </tr>
                       </thead>
@@ -156,10 +157,11 @@
                             </div>
                           </td>
                           <td class="text-right py-2">{{ Math.round(holding.unitsHeld) }}</td>
-                          <td class="text-right py-2">{{ formatCurrency(holding.fund.price) }}</td>
+                          <td class="text-right py-2">{{ formatNumber(holding.fund.price, 2) }}</td>
+                          <td class="text-right py-2">{{ holding.fund.currency || 'GBP' }}</td>
                           <td class="text-right py-2">
                             <span class="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700">
-                              {{ formatCurrency(holding.unitsHeld * holding.fund.price) }}
+                              {{ formatNumber(holding.unitsHeld * holding.fund.price, 2) }}
                             </span>
                           </td>
                         </tr>
@@ -1032,6 +1034,14 @@ export default {
           maximumFractionDigits: maxDecimals
       }).format(value);
     };
+
+    const formatNumber = (value, maxDecimals = 2) => {
+      if (typeof value !== 'number') return 'N/A';
+      return new Intl.NumberFormat('en-GB', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: maxDecimals
+      }).format(value);
+    };
     
     const getRiskProfileBadgeClass = (profile) => {
         switch (profile?.toLowerCase()) {
@@ -1099,6 +1109,7 @@ export default {
       portfolioAssetAllocation,
       formatDate,
       formatCurrency,
+      formatNumber,
       getRiskProfileBadgeClass,
       getCategoryBadgeClass,
       calculateGainLossPercent,

@@ -1276,35 +1276,6 @@
     }
   },
   {
-    "isin": "IE00B40YNZ54",
-    "sedol": null,
-    "name": "FTGF ClearBridge US Appreciation Fund LM Class JPY Accumulating",
-    "price": 21141.19,
-    "currency": "GBP",
-    "category": "US Large-Cap Blend Equity",
-    "lastUpdated": "2025-04-20T21:15:12.021Z",
-    "performance": {
-      "fiveYearChange": null,
-      "threeYearChange": null,
-      "oneYearChange": null,
-      "sixMonthChange": null,
-      "threeMonthChange": null,
-      "oneMonthChange": null
-    },
-    "allocation": {
-      "nonUKStock": 98.45,
-      "ukStock": 0,
-      "nonUKBond": 0,
-      "ukBond": 0,
-      "cash": 1.88,
-      "other": 25.61
-    },
-    "links": {
-      "ft": "https://markets.ft.com/data/funds/tearsheet/summary?s=IE00B40YNZ54",
-      "performance": "https://markets.ft.com/data/funds/tearsheet/performance?s=IE00B40YNZ54"
-    }
-  },
-  {
     "isin": "LU1956164856",
     "sedol": null,
     "name": "BNP Paribas Funds Sustainable US Multi-Factor Equity X USD Acc",

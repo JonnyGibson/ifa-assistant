@@ -306,8 +306,10 @@ function generateInteractionNote(typeId, clientFirstName) {
 }
 
 export async function generateAndSeedData(db, numClients = 50) {
-  // 1. Fetch all funds from DB (must be seeded first)
-  const allFunds = await db.funds.toArray();
+  // 1. Fetch all funds from DB and filter by allowed currencies
+  const allFunds = (await db.funds.toArray()).filter(fund => 
+    ['GBP', 'EUR', 'USD'].includes(fund.currency)
+  );
   if (!allFunds.length) throw new Error('No funds available in database. Seed funds before clients.');
 
   // Get admin and regular user data
@@ -318,7 +320,6 @@ export async function generateAndSeedData(db, numClients = 50) {
     throw new Error('Both admin and regular users must exist before seeding data');
   }
 
-  // Create array of users with their emails for interaction assignment
   const users = [
     { id: adminUser.id, email: adminUser.email },
     { id: regularUser.id, email: regularUser.email }
@@ -330,18 +331,27 @@ export async function generateAndSeedData(db, numClients = 50) {
     products: generateAccountProducts(),
     insurancePolicies: generateInsurancePolicies()
   }));
+
   const clientIds = [];
+  // Track number of high-value portfolios created
+  let highValuePortfolios = 0;
+  const MAX_HIGH_VALUE_PORTFOLIOS = 10; // Maximum number of portfolios > £1M
+
   for (const c of clientData) {
     const clientId = await db.clients.add({ ...c.client });
     clientIds.push(clientId);
+
     // 3. For each client, create 1-3 investment accounts (portfolios)
     const numAccounts = c.products.length;
+    let clientTotalValue = 0;
+
     for (let i = 0; i < numAccounts; i++) {
       const product = c.products[i];
       // Pick 2-7 random funds for this account
       const numFunds = Math.floor(Math.random() * (product.maxFunds - product.minFunds + 1)) + product.minFunds;
       const shuffledFunds = allFunds.sort(() => 0.5 - Math.random());
       const selectedFunds = shuffledFunds.slice(0, numFunds);
+
       // Create account
       const accountId = await db.accounts.add({
         clientId,
@@ -351,22 +361,37 @@ export async function generateAndSeedData(db, numClients = 50) {
         dateOpened: new Date().toISOString(),
         status: 'active'
       });
-      // Create holdings for this account with reduced units
+
+      // Calculate target portfolio value range based on remaining high-value slots
+      const isHighValue = highValuePortfolios < MAX_HIGH_VALUE_PORTFOLIOS && Math.random() < 0.2;
+      const targetValue = isHighValue ? 
+        Math.random() * 1500000 + 1000000 : // £1M - £2.5M for high value
+        Math.random() * 750000 + 50000;     // £50K - £800K for regular
+
+      // Create holdings for this account
       for (const fund of selectedFunds) {
-        // Generate original units between 10-1010
-        const originalUnits = Math.floor(Math.random() * 1000) + 10;
-        // Reduce by factor of 3, but ensure minimum of 1 unit
-        const reducedUnits = Math.max(1, Math.floor(originalUnits / 3));
+        if (!fund.price) continue;
+        
+        // Calculate units to achieve target value distribution
+        const targetHoldingValue = targetValue / numFunds;
+        const units = Math.floor(targetHoldingValue / fund.price);
         
         await db.holdings.add({
           accountId,
           fundId: fund.id,
-          unitsHeld: reducedUnits,
-          purchasePrice: fund.price || Math.floor(Math.random() * 100) + 1,
+          unitsHeld: units,
+          purchasePrice: fund.price,
           purchaseDate: new Date().toISOString()
         });
+
+        clientTotalValue += units * fund.price;
+      }
+
+      if (clientTotalValue > 1000000) {
+        highValuePortfolios++;
       }
     }
+
     // 4. Insert insurance policies for this client
     for (const policy of c.insurancePolicies) {
       await db.insurancePolicies.add({
@@ -376,7 +401,7 @@ export async function generateAndSeedData(db, numClients = 50) {
     }
   }
 
-  // 5. Generate 2-6 interactions per client, spread over the past year and alternating between users
+  // 5. Generate 2-6 interactions per client
   const now = new Date();
   const allInteractions = [];
   for (const clientId of clientIds) {
@@ -387,7 +412,6 @@ export async function generateAndSeedData(db, numClients = 50) {
       const daysAgo = Math.floor(Math.random() * 365);
       const date = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
       const typeId = Math.floor(Math.random() * 9) + 1;
-      // Alternate between admin and regular user
       const user = users[i % 2];
       
       allInteractions.push({
