@@ -373,3 +373,302 @@ The project utilizes MCP (Model Control Protocol) for automated testing to ensur
 -   **Admin Functions:** Testing user management (add, edit, delete users) and database reset functionality.
 
 Tests should verify not only that actions complete programmatically but also that UI elements are interactive from a user's perspective (visible, enabled, clickable) where feasible using MCP capabilities.
+
+## 9. Page Layout & Navigation Structure
+
+### Application Structure
+
+```mermaid
+graph TD
+    A[App.vue] --> B[LoginForm]
+    A --> C[Main Layout]
+    C --> D[Sidebar Navigation]
+    C --> E[Content Area]
+    
+    %% Main Navigation Routes
+    E --> F[Dashboard]
+    E --> G[Clients]
+    E --> H[Activity]
+    E --> I[Funds]
+    E --> J[Documents]
+    E --> K[Reports]
+    E --> L[Compliance]
+    E --> M[Settings]
+    
+    %% Sub-routes and modal flows
+    G --> N[ClientDetail]
+    G --> O[Add Client Modal]
+    H --> P[Activity Detail Panel]
+    I --> Q[Fund Detail Modal]
+    J --> R[Add Document Modal]
+    J --> S[New Folder Modal]
+    M --> T[User Management]
+    
+    %% Authenticated state handling
+    B -- "Auth Success" --> F
+    M -- "Admin Only" --> M
+```
+
+### Component Hierarchy
+
+```mermaid
+graph TD
+    subgraph App[App.vue]
+        L1[LoginForm] -- "or" --> ML[Main Layout]
+        subgraph ML[Main Layout]
+            SB[Sidebar] --- CA[Content Area]
+            subgraph CA[Content Area]
+                DV[Dashboard View] --- QA[Quick Actions]
+                DV --- UA[Upcoming Appointments]
+                DV --- RA[Recent Activity]
+                DV --- TC[Top Clients]
+                
+                CV[Clients View] --- CT[Client Table]
+                CV --- CF[Client Forms]
+                
+                CDV[Client Detail View] --- PI[Personal Info]
+                CDV --- PA[Portfolio Analysis]
+                CDV --- IN[Interactions]
+                CDV --- IP[Insurance Policies]
+                
+                FV[Funds View] --- FT[Funds Table]
+                FV --- FC[Fund Charts]
+            end
+        end
+    end
+```
+
+### Page Layout Standards
+
+Each main view follows a consistent layout pattern:
+
+1. **Header Section**
+   - Page title (left)
+   - Action buttons (right)
+   - Search/filter controls (if applicable)
+
+2. **Content Area**
+   - Main data display (table/grid/cards)
+   - Pagination controls (if applicable)
+   - Loading states
+   - Empty states
+
+3. **Modal Patterns**
+   - Form modals (centered, overlay background)
+   - Detail panels (right side slide-in)
+   - Confirmation dialogs (centered, small)
+
+4. **Responsive Behavior**
+   - Sidebar collapses on mobile
+   - Tables become scrollable
+   - Grid layouts adjust columns
+   - Modals take full width on mobile
+
+### Navigation Flows
+
+1. **Authentication Flow**
+   - / (Login) → /dashboard (on success)
+   - Any protected route → / (if not authenticated)
+
+2. **Client Management Flow**
+   - /clients (list) → /clients/:id (detail)
+   - /clients → Add Client Modal
+   - /clients/:id → Activity Log
+   - /clients/:id → Portfolio View
+
+3. **Activity Tracking Flow**
+   - /activity (list) → Detail Panel
+   - /activity → Filter by Client/Type
+   - /activity → Export (future feature)
+
+4. **Document Management Flow**
+   - /documents (grid) → Folder View
+   - /documents → Upload Modal
+   - /documents → New Folder Modal
+
+5. **Admin Flows**
+   - /settings → User Management
+   - /settings → Database Management
+   - /settings → System Configuration
+
+### Protected Routes
+
+```mermaid
+graph LR
+    A[Public] --> B[Login]
+    B --> C[Protected Routes]
+    C --> D[Regular User Routes]
+    C --> E[Admin Routes]
+    
+    subgraph Regular User Routes
+        D1[Dashboard]
+        D2[Clients]
+        D3[Activity]
+        D4[Funds]
+        D5[Documents]
+    end
+    
+    subgraph Admin Routes
+        E1[Settings]
+        E2[User Management]
+        E3[System Config]
+    end
+```
+
+## 10. UI Wireframes
+
+### Layout Grid System
+The application uses a 12-column grid system with consistent spacing:
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ Header (100% width)                                          │
+├──────────────────────────────────────────────────────────────┤
+│ ┌────────┐ ┌───────────────────────────────────────────────┐│
+│ │        │ │ Page Header                                    ││
+│ │        │ ├───────────────────────────────────────────────┤│
+│ │Sidebar │ │                                               ││
+│ │(fixed) │ │                                               ││
+│ │        │ │                Main Content                   ││
+│ │        │ │                                               ││
+│ │        │ │                                               ││
+│ │        │ │                                               ││
+│ └────────┘ └───────────────────────────────────────────────┘│
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Dashboard Layout
+```
+┌──────────────────────────────────────────────────────────────┐
+│ Stats Cards (4 columns)                                      │
+├─────────┬─────────┬─────────┬──────────────────────────────┤
+│ Clients │ AUM     │ Active  │ Avg Portfolio                │
+└─────────┴─────────┴─────────┴──────────────────────────────┘
+┌────────────────────────┐ ┌─────────────────────────────────┐
+│                        │ │                                 │
+│   Portfolio            │ │     Top Clients                 │
+│   Distribution         │ │                                 │
+│   (Pie Chart)         │ │                                 │
+│                        │ │                                 │
+└────────────────────────┘ └─────────────────────────────────┘
+┌────────────────────────┐ ┌─────────────────────────────────┐
+│  Recent Activity       │ │   Upcoming Appointments         │
+└────────────────────────┘ └─────────────────────────────────┘
+```
+
+### Client Detail View
+```
+┌──────────────────────────────────────────────────────────────┐
+│ Client Header & Actions                                      │
+├──────────────────────────────────────────────────────────────┤
+│ ┌──────────────────┐ ┌───────────────────┐ ┌──────────────┐ │
+│ │ Personal Info    │ │ Risk Profile      │ │ Contact Info │ │
+│ └──────────────────┘ └───────────────────┘ └──────────────┘ │
+├──────────────────────────────────────────────────────────────┤
+│ Portfolio Overview                                           │
+│ ┌─────────────────────────┐ ┌──────────────────────────────┐│
+│ │ Category Distribution   │ │ Asset Allocation             ││
+│ │ (Pie Chart)            │ │ (Bar Chart)                  ││
+│ └─────────────────────────┘ └──────────────────────────────┘│
+├──────────────────────────────────────────────────────────────┤
+│ ┌────────────────────┐ ┌─────────────────┐ ┌──────────────┐ │
+│ │ Recent Activity    │ │ Insurance       │ │ Documents    │ │
+│ └────────────────────┘ └─────────────────┘ └──────────────┘ │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Modal Patterns
+```
+┌──────────────────────────────────────────────────────────────┐
+│                      Modal Header                            │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │ Form Fields / Content                                  │  │
+│  │                                                        │  │
+│  │ ┌──────────────┐  ┌──────────────┐                    │  │
+│  │ │ Field Label  │  │ Input Field  │                    │  │
+│  │ └──────────────┘  └──────────────┘                    │  │
+│  │                                                        │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                              │
+├──────────────────────────────────────────────────────────────┤
+│  [Cancel]                                           [Submit] │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Responsive Breakpoints
+
+The application uses the following responsive breakpoints:
+
+```mermaid
+graph TD
+    A[Viewport Width] --> B[Mobile: < 640px]
+    A --> C[Tablet: 640px - 1024px]
+    A --> D[Desktop: > 1024px]
+
+    subgraph Mobile
+        B1[Full width components]
+        B2[Stacked layout]
+        B3[Hamburger menu]
+    end
+
+    subgraph Tablet
+        C1[2-column grid]
+        C2[Sidebar visible]
+        C3[Flexible charts]
+    end
+
+    subgraph Desktop
+        D1[3-4 column grid]
+        D2[Fixed sidebar]
+        D3[Full features]
+    end
+
+    B --> B1 & B2 & B3
+    C --> C1 & C2 & C3
+    D --> D1 & D2 & D3
+```
+
+### Component States
+
+```mermaid
+stateDiagram-v2
+    state "Initial" as init
+    state "Default" as def
+    state "Loading" as load
+    state "Error" as err
+    state "Empty" as empty
+    state "Populated" as pop
+    state "Filtered" as filt
+    state "Retry" as retry
+    
+    [*] --> init
+    init --> def
+    def --> load: Fetch Data
+    load --> err: API Error
+    load --> empty: No Data
+    load --> pop: Data Loaded
+    
+    pop --> filt: Apply Filter
+    filt --> pop: Clear Filter
+    
+    err --> retry: Retry Action
+    retry --> load
+    
+    empty --> load: Refresh
+    
+    state pop {
+        state "Viewing" as view
+        state "Editing" as edit
+        state "Saving" as save
+        
+        [*] --> view
+        view --> edit: Edit Action
+        edit --> save: Submit
+        save --> view: Success
+        save --> err: Fail
+    }
+```
+
+This layout documentation provides a clear visual reference for maintaining consistency across the application. The ASCII wireframes show the structural layout while the Mermaid diagrams illustrate the responsive behavior and component states.
