@@ -183,8 +183,8 @@ class IFADatabase extends Dexie {
             });
             console.log('[DB] Admin user created');
 
-            // Add default regular user
-            console.log('[DB] Creating default regular user...');
+            // Add default regular users
+            console.log('[DB] Creating default regular users...');
             await this.users.add({
               username: 'advisor',
               email: 'advisor@webserve.it',
@@ -194,7 +194,28 @@ class IFADatabase extends Dexie {
               isAdmin: false,
               createdAt: new Date()
             });
-            console.log('[DB] Regular user created');
+            
+            await this.users.add({
+              username: 'john',
+              email: 'john@webserve.it',
+              password: 'advisor123',
+              firstName: 'John',
+              lastName: 'IFA',
+              isAdmin: false,
+              createdAt: new Date()
+            });
+            
+            await this.users.add({
+              username: 'paul',
+              email: 'paul@webserve.it',
+              password: 'advisor123',
+              firstName: 'Paul',
+              lastName: 'IFA',
+              isAdmin: false,
+              createdAt: new Date()
+            });
+            
+            console.log('[DB] Regular users created');
           }
         }
       );

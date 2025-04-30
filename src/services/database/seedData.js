@@ -312,18 +312,20 @@ export async function generateAndSeedData(db, numClients = 50) {
   );
   if (!allFunds.length) throw new Error('No funds available in database. Seed funds before clients.');
 
-  // Get admin and regular user data
-  const adminUser = await db.users.where('email').equals('admin@webserve.it').first();
-  const regularUser = await db.users.where('email').equals('advisor@webserve.it').first();
+  // Get all advisor users
+  const advisorEmails = ['advisor@webserve.it', 'john@webserve.it', 'paul@webserve.it'];
+  const advisorUsers = [];
   
-  if (!adminUser || !regularUser) {
-    throw new Error('Both admin and regular users must exist before seeding data');
+  for (const email of advisorEmails) {
+    const user = await db.users.where('email').equals(email).first();
+    if (user) {
+      advisorUsers.push({ id: user.id, email: user.email });
+    }
   }
-
-  const users = [
-    { id: adminUser.id, email: adminUser.email },
-    { id: regularUser.id, email: regularUser.email }
-  ];
+  
+  if (!advisorUsers.length) {
+    throw new Error('No advisor users found in database');
+  }
 
   // 2. Generate and insert clients, capturing their real DB ids
   const clientData = Array(numClients).fill(null).map(() => ({
@@ -412,7 +414,8 @@ export async function generateAndSeedData(db, numClients = 50) {
       const daysAgo = Math.floor(Math.random() * 365);
       const date = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
       const typeId = Math.floor(Math.random() * 9) + 1;
-      const user = users[i % 2];
+      // Randomly select an advisor for each interaction
+      const user = advisorUsers[Math.floor(Math.random() * advisorUsers.length)];
       
       allInteractions.push({
         clientId,
