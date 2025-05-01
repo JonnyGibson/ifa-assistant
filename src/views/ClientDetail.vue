@@ -106,130 +106,123 @@
               </div>
             </div>
           </div>
-          
-          <!-- Investment Accounts Summary -->
-          <div v-if="client.accounts?.length > 0" class="mb-6">
-            <h4 class="text-sm font-medium text-gray-500 mb-3">Investment Accounts</h4>
-            <div class="space-y-3">
-              <div v-for="account in client.accounts" :key="account.id" 
-                   class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-                <div class="flex justify-between items-center">
-                  <div>
-                    <h5 class="font-medium text-gray-900">{{ account.type }}</h5>
-                    <p class="text-sm text-gray-600">{{ account.provider }} - #{{ account.accountNumber }}</p>
-                  </div>
-                  <div class="text-right">
-                    <p class="text-lg font-semibold text-emerald-600">{{ formatCurrency(calculateAccountValue(account)) }}</p>
-                    <button @click="toggleAccountDetails(account.id)" 
-                            class="text-xs text-emerald-600 hover:text-emerald-700 mt-1 flex items-center">
-                      {{ expandedAccount === account.id ? 'Hide' : 'Show' }} Details
-                      <i :class="['fas', expandedAccount === account.id ? 'fa-chevron-up' : 'fa-chevron-down', 'ml-1']"></i>
-                    </button>
-                  </div>
+
+          <!-- Investment Accounts and Holdings Table (Expandable) -->
+          <div v-if="client.accounts && client.accounts.length > 0">
+            <div v-for="account in client.accounts" :key="account.id" class="mb-8">
+              <button
+                type="button"
+                class="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                @click="toggleAccountDetails(account.id)"
+                :aria-expanded="expandedAccount === account.id ? 'true' : 'false'"
+                :aria-controls="`account-holdings-${account.id}`"
+              >
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-university text-emerald-500"></i>
+                  <span class="font-semibold text-gray-800">{{ account.type }}</span>
+                  <span class="ml-2 text-xs text-gray-500">({{ account.provider }})</span>
                 </div>
-                
-                <!-- Expandable Holdings -->
-                <div v-if="expandedAccount === account.id" class="mt-4">
-                  <div v-if="holdingsLoading" class="flex justify-center py-4">
-                    <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-emerald-500"></div>
-                  </div>
-                  <div v-else-if="account.holdings?.length" class="mt-2">
-                    <table class="min-w-full text-sm">
-                      <thead>
-                        <tr class="text-gray-500">
-                          <th class="text-left py-2">Fund</th>
-                          <th class="text-right py-2">Units</th>
-                          <th class="text-right py-2">Price</th>
-                          <th class="text-right py-2">Currency</th>
-                          <th class="text-right py-2">Value</th>
-                        </tr>
-                      </thead>
-                      <tbody class="divide-y divide-gray-100">
-                        <tr v-for="holding in account.holdings" :key="holding.id" class="hover:bg-gray-50">
-                          <td class="py-2">
-                            <div class="flex flex-col">
-                              <a :href="holding.fund.ftLink" target="_blank" class="hover:text-emerald-600">
-                                {{ holding.fund.name }}
-                              </a>
-                              <span :class="['text-xs mt-1 inline-block w-fit px-2 py-0.5 rounded-full', getCategoryBadgeClass(holding.fund.category)]">
-                                {{ holding.fund.category }}
-                              </span>
-                            </div>
-                          </td>
-                          <td class="text-right py-2">{{ Math.round(holding.unitsHeld) }}</td>
-                          <td class="text-right py-2">{{ formatNumber(holding.fund.price, 2) }}</td>
-                          <td class="text-right py-2">{{ holding.fund.currency || 'GBP' }}</td>
-                          <td class="text-right py-2">
-                            <span class="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700">
-                              {{ formatNumber(holding.unitsHeld * holding.fund.price, 2) }}
+                <div class="flex items-center gap-4">
+                  <span class="text-emerald-600 font-medium">{{ formatCurrency(calculateAccountValue(account)) }}</span>
+                  <i :class="['fas', expandedAccount === account.id ? 'fa-chevron-up' : 'fa-chevron-down', 'text-gray-400', 'transition-transform', 'duration-200']"></i>
+                </div>
+              </button>
+              <div v-if="expandedAccount === account.id" :id="`account-holdings-${account.id}`" class="mt-2">
+                <div v-if="account.holdings && account.holdings.length > 0" class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
+                  <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                      <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fund</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase w-[100px]">ISIN</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Units</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Price</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Currency</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Value</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
+                      <tr v-for="holding in account.holdings" :key="holding.id" class="hover:bg-gray-50">
+                        <td class="px-4 py-3">
+                          <div class="flex flex-col gap-1">
+                            <a :href="holding.fund.ftLink" target="_blank" class="hover:text-emerald-600 font-medium">
+                              {{ holding.fund.name }}
+                            </a>
+                            <span :class="['text-xs inline-block w-fit px-2 py-0.5 rounded-full', getCategoryBadgeClass(holding.fund.category)]">
+                              {{ holding.fund.category }}
                             </span>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <p v-else class="text-sm text-gray-500 text-center py-2">No holdings in this account</p>
+                          </div>
+                        </td>
+                        <td class="px-4 py-3 text-right text-xs text-gray-500">{{ holding.fund.isin }}</td>
+                        <td class="px-4 py-3 text-right">{{ Math.round(holding.unitsHeld) }}</td>
+                        <td class="px-4 py-3 text-right">{{ formatNumber(holding.fund.price, 2) }}</td>
+                        <td class="px-4 py-3 text-right">{{ holding.fund.currency || 'GBP' }}</td>
+                        <td class="px-4 py-3 text-right">
+                          <span class="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700">
+                            {{ formatNumber(holding.unitsHeld * holding.fund.price, 2) }}
+                          </span>
+                        </td>
+                        <td class="px-4 py-3 text-right">
+                          <button 
+                            @click="openEditHoldingModal(account, holding)"
+                            class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            aria-label="Edit fund holding"
+                          >
+                            <i class="fas fa-edit mr-1"></i>Edit
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Insurance Policies Summary -->
-          <div v-if="insurancePolicies.length > 0" class="mt-6">
-            <h4 class="text-sm font-medium text-gray-500 mb-3">Insurance Policies</h4>
-            <div class="space-y-3">
-              <div v-for="policy in insurancePolicies" :key="policy.id" 
-                   class="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-                <div class="flex justify-between items-center">
-                  <div>
-                    <h5 class="font-medium text-gray-900">{{ INSURANCE_TYPES[policy.type]?.name }}</h5>
-                    <p class="text-sm text-gray-600">{{ policy.provider }} - #{{ policy.policyNumber }}</p>
-                  </div>
-                  <div class="text-right">
-                    <p v-if="policy.premiumAmount != null && policy.premiumFrequency" class="text-sm font-medium text-gray-900">
-                      {{ formatCurrency(policy.premiumAmount) }}/{{ policy.premiumFrequency }}
-                    </p>
-                    <button @click="togglePolicyDetails(policy.id)"
-                            class="text-xs text-emerald-600 hover:text-emerald-700 mt-1 flex items-center">
-                      {{ expandedPolicy === policy.id ? 'Hide' : 'Show' }} Details
-                      <i :class="['fas', expandedPolicy === policy.id ? 'fa-chevron-up' : 'fa-chevron-down', 'ml-1']"></i>
-                    </button>
-                  </div>
-                </div>
-                
-                <!-- Expandable Policy Details -->
-                <div v-if="expandedPolicy === policy.id" class="mt-4 text-sm space-y-2">
-                  <div class="grid grid-cols-2 gap-4">
-                    <div>
-                      <p class="text-gray-600">Status</p>
-                      <p :class="[
-                        'inline-block px-2 py-1 rounded-full text-xs font-medium mt-1',
-                        policy.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                      ]">
-                        {{ policy.status }}
-                      </p>
-                    </div>
-                    <div>
-                      <p class="text-gray-600">Start Date</p>
-                      <p class="mt-1">{{ formatDate(policy.startDate) }}</p>
-                    </div>
-                    <div v-if="policy.coverageAmount">
-                      <p class="text-gray-600">Coverage Amount</p>
-                      <p class="mt-1">{{ formatCurrency(policy.coverageAmount) }}</p>
-                    </div>
-                    <div v-if="policy.nextPaymentDate">
-                      <p class="text-gray-600">Next Payment</p>
-                      <p class="mt-1">{{ formatDate(policy.nextPaymentDate) }}</p>
-                    </div>
-                  </div>
-                </div>
+                <div v-else class="text-sm text-gray-500 text-center py-2">No holdings in this account</div>
               </div>
             </div>
           </div>
 
-          <div v-if="!client.accounts?.length && !insurancePolicies.length" 
-               class="text-center text-gray-500 py-6">
-            No investment accounts or insurance policies found
+          <!-- Add Fund / Insurance Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4 justify-end mt-8">
+            <button
+              type="button"
+              class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-md bg-emerald-600 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+              @click="showAddFundPopover = !showAddFundPopover"
+              aria-haspopup="dialog"
+              aria-expanded="showAddFundPopover.toString()"
+              aria-controls="add-fund-popover"
+            >
+              <i class="fas fa-plus mr-2"></i>Add New Fund
+            </button>
+            <button
+              type="button"
+              class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              @click="showAddInsurancePopover = !showAddInsurancePopover"
+              aria-haspopup="dialog"
+              aria-expanded="showAddInsurancePopover.toString()"
+              aria-controls="add-insurance-popover"
+            >
+              <i class="fas fa-plus mr-2"></i>Add New Insurance Product
+            </button>
+          </div>
+
+          <!-- Add Fund Popover -->
+          <div
+            v-if="showAddFundPopover"
+            id="add-fund-popover"
+            role="dialog"
+            aria-modal="true"
+            class="absolute z-30 mt-2 right-0 bg-white border border-gray-200 rounded-lg shadow-lg p-6 min-w-[260px]"
+          >
+            <span class="block text-gray-500 text-sm">Add Fund Popover (placeholder)</span>
+          </div>
+          <!-- Add Insurance Popover -->
+          <div
+            v-if="showAddInsurancePopover"
+            id="add-insurance-popover"
+            role="dialog"
+            aria-modal="true"
+            class="absolute z-30 mt-2 right-0 bg-white border border-gray-200 rounded-lg shadow-lg p-6 min-w-[260px]"
+          >
+            <span class="block text-gray-500 text-sm">Add Insurance Popover (placeholder)</span>
           </div>
         </div>
       </div>
@@ -610,7 +603,7 @@
 import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Chart, ArcElement, Tooltip, Legend, PieController } from 'chart.js';
-import { clientService, investmentService, interactionService, insuranceService, userService } from '../services/database';
+import { clientService, investmentService, investmentAccountService, interactionService, insuranceService, userService } from '../services/database';
 import { INSURANCE_TYPES } from '../services/models/productTypes';
 
 Chart.register(ArcElement, Tooltip, Legend, PieController);
@@ -641,6 +634,9 @@ export default {
     const showDeleteModal = ref(false);
     const isUpdatingFunds = ref(false);
     const updateProgress = ref([]);
+    const editHoldingModal = ref({ open: false, account: null, holding: null, units: 0, confirmDelete: false });
+    const showAddFundPopover = ref(false);
+    const showAddInsurancePopover = ref(false);
 
     const clientId = computed(() => Number(props.id));
 
@@ -1090,6 +1086,45 @@ export default {
         });
     };
 
+    const openEditHoldingModal = (account, holding) => {
+      editHoldingModal.value.open = true;
+      editHoldingModal.value.account = account;
+      editHoldingModal.value.holding = holding;
+      editHoldingModal.value.units = holding.unitsHeld;
+      editHoldingModal.value.confirmDelete = false;
+    };
+
+    const closeEditHoldingModal = () => {
+      editHoldingModal.value.open = false;
+      editHoldingModal.value.account = null;
+      editHoldingModal.value.holding = null;
+      editHoldingModal.value.units = 0;
+      editHoldingModal.value.confirmDelete = false;
+    };
+
+    const saveHoldingEdit = async () => {
+      const { account, holding, units } = editHoldingModal.value;
+      if (!account || !holding) return;
+      if (units < 0) return;
+      // Persist change (update in DB)
+      await investmentAccountService.updateHolding(account.id, holding.fund.id, { unitsHeld: units });
+      closeEditHoldingModal();
+      await fetchClientData();
+    };
+
+    const confirmDeleteHolding = () => {
+      editHoldingModal.value.confirmDelete = true;
+    };
+
+    const deleteHolding = async () => {
+      const { account, holding } = editHoldingModal.value;
+      if (!account || !holding) return;
+      // Remove holding from DB
+      await investmentService.deleteHolding(account.id, holding.id);
+      closeEditHoldingModal();
+      await fetchClientData();
+    };
+
     watch(() => props.id, (newId) => {
         if (newId) {
             fetchClientData();
@@ -1131,7 +1166,15 @@ export default {
       isUpdatingFunds,
       updateProgress,
       cancelUpdateFunds,
-      calculatePriceChange
+      calculatePriceChange,
+      editHoldingModal,
+      openEditHoldingModal,
+      closeEditHoldingModal,
+      saveHoldingEdit,
+      confirmDeleteHolding,
+      deleteHolding,
+      showAddFundPopover,
+      showAddInsurancePopover
     };
   }
 }
