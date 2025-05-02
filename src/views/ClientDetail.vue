@@ -57,190 +57,170 @@
     </div>
 
     <!-- Portfolio Summary -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-      <!-- Portfolio Overview -->
-      <div class="lg:col-span-2">
-        <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 h-full transition-all duration-300 hover:shadow-hover">
-          <h3 class="text-lg font-semibold text-gray-800 mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <span>Portfolio Overview</span>
-            <div class="flex flex-wrap items-center gap-4">
-              <button 
-                @click="updateFundPrices" 
-                :disabled="holdings.length === 0" 
-                class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-emerald-600 bg-emerald-50 rounded-md hover:bg-emerald-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed" 
-                title="Update Fund Prices"
-              >
-                <i class="fas fa-sync-alt mr-2"></i>
-                Update Fund Prices
-              </button>
-              <span class="text-lg font-semibold text-emerald-600" aria-label="Total portfolio value">
-                {{ formatCurrency(totalPortfolioValue) }}
-              </span>
-            </div>
-          </h3>
-          
-          <!-- Category Distribution Chart -->
-          <div v-if="holdings.length > 0" class="mt-4 mb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div class="min-h-[300px] flex flex-col">
-              <h4 class="text-sm font-medium text-gray-600 mb-2">Category Distribution</h4>
-              <div class="relative flex-1">
-                <canvas ref="categoryChart"></canvas>
-              </div>
-            </div>
-            <div class="min-h-[300px] flex flex-col">
-              <h4 class="text-sm font-medium text-gray-600 mb-2">Asset Allocation</h4>
-              <div class="space-y-3 flex-1 flex flex-col justify-center">
-                <div v-for="(value, type) in portfolioAssetAllocation" :key="type" class="flex justify-between items-center">
-                  <span class="text-sm font-medium">{{ formatAssetType(type) }}</span>
-                  <div class="flex items-center gap-2">
-                    <div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div 
-                        class="h-full rounded-full" 
-                        :class="getAssetAllocationColor(type)"
-                        :style="{ width: `${value}%` }"
-                      ></div>
-                    </div>
-                    <span class="text-sm text-gray-600">{{ value.toFixed(1) }}%</span>
-                  </div>
-                </div>
-              </div>
+    <div class="mb-6">
+      <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 h-full transition-all duration-300 hover:shadow-hover">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <span>Portfolio Overview</span>
+          <div class="flex flex-wrap items-center gap-4">
+            <button 
+              @click="updateFundPrices" 
+              :disabled="holdings.length === 0" 
+              class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-emerald-600 bg-emerald-50 rounded-md hover:bg-emerald-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed" 
+              title="Update Fund Prices"
+            >
+              <i class="fas fa-sync-alt mr-2"></i>
+              Update Fund Prices
+            </button>
+            <span class="text-lg font-semibold text-emerald-600" aria-label="Total portfolio value">
+              {{ formatCurrency(totalPortfolioValue) }}
+            </span>
+          </div>
+        </h3>
+        
+        <!-- Category Distribution Chart -->
+        <div v-if="holdings.length > 0" class="mt-4 mb-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="min-h-[300px] flex flex-col">
+            <h4 class="text-sm font-medium text-gray-600 mb-2">Category Distribution</h4>
+            <div class="relative flex-1">
+              <canvas ref="categoryChart"></canvas>
             </div>
           </div>
-
-          <!-- Investment Accounts and Holdings Table (Expandable) -->
-          <div v-if="client.accounts && client.accounts.length > 0">
-            <div v-for="account in client.accounts" :key="account.id" class="mb-8">
-              <button
-                type="button"
-                class="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                @click="toggleAccountDetails(account.id)"
-                :aria-expanded="expandedAccount === account.id ? 'true' : 'false'"
-                :aria-controls="`account-holdings-${account.id}`"
-              >
+          <div class="min-h-[300px] flex flex-col">
+            <h4 class="text-sm font-medium text-gray-600 mb-2">Asset Allocation</h4>
+            <div class="space-y-3 flex-1 flex flex-col justify-center">
+              <div v-for="(value, type) in portfolioAssetAllocation" :key="type" class="flex justify-between items-center">
+                <span class="text-sm font-medium">{{ formatAssetType(type) }}</span>
                 <div class="flex items-center gap-2">
-                  <i class="fas fa-university text-emerald-500"></i>
-                  <span class="font-semibold text-gray-800">{{ account.type }}</span>
-                  <span class="ml-2 text-xs text-gray-500">({{ account.provider }})</span>
+                  <div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      class="h-full rounded-full" 
+                      :class="getAssetAllocationColor(type)"
+                      :style="{ width: `${value}%` }"
+                    ></div>
+                  </div>
+                  <span class="text-sm text-gray-600">{{ value.toFixed(1) }}%</span>
                 </div>
-                <div class="flex items-center gap-4">
-                  <span class="text-emerald-600 font-medium">{{ formatCurrency(calculateAccountValue(account)) }}</span>
-                  <i :class="['fas', expandedAccount === account.id ? 'fa-chevron-up' : 'fa-chevron-down', 'text-gray-400', 'transition-transform', 'duration-200']"></i>
-                </div>
-              </button>
-              <div v-if="expandedAccount === account.id" :id="`account-holdings-${account.id}`" class="mt-2">
-                <div v-if="account.holdings && account.holdings.length > 0" class="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-                  <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                      <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fund</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase w-[100px]">ISIN</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Units</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Price</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Currency</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Value</th>
-                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-100">
-                      <tr v-for="holding in account.holdings" :key="holding.id" class="hover:bg-gray-50">
-                        <td class="px-4 py-3">
-                          <div class="flex flex-col gap-1">
-                            <a :href="holding.fund.ftLink" target="_blank" class="hover:text-emerald-600 font-medium">
-                              {{ holding.fund.name }}
-                            </a>
-                            <span :class="['text-xs inline-block w-fit px-2 py-0.5 rounded-full', getCategoryBadgeClass(holding.fund.category)]">
-                              {{ holding.fund.category }}
-                            </span>
-                          </div>
-                        </td>
-                        <td class="px-4 py-3 text-right text-xs text-gray-500">{{ holding.fund.isin }}</td>
-                        <td class="px-4 py-3 text-right">{{ Math.round(holding.unitsHeld) }}</td>
-                        <td class="px-4 py-3 text-right">{{ formatNumber(holding.fund.price, 2) }}</td>
-                        <td class="px-4 py-3 text-right">{{ holding.fund.currency || 'GBP' }}</td>
-                        <td class="px-4 py-3 text-right">
-                          <span class="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700">
-                            {{ formatNumber(holding.unitsHeld * holding.fund.price, 2) }}
-                          </span>
-                        </td>
-                        <td class="px-4 py-3 text-right">
-                          <button 
-                            @click="openEditHoldingModal(account, holding)"
-                            class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                            aria-label="Edit fund holding"
-                          >
-                            <i class="fas fa-edit mr-1"></i>Edit
-                          </button>
-                        </td>
-                      </tr>
-                      <tr v-if="addRowAccountId === account.id">
-                        <td colspan="7">
-                          <form @submit.prevent="findFundForAccount(account.id)" class="flex items-center gap-2">
-                            <label for="add-isin-input-{{account.id}}" class="sr-only">ISIN</label>
-                            <input :id="'add-isin-input-' + account.id" v-model="addRowIsin" type="text" maxlength="12" pattern="[A-Za-z0-9]{12}" required autocomplete="off" placeholder="Enter ISIN" class="border border-gray-300 rounded px-2 py-1 w-40" />
-                            <button type="submit" class="px-3 py-1 bg-emerald-600 text-white rounded hover:bg-emerald-700 text-sm">Find</button>
-                            <button type="button" @click="cancelAddRow()" class="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 text-sm">Cancel</button>
-                            <span v-if="addRowError" class="ml-2 text-red-600 text-sm">{{ addRowError }}</span>
-                            <span v-if="addRowResult" class="ml-2 text-emerald-700 text-sm">{{ addRowResult }}</span>
-                          </form>
-                        </td>
-                      </tr>
-                      <tr v-if="!addRowAccountId || addRowAccountId !== account.id">
-                        <td colspan="7" class="text-right">
-                          <button type="button" @click="showAddRow(account.id)" class="px-4 py-2 text-sm font-semibold rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100">Add Fund</button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div v-else class="text-sm text-gray-500 text-center py-2">No holdings in this account</div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Recent Interactions Card -->
-      <div class="lg:col-span-1">
-        <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 h-full transition-all duration-300 hover:shadow-hover">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-800">Recent Interactions</h3>
-          </div>
-          <div v-if="interactionsLoading" class="flex justify-center py-8">
-            <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-emerald-500"></div>
-          </div>
-          <div v-else-if="interactions.length > 0" class="overflow-hidden rounded-lg border border-gray-200">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr v-for="interaction in interactions.slice(0, 5)" :key="interaction.id" 
-                    class="hover:bg-gray-50 transition-colors duration-150">
-                  <td class="px-6 py-4">
-                    <span class="text-sm font-medium text-gray-900">{{ interactionTypeMap[interaction.interactionTypeId]?.name || 'Unknown Type' }}</span>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ formatDate(interaction.date) }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="p-4 bg-gray-50 border-t border-gray-200">
-              <p class="text-sm text-gray-600">
-                Showing last 5 interactions.
-                <router-link :to="{ name: 'Activity', query: { clientId: client.id }}" class="text-emerald-600 hover:text-emerald-800 font-medium">
-                  View all
-                </router-link>
-              </p>
+        <!-- Investment Accounts and Holdings Table (Expandable) -->
+        <div v-if="client.accounts && client.accounts.length > 0">
+          <div v-for="account in client.accounts" :key="account.id" class="mb-8">
+            <button
+              type="button"
+              class="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              @click="toggleAccountDetails(account.id)"
+              :aria-expanded="expandedAccount === account.id ? 'true' : 'false'"
+              :aria-controls="`account-holdings-${account.id}`"
+            >
+              <div class="flex items-center gap-2">
+                <i class="fas fa-university text-emerald-500"></i>
+                <span class="font-semibold text-gray-800">{{ account.type }}</span>
+                <span class="ml-2 text-xs text-gray-500">({{ account.provider }})</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <span class="text-emerald-600 font-medium">{{ formatCurrency(calculateAccountValue(account)) }}</span>
+                <i :class="['fas', expandedAccount === account.id ? 'fa-chevron-up' : 'fa-chevron-down', 'text-gray-400', 'transition-transform', 'duration-200']"></i>
+              </div>
+            </button>
+            <div v-if="expandedAccount === account.id" :id="`account-holdings-${account.id}`" class="mt-2">
+              <div v-if="account.holdings && account.holdings.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <section v-for="holding in account.holdings" :key="holding.id" class="bg-white rounded-lg shadow p-4 flex flex-col justify-between border border-gray-200 min-h-[180px]">
+                  <div class="flex-1">
+                    <header class="mb-2">
+                      <h4 class="text-base font-semibold text-gray-900">{{ holding.fund.name }}</h4>
+                    </header>
+                    <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                      <div><dt class="font-medium text-gray-500">ISIN</dt><dd class="text-gray-900">{{ holding.fund.isin }}</dd></div>
+                      <div><dt class="font-medium text-gray-500">Units</dt><dd class="text-gray-900">{{ Math.round(holding.unitsHeld) }}</dd></div>
+                      <div><dt class="font-medium text-gray-500">Currency</dt><dd class="text-gray-900">{{ holding.fund.currency || 'GBP' }}</dd></div>
+                      <div>
+                        <dt class="font-medium text-gray-500">Category</dt>
+                        <dd>
+                          <span :class="['inline-block px-2 py-0.5 rounded-full text-xs font-semibold', getCategoryBadgeClass(holding.fund.category)]">
+                            {{ holding.fund.category }}
+                          </span>
+                        </dd>
+                      </div>
+                    </dl>
+                  </div>
+                  <footer class="flex items-end justify-between mt-4">
+                    <div class="flex gap-2">
+                      <button @click="openEditHoldingModal(account, holding)" aria-label="Edit fund holding" class="text-blue-600 hover:text-blue-800 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"><i class="fas fa-edit"></i></button>
+                      <button @click="confirmDeleteHolding()" aria-label="Delete fund holding" class="text-red-600 hover:text-red-800 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-red-500"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <div class="flex items-center">
+                      <dt class="font-medium text-gray-500 mr-1">Value</dt>
+                      <dd class="text-emerald-700 text-lg font-bold bg-emerald-50 rounded px-3 py-1">{{ formatNumber(holding.unitsHeld * holding.fund.price, 2) }}</dd>
+                    </div>
+                  </footer>
+                </section>
+                <section v-if="addRowAccountId === account.id" class="bg-gray-50 rounded-lg border-2 border-dashed border-emerald-300 p-4 flex flex-col justify-center items-center">
+                  <form @submit.prevent="findFundForAccount(account.id)" class="w-full flex flex-col gap-2">
+                    <label for="add-isin-input-{{account.id}}" class="text-sm font-medium text-gray-700">Add Fund by ISIN</label>
+                    <div class="flex gap-2">
+                      <input :id="'add-isin-input-' + account.id" v-model="addRowIsin" type="text" maxlength="12" pattern="[A-Za-z0-9]{12}" required autocomplete="off" placeholder="Enter ISIN" class="border border-gray-300 rounded px-2 py-1 w-40" />
+                      <button type="submit" class="px-3 py-1 bg-emerald-600 text-white rounded hover:bg-emerald-700 text-sm">Find</button>
+                      <button type="button" @click="cancelAddRow()" class="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 text-sm">Cancel</button>
+                    </div>
+                    <span v-if="addRowError" class="text-red-600 text-sm">{{ addRowError }}</span>
+                    <span v-if="addRowResult" class="text-emerald-700 text-sm">{{ addRowResult }}</span>
+                  </form>
+                </section>
+                <section v-if="!addRowAccountId || addRowAccountId !== account.id" class="flex items-center justify-center">
+                  <button type="button" @click="showAddRow(account.id)" class="w-full px-4 py-3 border-2 border-dashed border-emerald-300 rounded-lg text-emerald-700 bg-gray-50 hover:bg-emerald-50 font-semibold">+ Add Fund</button>
+                </section>
+              </div>
+              <div v-else class="text-sm text-gray-500 text-center py-2">No holdings in this account</div>
             </div>
           </div>
-          <div v-else class="text-center py-8">
-            <i class="fas fa-history text-gray-300 text-3xl mb-2"></i>
-            <p class="text-gray-500 text-sm">No recent interactions</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Interactions Card (moved below Portfolio Overview) -->
+    <div class="mb-6">
+      <div class="bg-glass backdrop-blur-xs rounded-lg shadow-soft p-6 h-full transition-all duration-300 hover:shadow-hover">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">Recent Interactions</h3>
+        </div>
+        <div v-if="interactionsLoading" class="flex justify-center py-8">
+          <div class="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-emerald-500"></div>
+        </div>
+        <div v-else-if="interactions.length > 0" class="overflow-hidden rounded-lg border border-gray-200">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr v-for="interaction in interactions.slice(0, 5)" :key="interaction.id" 
+                  class="hover:bg-gray-50 transition-colors duration-150">
+                <td class="px-6 py-4">
+                  <span class="text-sm font-medium text-gray-900">{{ interactionTypeMap[interaction.interactionTypeId]?.name || 'Unknown Type' }}</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatDate(interaction.date) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="p-4 bg-gray-50 border-t border-gray-200">
+            <p class="text-sm text-gray-600">
+              Showing last 5 interactions.
+              <router-link :to="{ name: 'Activity', query: { clientId: client.id }}" class="text-emerald-600 hover:text-emerald-800 font-medium">
+                View all
+              </router-link>
+            </p>
           </div>
+        </div>
+        <div v-else class="text-center py-8">
+          <i class="fas fa-history text-gray-300 text-3xl mb-2"></i>
+          <p class="text-gray-500 text-sm">No recent interactions</p>
         </div>
       </div>
     </div>
