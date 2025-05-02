@@ -19,10 +19,7 @@
       </dl>
     </div>
     <footer class="flex items-end justify-between mt-4">
-      <div class="flex gap-2">
-        <button @click="$emit('edit')" aria-label="Edit fund holding" class="text-blue-600 hover:text-blue-800 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"><i class="fas fa-edit"></i></button>
-        <button @click="$emit('delete')" aria-label="Delete fund holding" class="text-red-600 hover:text-red-800 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-red-500"><i class="fas fa-trash"></i></button>
-      </div>
+      <button @click="$emit('edit')" aria-label="Edit fund holding" class="text-blue-600 hover:text-blue-800 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"><i class="fas fa-edit"></i></button>
       <div class="flex items-center">
         <dt class="font-medium text-gray-500 mr-1">Value</dt>
         <dd class="text-emerald-700 text-lg font-bold bg-emerald-50 rounded px-3 py-1">{{ formatNumber(unitsHeld * fund.price, 2) }}</dd>
