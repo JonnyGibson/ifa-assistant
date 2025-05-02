@@ -44,17 +44,21 @@ export default {
     };
 
     const setupChart = () => {
+      if (!chartCanvas.value || !props.data || Object.keys(props.data).length === 0) {
+        return;
+      }
+
       if (chart) {
         chart.destroy();
       }
 
       const colors = [
-        '#10B981', // emerald-500
-        '#3B82F6', // blue-500
-        '#6366F1', // indigo-500
-        '#8B5CF6', // violet-500
-        '#EC4899', // pink-500
-        '#F59E0B', // amber-500
+        '#10B981', // emerald-500 for UK Stock
+        '#3B82F6', // blue-500 for Non-UK Stock
+        '#6366F1', // indigo-500 for UK Bond
+        '#8B5CF6', // violet-500 for Non-UK Bond
+        '#64748B', // slate-500 for Cash
+        '#F59E0B', // amber-500 for Other
       ];
 
       const labels = Object.keys(props.data);
@@ -74,6 +78,7 @@ export default {
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          cutout: '65%',
           plugins: {
             legend: {
               position: 'right',
@@ -81,7 +86,8 @@ export default {
                 usePointStyle: true,
                 font: {
                   size: 12
-                }
+                },
+                color: '#374151' // text-gray-700
               }
             },
             tooltip: {
@@ -99,10 +105,16 @@ export default {
       });
     };
 
-    watch(() => [props.data, props.total], setupChart, { deep: true });
+    // Watch for changes in both data and total, also check for chart canvas availability
+    watch([() => props.data, () => props.total, chartCanvas], () => {
+      if (chartCanvas.value && Object.keys(props.data).length > 0) {
+        setupChart();
+      }
+    }, { deep: true });
 
+    // Setup chart on mount if data is available
     onMounted(() => {
-      if (Object.keys(props.data).length > 0) {
+      if (chartCanvas.value && Object.keys(props.data).length > 0) {
         setupChart();
       }
     });

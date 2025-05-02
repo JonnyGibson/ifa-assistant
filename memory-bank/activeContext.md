@@ -24,6 +24,13 @@ Tracks the current work focus, recent changes, next steps, and active decisions 
 
 ## Recent Changes
 
+### Chart Visualization Improvements
+- Enhanced donut chart initialization and rendering
+- Improved chart responsiveness and data updates
+- Added better tooltips with currency formatting
+- Implemented proper chart cleanup on component changes
+- Fixed category distribution visualization
+
 ### Portfolio Display Enhancement
 - Added expandable/collapsible account sections
 - Implemented fixed-width ISIN columns

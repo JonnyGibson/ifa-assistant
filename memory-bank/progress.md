@@ -58,8 +58,9 @@
 ### UI/UX
 1. Table responsiveness on small screens
 2. Modal positioning in complex views
-3. Chart rendering optimization
-4. Form validation feedback
+3. Form validation feedback
+4. Chart legend positioning in confined spaces
+5. Touch interactions with charts on mobile devices
 
 ### Data Management
 1. Cache invalidation strategies
@@ -74,6 +75,7 @@
 2. Enhance fact finding tools
 3. Implement document management
 4. Improve compliance tracking
+5. Mobile chart interactions
 
 ### Medium Priority
 1. Advanced reporting features
