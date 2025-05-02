@@ -172,57 +172,29 @@
                           </button>
                         </td>
                       </tr>
+                      <tr v-if="addRowAccountId === account.id">
+                        <td colspan="7">
+                          <form @submit.prevent="findFundForAccount(account.id)" class="flex items-center gap-2">
+                            <label for="add-isin-input-{{account.id}}" class="sr-only">ISIN</label>
+                            <input :id="'add-isin-input-' + account.id" v-model="addRowIsin" type="text" maxlength="12" pattern="[A-Za-z0-9]{12}" required autocomplete="off" placeholder="Enter ISIN" class="border border-gray-300 rounded px-2 py-1 w-40" />
+                            <button type="submit" class="px-3 py-1 bg-emerald-600 text-white rounded hover:bg-emerald-700 text-sm">Find</button>
+                            <button type="button" @click="cancelAddRow()" class="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 text-sm">Cancel</button>
+                            <span v-if="addRowError" class="ml-2 text-red-600 text-sm">{{ addRowError }}</span>
+                            <span v-if="addRowResult" class="ml-2 text-emerald-700 text-sm">{{ addRowResult }}</span>
+                          </form>
+                        </td>
+                      </tr>
+                      <tr v-if="!addRowAccountId || addRowAccountId !== account.id">
+                        <td colspan="7" class="text-right">
+                          <button type="button" @click="showAddRow(account.id)" class="px-4 py-2 text-sm font-semibold rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100">Add Fund</button>
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
                 <div v-else class="text-sm text-gray-500 text-center py-2">No holdings in this account</div>
               </div>
             </div>
-          </div>
-
-          <!-- Add Fund / Insurance Buttons -->
-          <div class="flex flex-col sm:flex-row gap-4 justify-end mt-8">
-            <button
-              type="button"
-              class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-md bg-emerald-600 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
-              @click="showAddFundPopover = !showAddFundPopover"
-              aria-haspopup="dialog"
-              aria-expanded="showAddFundPopover.toString()"
-              aria-controls="add-fund-popover"
-            >
-              <i class="fas fa-plus mr-2"></i>Add New Fund
-            </button>
-            <button
-              type="button"
-              class="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              @click="showAddInsurancePopover = !showAddInsurancePopover"
-              aria-haspopup="dialog"
-              aria-expanded="showAddInsurancePopover.toString()"
-              aria-controls="add-insurance-popover"
-            >
-              <i class="fas fa-plus mr-2"></i>Add New Insurance Product
-            </button>
-          </div>
-
-          <!-- Add Fund Popover -->
-          <div
-            v-if="showAddFundPopover"
-            id="add-fund-popover"
-            role="dialog"
-            aria-modal="true"
-            class="absolute z-30 mt-2 right-0 bg-white border border-gray-200 rounded-lg shadow-lg p-6 min-w-[260px]"
-          >
-            <span class="block text-gray-500 text-sm">Add Fund Popover (placeholder)</span>
-          </div>
-          <!-- Add Insurance Popover -->
-          <div
-            v-if="showAddInsurancePopover"
-            id="add-insurance-popover"
-            role="dialog"
-            aria-modal="true"
-            class="absolute z-30 mt-2 right-0 bg-white border border-gray-200 rounded-lg shadow-lg p-6 min-w-[260px]"
-          >
-            <span class="block text-gray-500 text-sm">Add Insurance Popover (placeholder)</span>
           </div>
         </div>
       </div>
@@ -637,6 +609,11 @@ export default {
     const editHoldingModal = ref({ open: false, account: null, holding: null, units: 0, confirmDelete: false });
     const showAddFundPopover = ref(false);
     const showAddInsurancePopover = ref(false);
+    const addFundForm = ref({ accountId: '', isin: '', error: '', result: '' });
+    const addRowAccountId = ref(null);
+    const addRowIsin = ref('');
+    const addRowError = ref('');
+    const addRowResult = ref('');
 
     const clientId = computed(() => Number(props.id));
 
@@ -1125,6 +1102,61 @@ export default {
       await fetchClientData();
     };
 
+    const handleFindFund = async () => {
+      const { accountId, isin } = addFundForm.value;
+      addFundForm.value.error = '';
+      addFundForm.value.result = '';
+      if (!accountId || !isin) {
+        addFundForm.value.error = 'Please select an account and enter a valid ISIN.';
+        return;
+      }
+      try {
+        const fund = await investmentService.findFundByISIN(isin);
+        if (!fund) {
+          addFundForm.value.error = 'Fund not found. Please check the ISIN and try again.';
+          return;
+        }
+        addFundForm.value.result = `Found fund: ${fund.name}. You can now add it to the selected account.`;
+      } catch (error) {
+        console.error('Error finding fund:', error);
+        addFundForm.value.error = 'An error occurred while searching for the fund. Please try again later.';
+      }
+    };
+
+    const showAddRow = (accountId) => {
+      addRowAccountId.value = accountId;
+      addRowIsin.value = '';
+      addRowError.value = '';
+      addRowResult.value = '';
+    };
+
+    const cancelAddRow = () => {
+      addRowAccountId.value = null;
+      addRowIsin.value = '';
+      addRowError.value = '';
+      addRowResult.value = '';
+    };
+
+    const findFundForAccount = async (accountId) => {
+      addRowError.value = '';
+      addRowResult.value = '';
+      if (!addRowIsin.value) {
+        addRowError.value = 'Please enter a valid ISIN.';
+        return;
+      }
+      try {
+        const fund = await investmentService.findFundByISIN(addRowIsin.value);
+        if (!fund) {
+          addRowError.value = 'Fund not found. Please check the ISIN and try again.';
+          return;
+        }
+        addRowResult.value = `Found fund: ${fund.name}. You can now add it to the account.`;
+      } catch (error) {
+        console.error('Error finding fund:', error);
+        addRowError.value = 'An error occurred while searching for the fund. Please try again later.';
+      }
+    };
+
     watch(() => props.id, (newId) => {
         if (newId) {
             fetchClientData();
@@ -1174,7 +1206,16 @@ export default {
       confirmDeleteHolding,
       deleteHolding,
       showAddFundPopover,
-      showAddInsurancePopover
+      showAddInsurancePopover,
+      addFundForm,
+      handleFindFund,
+      addRowAccountId,
+      addRowIsin,
+      addRowError,
+      addRowResult,
+      showAddRow,
+      cancelAddRow,
+      findFundForAccount
     };
   }
 }

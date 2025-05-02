@@ -35,7 +35,7 @@
 
     <!-- Add New User -->
     <div v-if="showAddUserForm" class="bg-white shadow rounded-lg p-6">
-      <h3 class="text-xl font-semibold mb-4">Add New User</h3>
+      <h3 class="text-xl font-semibold mb-4">New User</h3>
       <form @submit.prevent="addUser" class="space-y-4">
         <div class="grid grid-cols-2 gap-4">
           <div>

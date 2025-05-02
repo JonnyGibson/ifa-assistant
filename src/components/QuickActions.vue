@@ -7,7 +7,7 @@
         class="flex items-center justify-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-150"
       >
         <i class="fas fa-user-plus text-emerald-600 mr-3"></i>
-        <span class="text-sm font-medium text-gray-900">Add New Client</span>
+        <span class="text-sm font-medium text-gray-900">New Client</span>
       </router-link>
       
       <router-link 
