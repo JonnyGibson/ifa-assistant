@@ -4,16 +4,14 @@
       <header class="mb-2">
         <h4 class="text-base font-semibold text-gray-900">{{ fund.name }}</h4>
       </header>
-      <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm">
         <div><dt class="font-medium text-gray-500">ISIN</dt><dd class="text-gray-900">{{ fund.isin }}</dd></div>
         <div><dt class="font-medium text-gray-500">Units</dt><dd class="text-gray-900">{{ Math.round(unitsHeld) }}</dd></div>
         <div><dt class="font-medium text-gray-500">Currency</dt><dd class="text-gray-900">{{ fund.currency || 'GBP' }}</dd></div>
         <div>
           <dt class="font-medium text-gray-500">Category</dt>
           <dd>
-            <span :class="['inline-block px-2 py-0.5 rounded-full text-xs font-semibold', getCategoryBadgeClass(fund.category)]">
-              {{ fund.category }}
-            </span>
+            <span class="text-xs font-semibold text-gray-700">{{ fund.category }}</span>
           </dd>
         </div>
       </dl>
